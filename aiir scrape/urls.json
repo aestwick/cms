@@ -1,0 +1,878 @@
+[
+  {
+    "url": "https://www.kpfk.org/on-air/",
+    "path": "/on-air/",
+    "type": "index",
+    "title": "Programs"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/afrodicia1/",
+    "path": "/on-air/afrodicia1/",
+    "type": "show",
+    "title": "Afro Dicia"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/alan-watts2/",
+    "path": "/on-air/alan-watts2/",
+    "type": "show",
+    "title": "Alan Watts"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/all-of-the-above/",
+    "path": "/on-air/all-of-the-above/",
+    "type": "show",
+    "title": "All Of The Above"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/alternative-radio/",
+    "path": "/on-air/alternative-radio/",
+    "type": "show",
+    "title": "Alternative Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/american-indian-airwaves/",
+    "path": "/on-air/american-indian-airwaves/",
+    "type": "show",
+    "title": "American Indian Airwaves"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/arts-in-review/",
+    "path": "/on-air/arts-in-review/",
+    "type": "show",
+    "title": "Arts in Review"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/awakenings/",
+    "path": "/on-air/awakenings/",
+    "type": "show",
+    "title": "Awakenings"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/aware-show",
+    "path": "/on-air/aware-show",
+    "type": "show",
+    "title": "Aware with Lisa Garr"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/be-a-better-relative/",
+    "path": "/on-air/be-a-better-relative/",
+    "type": "show",
+    "title": "Be a Better Relative"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/beautiful-struggle/",
+    "path": "/on-air/beautiful-struggle/",
+    "type": "show",
+    "title": "Beautiful Struggle"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/beneath-the-surface/",
+    "path": "/on-air/beneath-the-surface/",
+    "type": "show",
+    "title": "Beneath the Surface with Suzi Weissman"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/bibliocracy/",
+    "path": "/on-air/bibliocracy/",
+    "type": "show",
+    "title": "Bibliocracy"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/bike-talk/",
+    "path": "/on-air/bike-talk/",
+    "type": "show",
+    "title": "Bike Talk"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/bradcast-with-brad-friedman/",
+    "path": "/on-air/bradcast-with-brad-friedman/",
+    "type": "show",
+    "title": "BradCast with Brad Friedman"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/breakbeats-and-rhymes/",
+    "path": "/on-air/breakbeats-and-rhymes/",
+    "type": "show",
+    "title": "Breakbeats and Rhymes"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/cal-state-la-community-news-hour/",
+    "path": "/on-air/cal-state-la-community-news-hour/",
+    "type": "show",
+    "title": "Cal State LA Community News Hour"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/california-solartopia/",
+    "path": "/on-air/california-solartopia/",
+    "type": "show",
+    "title": "California Solartopia"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/caminando-por-mesoamerica/",
+    "path": "/on-air/caminando-por-mesoamerica/",
+    "type": "show",
+    "title": "Caminando por Mesoamerica"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/canto-sin-fronteras/",
+    "path": "/on-air/canto-sin-fronteras/",
+    "type": "show",
+    "title": "Canto Sin Fronteras"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/canto-tropical/",
+    "path": "/on-air/canto-tropical/",
+    "type": "show",
+    "title": "Canto Tropical"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/capitalism-race-and-democracy/",
+    "path": "/on-air/capitalism-race-and-democracy/",
+    "type": "show",
+    "title": "Capitalism, Race and Democracy"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/car-show-the/",
+    "path": "/on-air/car-show-the/",
+    "type": "show",
+    "title": "Car Show, The"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/the-cary-harrison-files/",
+    "path": "/on-air/the-cary-harrison-files/",
+    "type": "show",
+    "title": "The Cary Harrison Files"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/centroamerica-sin-censura-con-francisco-marti­nez/",
+    "path": "/on-air/centroamerica-sin-censura-con-francisco-marti­nez/",
+    "type": "show",
+    "title": "Centroamerica Sin Censura con Francisco Marti­nez"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/on-contact/",
+    "path": "/on-air/on-contact/",
+    "type": "show",
+    "title": "On Contact"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/cinemascore/",
+    "path": "/on-air/cinemascore/",
+    "type": "show",
+    "title": "CinemaScore"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/codepink-radio/",
+    "path": "/on-air/codepink-radio/",
+    "type": "show",
+    "title": "CODEPINK Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/contacto-ancestral/",
+    "path": "/on-air/contacto-ancestral/",
+    "type": "show",
+    "title": "Contacto Ancestral"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/contragolpe/",
+    "path": "/on-air/contragolpe/",
+    "type": "show",
+    "title": "Contragolpe"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/conversation-piece/",
+    "path": "/on-air/conversation-piece/",
+    "type": "show",
+    "title": "Conversation Piece"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/cut-to-the-chase/",
+    "path": "/on-air/cut-to-the-chase/",
+    "type": "show",
+    "title": "Cut To The Chase"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/dark-star-dead-and-music/",
+    "path": "/on-air/dark-star-dead-and-music/",
+    "type": "show",
+    "title": "Dark Star, Dead & Music"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/democracy-now/",
+    "path": "/on-air/democracy-now/",
+    "type": "show",
+    "title": "Democracy Now!"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/dialogos-de-media-noche/",
+    "path": "/on-air/dialogos-de-media-noche/",
+    "type": "show",
+    "title": "Diálogos de Media Noche"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/eco-justice-radio/",
+    "path": "/on-air/eco-justice-radio/",
+    "type": "show",
+    "title": "Eco Justice Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/economic-update/",
+    "path": "/on-air/economic-update/",
+    "type": "show",
+    "title": "Economic Update"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/edna-tatums-gospel-classics/",
+    "path": "/on-air/edna-tatums-gospel-classics/",
+    "type": "show",
+    "title": "Edna Tatum's Gospel Classics"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/el-noticiero/",
+    "path": "/on-air/el-noticiero/",
+    "type": "show",
+    "title": "El Noticiero"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/encuentros/",
+    "path": "/on-air/encuentros/",
+    "type": "show",
+    "title": "Encuentros con Gregorio Luke"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/enfoque-latino-con-ruben-tapia/",
+    "path": "/on-air/enfoque-latino-con-ruben-tapia/",
+    "type": "show",
+    "title": "Enfoque Latino con Ruben Tapia"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/expansion-zone/",
+    "path": "/on-air/expansion-zone/",
+    "type": "show",
+    "title": "Expansion Zone"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/feminist-magazine/",
+    "path": "/on-air/feminist-magazine/",
+    "type": "show",
+    "title": "Feminist Magazine"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/folkscene/",
+    "path": "/on-air/folkscene/",
+    "type": "show",
+    "title": "FolkScene"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/freedom-now/",
+    "path": "/on-air/freedom-now/",
+    "type": "show",
+    "title": "Freedom Now"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/global-village-mondays/",
+    "path": "/on-air/global-village-mondays/",
+    "type": "show",
+    "title": "Global Village Mondays"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/global-village-tuesdays/",
+    "path": "/on-air/global-village-tuesdays/",
+    "type": "show",
+    "title": "Global Village Tuesdays w/Gary Baca"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/global-village-wednesdays/",
+    "path": "/on-air/global-village-wednesdays/",
+    "type": "show",
+    "title": "Global Village Wednesdays"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/global-village-thursdays-w-john-schneider/",
+    "path": "/on-air/global-village-thursdays-w-john-schneider/",
+    "type": "show",
+    "title": "Global Village Thursdays w John Schneider"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/global-village-fridays-w-sergio-mielniczenko/",
+    "path": "/on-air/global-village-fridays-w-sergio-mielniczenko/",
+    "type": "show",
+    "title": "Global Village Fridays w Sergio Mielniczenko"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/hablando-de-sudamerica/",
+    "path": "/on-air/hablando-de-sudamerica/",
+    "type": "show",
+    "title": "Hablando de Sudamerica"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/imru/",
+    "path": "/on-air/imru/",
+    "type": "show",
+    "title": "IMRU Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/informativo-pacifica/",
+    "path": "/on-air/informativo-pacifica/",
+    "type": "show",
+    "title": "Informativo Pacifica"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/in-the-cut-radio/",
+    "path": "/on-air/in-the-cut-radio/",
+    "type": "show",
+    "title": "In The Cut Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/jazz-sessions/",
+    "path": "/on-air/jazz-sessions/",
+    "type": "show",
+    "title": "Jazz Sessions"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/la-review-of-books/",
+    "path": "/on-air/la-review-of-books/",
+    "type": "show",
+    "title": "LA Review of Books (LARB)"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/l-a-theatre-works/",
+    "path": "/on-air/l-a-theatre-works/",
+    "type": "show",
+    "title": "L.A. Theatre Works"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/la-raza-radio/",
+    "path": "/on-air/la-raza-radio/",
+    "type": "show",
+    "title": "La Raza Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/lawyers-guild/",
+    "path": "/on-air/lawyers-guild/",
+    "type": "show",
+    "title": "The Lawyer's Guild with Jim Lafferty"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/jon-wiener/",
+    "path": "/on-air/jon-wiener/",
+    "type": "show",
+    "title": "Living In The USA"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/middle-east-in-focus/",
+    "path": "/on-air/middle-east-in-focus/",
+    "type": "show",
+    "title": "Middle East in Focus"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/midnight-snack/",
+    "path": "/on-air/midnight-snack/",
+    "type": "show",
+    "title": "Midnight Snack"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/musiqueros-y-juventud/",
+    "path": "/on-air/musiqueros-y-juventud/",
+    "type": "show",
+    "title": "Musiqueros y Juventud"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/nightscapes/",
+    "path": "/on-air/nightscapes/",
+    "type": "show",
+    "title": "Nightscapes"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/nuestra-voz/",
+    "path": "/on-air/nuestra-voz/",
+    "type": "show",
+    "title": "Nuestra Voz"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/the-out-agenda/",
+    "path": "/on-air/the-out-agenda/",
+    "type": "show",
+    "title": "The Out Agenda"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/pacifica-performance-showcase/",
+    "path": "/on-air/pacifica-performance-showcase/",
+    "type": "show",
+    "title": "Pacifica Performance Showcase"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/perspectiva-de-las-americas/",
+    "path": "/on-air/perspectiva-de-las-americas/",
+    "type": "show",
+    "title": "Perspectiva de las Americas"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/phil-and-teds-sexy-boomer-show/",
+    "path": "/on-air/phil-and-teds-sexy-boomer-show/",
+    "type": "show",
+    "title": "Phil and Ted’s Sexy Boomer Show"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/pocho-hour-of-power/",
+    "path": "/on-air/pocho-hour-of-power/",
+    "type": "show",
+    "title": "Pocho Hour of Power"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/profiles/",
+    "path": "/on-air/profiles/",
+    "type": "show",
+    "title": "Profiles with Maggie LePique"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/qr-code/",
+    "path": "/on-air/qr-code/",
+    "type": "show",
+    "title": "QR Code"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/que-pasa-en-los-angeles/",
+    "path": "/on-air/que-pasa-en-los-angeles/",
+    "type": "show",
+    "title": "Que Pasa en Los Angeles?"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/radio-bilingue/",
+    "path": "/on-air/radio-bilingue/",
+    "type": "show",
+    "title": "Radio Bilingue"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/radio-insurgencia-femenina/",
+    "path": "/on-air/radio-insurgencia-femenina/",
+    "type": "show",
+    "title": "RADIO INSURGENCIA   FEMENINA"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/ralph-nader-radio-hour/",
+    "path": "/on-air/ralph-nader-radio-hour/",
+    "type": "show",
+    "title": "Ralph Nader Radio Hour"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/reggae-central/",
+    "path": "/on-air/reggae-central/",
+    "type": "show",
+    "title": "Reggae Central"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/revolucion-arcoiris/",
+    "path": "/on-air/revolucion-arcoiris/",
+    "type": "show",
+    "title": "Revolucion Arcoiris"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/rhapsody-in-black/",
+    "path": "/on-air/rhapsody-in-black/",
+    "type": "show",
+    "title": "Rhapsody in Black"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/sonali-kolhatkar/",
+    "path": "/on-air/sonali-kolhatkar/",
+    "type": "show",
+    "title": "Rising Up with Sonali"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/roots-music-and-beyond/",
+    "path": "/on-air/roots-music-and-beyond/",
+    "type": "show",
+    "title": "Roots Music & Beyond"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/scholars-circle/",
+    "path": "/on-air/scholars-circle/",
+    "type": "show",
+    "title": "Scholars Circle"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/senderos-de-oaxaca/",
+    "path": "/on-air/senderos-de-oaxaca/",
+    "type": "show",
+    "title": "Senderos de Oaxaca"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/the-signal/",
+    "path": "/on-air/the-signal/",
+    "type": "show",
+    "title": "The Signal"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/sojourner-truth/",
+    "path": "/on-air/sojourner-truth/",
+    "type": "show",
+    "title": "Sojourner Truth"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/somethings-happening-a-hour-1-honoring-roy-of-hollywood/",
+    "path": "/on-air/somethings-happening-a-hour-1-honoring-roy-of-hollywood/",
+    "type": "show",
+    "title": "Something's Happening A Hour 1 honoring Roy Of Hollywood"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/soul-rebel-radio/",
+    "path": "/on-air/soul-rebel-radio/",
+    "type": "show",
+    "title": "Soul Rebel Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/soundwaves/",
+    "path": "/on-air/soundwaves/",
+    "type": "show",
+    "title": "Soundwaves Radio"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/special-programming/",
+    "path": "/on-air/special-programming/",
+    "type": "show",
+    "title": "Special Programming"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/stairway-to-heaven/",
+    "path": "/on-air/stairway-to-heaven/",
+    "type": "show",
+    "title": "Stairway To Heaven"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/suplemento-comunitario/",
+    "path": "/on-air/suplemento-comunitario/",
+    "type": "show",
+    "title": "Suplemento Comunitario"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/swana-region-radio/",
+    "path": "/on-air/swana-region-radio/",
+    "type": "show",
+    "title": "Radio Intifada (SWANA Region Radio)"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/think-outside-the-cage/",
+    "path": "/on-air/think-outside-the-cage/",
+    "type": "show",
+    "title": "Think Outside The Cage"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/this-way-out/",
+    "path": "/on-air/this-way-out/",
+    "type": "show",
+    "title": "This Way Out"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/thom-hartmann/",
+    "path": "/on-air/thom-hartmann/",
+    "type": "show",
+    "title": "Thom Hartmann"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/travel-tips-for-aztlan/",
+    "path": "/on-air/travel-tips-for-aztlan/",
+    "type": "show",
+    "title": "Travel Tips for Aztlan"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/voces-de-libertad/",
+    "path": "/on-air/voces-de-libertad/",
+    "type": "show",
+    "title": "Voces de Libertad"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/way-out-west/",
+    "path": "/on-air/way-out-west/",
+    "type": "show",
+    "title": "Way Out West"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/working-voices/",
+    "path": "/on-air/working-voices/",
+    "type": "show",
+    "title": "Working Voices"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/dj-potira/",
+    "path": "/on-air/dj-potira/",
+    "type": "show",
+    "title": "World Massive with D. Painter"
+  },
+  {
+    "url": "https://www.kpfk.org/blogs/",
+    "path": "/blogs/",
+    "type": "blog_index",
+    "title": "Blogs"
+  },
+  {
+    "url": "https://www.kpfk.org/blogs/programming-highlights/",
+    "path": "/blogs/programming-highlights/",
+    "type": "blog_index",
+    "title": "Blogs"
+  },
+  {
+    "url": "https://www.kpfk.org/blogs/from-the-gm/",
+    "path": "/blogs/from-the-gm/",
+    "type": "blog_index",
+    "title": "Blogs"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/",
+    "path": "/calendar/",
+    "type": "calendar_index",
+    "title": "Events Calendar"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/tyshawn-sorey-trio/",
+    "path": "/calendar/event/tyshawn-sorey-trio/",
+    "type": "calendar_event",
+    "title": "Tyshawn Sorey Trio"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/rodrigo-y-gabriela-20th-anniversary-tour-may-10-2026-live-at-the-youtube-theater/",
+    "path": "/calendar/event/rodrigo-y-gabriela-20th-anniversary-tour-may-10-2026-live-at-the-youtube-theater/",
+    "type": "calendar_event",
+    "title": "Rodrigo y Gabriela 20th Anniversary Tour May 10, 2026 Live At The YouTube Theater"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/phyllis-bennis-book-tour-understanding-palestine-and-israel/",
+    "path": "/calendar/event/phyllis-bennis-book-tour-understanding-palestine-and-israel/",
+    "type": "calendar_event",
+    "title": "Phyllis Bennis Book Tour: Understanding Palestine & Israel"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/luciana-souza-and-marcel-camargo-new-moon/",
+    "path": "/calendar/event/luciana-souza-and-marcel-camargo-new-moon/",
+    "type": "calendar_event",
+    "title": "Luciana Souza and Marcel Camargo: New Moon"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/the-ravi-shankar-ensemble-march-31-2026-live-at-the-alex-theatre-in-glendale/",
+    "path": "/calendar/event/the-ravi-shankar-ensemble-march-31-2026-live-at-the-alex-theatre-in-glendale/",
+    "type": "calendar_event",
+    "title": "The Ravi Shankar Ensemble March 31, 2026 Live At The Alex Theatre In Glendale"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/phyllis-bennis-book-tour-understanding-palestine-and-israel1/",
+    "path": "/calendar/event/phyllis-bennis-book-tour-understanding-palestine-and-israel1/",
+    "type": "calendar_event",
+    "title": "Phyllis Bennis Book Tour: Understanding Palestine & Israel"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/sullivan-fortner-trio/",
+    "path": "/calendar/event/sullivan-fortner-trio/",
+    "type": "calendar_event",
+    "title": "Sullivan Fortner Trio"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/enjambre-with-surely-tempo-sunday-march-22-2026-live-at-the-fonda-theatre/",
+    "path": "/calendar/event/enjambre-with-surely-tempo-sunday-march-22-2026-live-at-the-fonda-theatre/",
+    "type": "calendar_event",
+    "title": "Enjambre with Surely Tempo Sunday March 22, 2026 Live At The Fonda Theatre"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/jerry-harrison-and-adrian-belew-live-at-the-orpheum-theatre-march-28-2026/",
+    "path": "/calendar/event/jerry-harrison-and-adrian-belew-live-at-the-orpheum-theatre-march-28-2026/",
+    "type": "calendar_event",
+    "title": "Jerry Harrison & Adrian Belew Live At The Orpheum Theatre March 28, 2026"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/event/chavela-y-sus-mujeres-un-homenaje-a-chavela-vargas-featuring-ofelia-medina-eugenia-leon-ely-guerra-l/",
+    "path": "/calendar/event/chavela-y-sus-mujeres-un-homenaje-a-chavela-vargas-featuring-ofelia-medina-eugenia-leon-ely-guerra-l/",
+    "type": "calendar_event",
+    "title": "Chavela y Sus Mujeres Un Homenaje a Chavela Vargas Featuring Ofelia Medina, Eugenia León, Ely Guerra"
+  },
+  {
+    "url": "https://www.kpfk.org/about",
+    "path": "/about",
+    "type": "page",
+    "title": "About KPFK 90.7 FM"
+  },
+  {
+    "url": "https://www.kpfk.org/about/",
+    "path": "/about/",
+    "type": "page",
+    "title": "About KPFK 90.7 FM"
+  },
+  {
+    "url": "https://www.kpfk.org/support/more/",
+    "path": "/support/more/",
+    "type": "page",
+    "title": "More Ways to Give"
+  },
+  {
+    "url": "https://www.kpfk.org/support/volunteer/",
+    "path": "/support/volunteer/",
+    "type": "page",
+    "title": "Volunteer"
+  },
+  {
+    "url": "https://www.kpfk.org/support/board/",
+    "path": "/support/board/",
+    "type": "page",
+    "title": "Station Boards"
+  },
+  {
+    "url": "https://www.kpfk.org/archives/",
+    "path": "/archives/",
+    "type": "page",
+    "title": "Archives"
+  },
+  {
+    "url": "https://www.kpfk.org/podcasts/",
+    "path": "/podcasts/",
+    "type": "page",
+    "title": "Podcasts"
+  },
+  {
+    "url": "https://www.kpfk.org/schedule/",
+    "path": "/schedule/",
+    "type": "page",
+    "title": "Daily Schedule"
+  },
+  {
+    "url": "https://www.kpfk.org/schedule/grid/",
+    "path": "/schedule/grid/",
+    "type": "page",
+    "title": "Schedule Grid"
+  },
+  {
+    "url": "https://www.kpfk.org/",
+    "path": "/",
+    "type": "page",
+    "title": "KPFK 90.7 FM"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar",
+    "path": "/calendar",
+    "type": "page",
+    "title": "Events"
+  },
+  {
+    "url": "https://www.kpfk.org/searchresults/",
+    "path": "/searchresults/",
+    "type": "page",
+    "title": "Search Results"
+  },
+  {
+    "url": "https://www.kpfk.org/player/",
+    "path": "/player/",
+    "type": "page",
+    "title": "Listen Live Listen"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/venue/orpheum-theatre-los-angeles/",
+    "path": "/calendar/venue/orpheum-theatre-los-angeles/",
+    "type": "calendar",
+    "title": "Orpheum Theatre"
+  },
+  {
+    "url": "https://www.kpfk.org/calendar/venue/the-alex-theatre-glendale-ca/",
+    "path": "/calendar/venue/the-alex-theatre-glendale-ca/",
+    "type": "calendar",
+    "title": "The Alex Theatre"
+  },
+  {
+    "url": "https://www.kpfk.org/donate",
+    "path": "/donate",
+    "type": "page",
+    "title": ""
+  },
+  {
+    "url": "https://www.kpfk.org/support/",
+    "path": "/support/",
+    "type": "page",
+    "title": "Donate"
+  },
+  {
+    "url": "https://www.kpfk.org/blogs/info-about-kpfk-and-pacifica/",
+    "path": "/blogs/info-about-kpfk-and-pacifica/",
+    "type": "blog",
+    "title": "KPFK Info, Contacts and Location"
+  },
+  {
+    "url": "https://www.kpfk.org/Resources/",
+    "path": "/Resources/",
+    "type": "page",
+    "title": "Resources"
+  },
+  {
+    "url": "https://www.kpfk.org/support/fcc-applications/",
+    "path": "/support/fcc-applications/",
+    "type": "page",
+    "title": "FCC Applications"
+  },
+  {
+    "url": "https://www.kpfk.org/resources/jobs-at-kpfk-and-pacifica/",
+    "path": "/resources/jobs-at-kpfk-and-pacifica/",
+    "type": "page",
+    "title": "Careers"
+  },
+  {
+    "url": "https://www.kpfk.org/_hp/",
+    "path": "/_hp/",
+    "type": "page",
+    "title": "On Air"
+  },
+  {
+    "url": "https://www.kpfk.org/on-air/radio-maiz-el-vuelo-del-aguila-y-el-condor-radio-sudamerica/",
+    "path": "/on-air/radio-maiz-el-vuelo-del-aguila-y-el-condor-radio-sudamerica/",
+    "type": "show",
+    "title": "Radio Maíz - El Vuelo del Águila y el Cóndor - Radio Sudamérica"
+  },
+  {
+    "url": "https://www.kpfk.org/listen",
+    "path": "/listen",
+    "type": "page",
+    "title": "LISTEN LIVE"
+  },
+  {
+    "url": "mailto:mlepique@kpfk.org",
+    "path": "mlepique@kpfk.org",
+    "type": "page",
+    "title": "gro.kfpk@euqipelm"
+  },
+  {
+    "url": "mailto:ace@kpfk.org",
+    "path": "ace@kpfk.org",
+    "type": "page",
+    "title": "gro.kfpk@eca"
+  },
+  {
+    "url": "mailto:mmaxwell@kpfk.org",
+    "path": "mmaxwell@kpfk.org",
+    "type": "page",
+    "title": "gro.kfpk@llewxamm"
+  },
+  {
+    "url": "mailto:gbaca@kpfk.org",
+    "path": "gbaca@kpfk.org",
+    "type": "page",
+    "title": "gro.kfpk@acabg"
+  },
+  {
+    "url": "mailto:tguy@kpfk.org",
+    "path": "tguy@kpfk.org",
+    "type": "page",
+    "title": "gro.kfpk@yugt"
+  },
+  {
+    "url": "mailto:engineering@kpfk.org",
+    "path": "engineering@kpfk.org",
+    "type": "page",
+    "title": "gro.kfpk@gnireenigne"
+  },
+  {
+    "url": "https://www.kpfk.org/volunteer",
+    "path": "/volunteer",
+    "type": "page",
+    "title": "Volunteer"
+  },
+  {
+    "url": "https://www.kpfk.org/pitch",
+    "path": "/pitch",
+    "type": "page",
+    "title": "Pitch a Show"
+  }
+]
