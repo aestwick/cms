@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 # VPS deploy script for kpfk-cms.
-# Triggered by GitHub Actions after a successful image push to GHCR.
-# Requires on the VPS:
-#   - GHCR_USER and GHCR_PAT exported in /etc/environment (or .bashrc for the deploy user)
-#   - docker compose v2 installed
-#   - /opt/kpfk-cms/docker-compose.yml present
+# Called by GitHub Actions after build and migrations have succeeded.
+# Assumes: docker compose v2, GHCR_USER + GHCR_PAT in environment.
 
 set -euo pipefail
 
@@ -31,7 +28,7 @@ log "Authenticated to GHCR"
 docker pull "$IMAGE"
 log "Pulled $IMAGE"
 
-# --- Restart the stack ---
+# --- Restart the stack (no --build; image comes from GHCR) ---
 cd "$COMPOSE_DIR"
 docker compose up -d --remove-orphans
 log "Stack restarted"
