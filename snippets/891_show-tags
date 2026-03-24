@@ -1,0 +1,67 @@
+<!-- KPFK Show Tags -->
+<div class="show-tags" id="kpfk-show-tags"></div>
+
+<script>
+(function() {
+  'use strict';
+  
+  const SUPABASE_URL = 'https://czjhwhfqohpmwprhasve.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6amh3aGZxb2hwbXdwcmhhc3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5Njc0NTYsImV4cCI6MjA4MjU0MzQ1Nn0.UCT-1wTR1Qn0VX8KeE6ZxKqF5gslLXL0XF6bh6UtwO4';
+  
+  const categoryClass = {
+    'genre': 'tag--topic',
+    'region': 'tag--topic',
+    'topic': 'tag--topic',
+    'format': 'tag--format',
+    'lens': 'tag--format',
+    'audience': 'tag--audience'
+  };
+  
+  function getShowKey() {
+    const el = document.getElementById('show-key');
+    return el ? el.textContent.trim() : null;
+  }
+  
+  async function fetchTags(showKey) {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/show_tags?show_key=eq.${showKey}&select=display_order,tags(name,slug,category)&order=display_order`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
+    if (!response.ok) return [];
+    return response.json();
+  }
+  
+  function render(tags) {
+    const container = document.getElementById('kpfk-show-tags');
+    if (!container || tags.length === 0) {
+      if (container) container.style.display = 'none';
+      return;
+    }
+    
+    container.innerHTML = tags.map(row => {
+      const t = row.tags;
+      const cssClass = categoryClass[t.category] || 'tag--topic';
+      return `<a href="/shows?tag=${t.slug}" class="tag ${cssClass}">${t.name}</a>`;
+    }).join('');
+  }
+  
+  async function init() {
+    const showKey = getShowKey();
+    if (!showKey) return;
+    
+    try {
+      const tags = await fetchTags(showKey);
+      render(tags);
+    } catch (err) {
+      console.error('KPFK Tags Error:', err);
+    }
+  }
+  
+  init();
+})();
+</script>

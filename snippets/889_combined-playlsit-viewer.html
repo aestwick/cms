@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPFK Playlist - Tabbed</title>
+  <style>
+    /* === TAB-SPECIFIC STYLES ONLY === */
+    /* Base component styles come from show-page-and-snippet-styling.css */
+    
+    .kpfk-playlist-tabbed * {
+      box-sizing: border-box;
+    }
+    
+    /* Tab Bar */
+    .kpfk-tabs {
+      display: flex;
+      border-bottom: 3px solid #1a1a1a;
+    }
+    
+    .kpfk-tabs__btn {
+      flex: 1;
+      padding: 12px 16px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: #555;
+      background: #f5f5f5;
+      border: none;
+      border-right: 1px solid #ddd;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .kpfk-tabs__btn:last-child {
+      border-right: none;
+    }
+    
+    .kpfk-tabs__btn:hover {
+      background: #eee;
+      color: #1a1a1a;
+    }
+    
+    .kpfk-tabs__btn--active {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    
+    .kpfk-tabs__btn--active:hover {
+      background: #1a1a1a;
+      color: #fff;
+    }
+    
+    /* Tab Panels */
+    .kpfk-panel {
+      display: none;
+      min-height: 450px;
+    }
+    
+    .kpfk-panel--active {
+      display: block;
+    }
+    
+    /* Track list container */
+    .kpfk-tracks {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COMPONENT START -->
+  <div class="kpfk-component kpfk-playlist-tabbed" id="kpfk-playlist-tabbed">
+    <div class="kpfk-state kpfk-state--loading">
+      <div class="kpfk-spinner"></div>
+      <div class="kpfk-state__text">Loading playlist...</div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+    
+    // === CONFIGURATION ===
+    function getShowKey() {
+      const showKeyEl = document.getElementById('show-key');
+      if (showKeyEl && showKeyEl.textContent.trim()) {
+        return showKeyEl.textContent.trim();
+      }
+      return null;
+    }
+    
+    const showKey = getShowKey();
+    const container = document.getElementById('kpfk-playlist-tabbed');
+    
+    function buildMailtoLink(errorType, errorDetail) {
+      const e = ['webmaster', 'kpfk', 'org'].join('@').replace('@org', '.org');
+      const subject = encodeURIComponent(`Playlist Error: ${errorType}`);
+      const body = encodeURIComponent(
+        `Hi,\n\nI encountered an error on the playlist widget.\n\n` +
+        `Page: ${window.location.href}\n` +
+        `Error: ${errorType}\n` +
+        `Detail: ${errorDetail}\n` +
+        `Time: ${new Date().toISOString()}\n\n` +
+        `Thanks!`
+      );
+      return `mailto:${e}?subject=${subject}&body=${body}`;
+    }
+    
+    if (!showKey) {
+      container.innerHTML = `
+        <div class="kpfk-state kpfk-state--error">
+          <div class="kpfk-state__title">Playlist Unavailable</div>
+          <div class="kpfk-state__text">This show's playlist isn't available right now. <a href="${buildMailtoLink('Config', 'show-key not found')}">Report this issue</a></div>
+        </div>
+      `;
+      return;
+    }
+    
+    const CONFIG = {
+      showKey: showKey,
+      apiBase: 'https://confessor.kpfk.org/_nu_do_api.php',
+      quickPickCount: 8
+    };
+    
+    // === STATE ===
+    let currentTab = 'current';
+    let currentPlaylistData = null;
+    let archiveDates = [];
+    let selectedPhid = null;
+    
+    // === API CALLS (preserved exactly) ===
+    async function fetchCurrentPlaylist() {
+      const url = `${CONFIG.apiBase}?req=mostrecent&altid=${encodeURIComponent(CONFIG.showKey)}&json=1`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    }
+    
+    async function fetchArchiveDates() {
+      const url = `${CONFIG.apiBase}?req=shotimes&key=${encodeURIComponent(CONFIG.showKey)}&json=1`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      return data.map(item => ({
+        phid: item.phid,
+        date: item.date,
+        time: item.time,
+        name: item.name,
+        unix: item.dt
+      }));
+    }
+    
+    async function fetchPlaylistByPhid(phid) {
+      const url = `${CONFIG.apiBase}?req=playlist&phid=${phid}&json=1`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    }
+    
+    // === UTILITIES ===
+    function decodeHtml(html) {
+      const txt = document.createElement('textarea');
+      txt.innerHTML = html;
+      return txt.value;
+    }
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+    
+    function extractTracks(data) {
+      const tracks = [];
+      for (const key of Object.keys(data)) {
+        if (!isNaN(parseInt(key)) && data[key].title) {
+          tracks.push({
+            sort: parseInt(key),
+            title: decodeHtml(data[key].title || ''),
+            artist: decodeHtml(data[key].artist || ''),
+            album: decodeHtml(data[key].album || ''),
+            label: decodeHtml(data[key].label || ''),
+            time: data[key].start || ''
+          });
+        }
+      }
+      tracks.sort((a, b) => a.sort - b.sort);
+      return tracks;
+    }
+    
+    function renderTracksHtml(tracks) {
+      if (tracks.length === 0) {
+        return `
+          <div class="kpfk-state">
+            <div class="kpfk-state__icon">♫</div>
+            <div class="kpfk-state__text">No tracks available for this playlist.</div>
+          </div>
+        `;
+      }
+      
+      return `
+        <div class="kpfk-tracks">
+          ${tracks.map(track => `
+            <div class="kpfk-track">
+              <div class="kpfk-track__main">
+                <div class="kpfk-track__song">${escapeHtml(track.title)}</div>
+                <div class="kpfk-track__artist">${escapeHtml(track.artist)}</div>
+                ${track.album ? `<div class="kpfk-track__meta">${escapeHtml(track.album)}${track.label ? ` · ${escapeHtml(track.label)}` : ''}</div>` : ''}
+              </div>
+              <div class="kpfk-track__time">${escapeHtml(track.time)}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    
+    // === RENDER FUNCTIONS ===
+    function renderShell() {
+      const show = currentPlaylistData?.show || {};
+      const showName = show.name || 'Unknown Show';
+      const showDate = show.date || '';
+      const showTime = show.time || '';
+      const currentTracks = extractTracks(currentPlaylistData || {});
+      const quickPicks = archiveDates.slice(0, CONFIG.quickPickCount);
+      
+      container.innerHTML = `
+        <nav class="kpfk-tabs">
+          <button class="kpfk-tabs__btn kpfk-tabs__btn--active" data-tab="current">Current Playlist</button>
+          <button class="kpfk-tabs__btn" data-tab="archive">Playlist Archive</button>
+        </nav>
+        
+        <!-- CURRENT PLAYLIST TAB -->
+        <div class="kpfk-panel kpfk-panel--active" id="kpfk-panel-current">
+          <header class="kpfk-component__header kpfk-component__header--dark">
+            <div class="kpfk-component__header-content">
+              <div class="kpfk-component__label">Current Playlist</div>
+              <h2 class="kpfk-component__title">${escapeHtml(showName)}</h2>
+              <div class="kpfk-component__date">${escapeHtml(showDate)}${showTime ? ' · ' + escapeHtml(showTime) : ''}</div>
+            </div>
+          </header>
+          
+          <div id="kpfk-current-tracks">
+            ${renderTracksHtml(currentTracks)}
+          </div>
+          
+          <footer class="kpfk-component__footer">
+            <span class="kpfk-component__count">${currentTracks.length} track${currentTracks.length !== 1 ? 's' : ''}</span>
+            <a href="#" class="kpfk-component__link" data-switch="archive">Browse Archive →</a>
+          </footer>
+        </div>
+        
+        <!-- PLAYLIST ARCHIVE TAB -->
+        <div class="kpfk-panel" id="kpfk-panel-archive">
+          <header class="kpfk-component__header kpfk-component__header--dark">
+            <div class="kpfk-component__header-content">
+              <div class="kpfk-component__label">Playlist Archive</div>
+              <h2 class="kpfk-component__title">Previous Playlists</h2>
+            </div>
+          </header>
+          
+          <div class="kpfk-controls">
+            <div class="kpfk-select-wrap">
+              <select class="kpfk-select" id="kpfk-date-select">
+                <option value="">Select a date...</option>
+                ${archiveDates.map(d => `<option value="${d.phid}">${d.date} · ${d.time}</option>`).join('')}
+              </select>
+              <span class="kpfk-select-arrow">▼</span>
+            </div>
+          </div>
+          
+          ${quickPicks.length > 0 ? `
+          <div class="kpfk-quick">
+            <div class="kpfk-quick__label">Recent Shows</div>
+            <div class="kpfk-quick__list" id="kpfk-quick-picks">
+              ${quickPicks.map(d => `
+                <button class="kpfk-quick__btn" data-phid="${d.phid}">${d.date}</button>
+              `).join('')}
+            </div>
+          </div>
+          ` : ''}
+          
+          <div id="kpfk-archive-content">
+            <div class="kpfk-state">
+              <div class="kpfk-state__icon">📻</div>
+              <div class="kpfk-state__text">Select a date above to view that show's playlist</div>
+            </div>
+          </div>
+          
+          <footer class="kpfk-component__footer">
+            <span class="kpfk-component__count" id="kpfk-archive-count"></span>
+            <a href="#" class="kpfk-component__link" data-switch="current">← Current Playlist</a>
+          </footer>
+        </div>
+      `;
+      
+      bindEvents();
+    }
+    
+    function renderArchivePlaylist(data, dateInfo) {
+      const content = document.getElementById('kpfk-archive-content');
+      const countEl = document.getElementById('kpfk-archive-count');
+      const tracks = extractTracks(data);
+      
+      const dateDisplay = dateInfo ? `${dateInfo.date} · ${dateInfo.time}` : '';
+      
+      content.innerHTML = `
+        <div class="kpfk-selected">
+          <div class="kpfk-selected__date">${escapeHtml(dateDisplay)}</div>
+          <div class="kpfk-selected__count">${tracks.length} track${tracks.length !== 1 ? 's' : ''}</div>
+        </div>
+        ${renderTracksHtml(tracks)}
+      `;
+      
+      countEl.textContent = `${tracks.length} track${tracks.length !== 1 ? 's' : ''}`;
+    }
+    
+    function renderArchiveLoading() {
+      const content = document.getElementById('kpfk-archive-content');
+      content.innerHTML = `
+        <div class="kpfk-state kpfk-state--loading">
+          <div class="kpfk-spinner"></div>
+          <div class="kpfk-state__text">Loading playlist...</div>
+        </div>
+      `;
+    }
+    
+    function renderArchiveError(message, errorDetail) {
+      const content = document.getElementById('kpfk-archive-content');
+      content.innerHTML = `
+        <div class="kpfk-state kpfk-state--error">
+          <div class="kpfk-state__title">Unable to load playlist</div>
+          <div class="kpfk-state__text">${escapeHtml(message)} <a href="${buildMailtoLink('Archive Load', errorDetail || 'Unknown')}">Report this issue</a></div>
+        </div>
+      `;
+    }
+    
+    // === EVENT HANDLERS ===
+    function bindEvents() {
+      // Tab switching
+      container.querySelectorAll('.kpfk-tabs__btn').forEach(btn => {
+        btn.addEventListener('click', handleTabClick);
+      });
+      
+      // Footer links that switch tabs
+      container.querySelectorAll('[data-switch]').forEach(link => {
+        link.addEventListener('click', handleSwitchClick);
+      });
+      
+      // Date select dropdown
+      const dateSelect = document.getElementById('kpfk-date-select');
+      if (dateSelect) {
+        dateSelect.addEventListener('change', handleDateSelect);
+      }
+      
+      // Quick pick buttons
+      container.querySelectorAll('.kpfk-quick__btn').forEach(btn => {
+        btn.addEventListener('click', handleQuickPick);
+      });
+    }
+    
+    function handleTabClick(e) {
+      const tab = e.currentTarget.dataset.tab;
+      switchTab(tab);
+    }
+    
+    function handleSwitchClick(e) {
+      e.preventDefault();
+      const tab = e.currentTarget.dataset.switch;
+      switchTab(tab);
+    }
+    
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      // Update tab buttons
+      container.querySelectorAll('.kpfk-tabs__btn').forEach(btn => {
+        btn.classList.toggle('kpfk-tabs__btn--active', btn.dataset.tab === tab);
+      });
+      
+      // Update panels
+      container.querySelectorAll('.kpfk-panel').forEach(panel => {
+        panel.classList.toggle('kpfk-panel--active', panel.id === `kpfk-panel-${tab}`);
+      });
+    }
+    
+    function handleDateSelect(e) {
+      const phid = e.target.value;
+      if (phid) {
+        loadArchivePlaylist(parseInt(phid));
+        updateQuickPickActive(parseInt(phid));
+      }
+    }
+    
+    function handleQuickPick(e) {
+      const phid = parseInt(e.currentTarget.dataset.phid);
+      loadArchivePlaylist(phid);
+      document.getElementById('kpfk-date-select').value = phid;
+      updateQuickPickActive(phid);
+    }
+    
+    function updateQuickPickActive(phid) {
+      container.querySelectorAll('.kpfk-quick__btn').forEach(btn => {
+        btn.classList.toggle('kpfk-quick__btn--active', parseInt(btn.dataset.phid) === phid);
+      });
+    }
+    
+    async function loadArchivePlaylist(phid) {
+      selectedPhid = phid;
+      renderArchiveLoading();
+      
+      try {
+        const data = await fetchPlaylistByPhid(phid);
+        const dateInfo = archiveDates.find(d => d.phid === phid);
+        renderArchivePlaylist(data, dateInfo);
+      } catch (err) {
+        console.error('KPFK Playlist Error:', err);
+        renderArchiveError('Please try again or select a different date.', `phid=${phid}, ${err.message}`);
+      }
+    }
+    
+    // === INITIALIZATION ===
+    async function init() {
+      try {
+        // Fetch both current playlist and archive dates in parallel
+        const [currentData, dates] = await Promise.all([
+          fetchCurrentPlaylist(),
+          fetchArchiveDates()
+        ]);
+        
+        currentPlaylistData = currentData;
+        archiveDates = dates;
+        
+        renderShell();
+      } catch (err) {
+        console.error('KPFK Playlist Init Error:', err);
+        container.innerHTML = `
+          <div class="kpfk-state kpfk-state--error">
+            <div class="kpfk-state__title">Unable to load playlist</div>
+            <div class="kpfk-state__text">Please try refreshing the page. <a href="${buildMailtoLink('Init', err.message)}">Report this issue</a></div>
+          </div>
+        `;
+      }
+    }
+    
+    init();
+  })();
+  </script>
+  <!-- COMPONENT END -->
+
+</body>
+</html>

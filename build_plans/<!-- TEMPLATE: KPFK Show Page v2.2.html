@@ -1,0 +1,150 @@
+<!-- TEMPLATE: KPFK Show Page v2.2 | Community Radio Aesthetic -->
+<!-- Compatible with existing n8n flow -->
+
+<!-- === AIIR-INJECTED CSS STYLING (~1000 ROWS) === -->
+{{ snippet_html(890) }}
+
+<!-- === SHOW HEADER (MASTHEAD) === -->
+<div class="show-page">
+    <div class="show-header">
+        <!-- Left Column: Logo + Social -->
+        <div class="show-logo-column">
+            <!-- 🔧 EDIT: Update logo src manually -->
+            <img class="show-logo" src="https://placehold.co/240x240/1a1a1a/ffffff?text=SHOW" alt="{{showTitle}} logo" />
+            
+            <!-- 🔧 EDIT: Update social links manually -->
+            <div class="social-links">
+                <a href="#" target="_blank"><img src="https://cdn.simpleicons.org/x/1a1a1a" alt="X"></a>
+                <a href="#" target="_blank"><img src="https://cdn.simpleicons.org/facebook/1a1a1a" alt="Facebook"></a>
+            </div>
+        </div>
+        
+        <!-- Right Column: Show Info -->
+        <div class="show-info">
+            <h1 class="show-title">{{showTitle}}</h1>
+            <p class="show-tagline">{{tagline}}</p>
+            
+            <div class="show-schedule">{{schedule}}</div>
+            
+            <div class="show-host">{{hostedBy}}</div>
+            
+            <div>
+                <a class="btn-listen" href="#episodes">▶ Episodes</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTE: No HR here - the double-rule is built into .show-header via ::after -->
+
+    <!-- === OVERVIEW === -->
+    <div class="show-overview">
+        <h2 class="section-header">About the Show</h2>
+        <p>{{overview1}}</p>
+        <p>{{overview2}}</p>
+
+    <!-- === SHOW TAGS INSERT === -->    
+        <div class="show-tags">
+            {{ snippet_html(891) }}
+        </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- === HISTORY & LEGACY SECTION === -->
+    <!-- n8n removes this entire block (through next Divider comment) if hasHistory is false -->
+    <div class="show-history">
+        <h2 class="section-header">History & Legacy</h2>
+        <p>{{history}}</p>
+    </div>
+
+    <hr class="section-divider" />
+    <!-- Divider -->
+
+    <!-- === HOSTS === -->
+    <!-- OPTION A: Standard grid (1-4 hosts) -->
+    <div class="show-hosts">
+        <h2 class="section-header">Hosts</h2>
+        <!-- n8n: Change to "Host" (singular) if only 1 host -->
+        
+        <div class="hosts-grid">
+            <div class="host-card">
+                <!-- 🔧 EDIT: Update host image src manually -->
+                <img class="host-image" src="https://placehold.co/320x320/333/fff?text=HOST" alt="{{host1Name}}" />
+                <div class="host-info">
+                    <h3 class="host-name">{{host1Name}}</h3>
+                    <p class="host-bio">{{host1Bio}}</p>
+                </div>
+            </div>
+            
+            <!-- n8n removes this entire div if hasHost2 is false -->
+            <div class="host-card">
+                <img class="host-image" src="https://placehold.co/320x320/333/fff?text=HOST" alt="{{host2Name}}" />
+                <div class="host-info">
+                    <h3 class="host-name">{{host2Name}}</h3>
+                    <p class="host-bio">{{host2Bio}}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn-contact" onclick="goToContactPage()">✉ Contact</button>
+        </div>
+    </div>
+    
+    <!-- OPTION B: Collapsible hosts (5+ hosts) - use this instead of OPTION A when needed -->
+    <!-- 
+    <div class="show-hosts">
+        <h2 class="section-header">Hosts</h2>
+        
+        <details class="hosts-collapsible">
+            <summary class="hosts-collapsible__toggle">
+                <span>View All Hosts ({{hostCount}})</span>
+                <span class="hosts-collapsible__arrow">▼</span>
+            </summary>
+            <div class="hosts-collapsible__content">
+                <div class="hosts-grid">
+                    [Host cards go here]
+                </div>
+            </div>
+        </details>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn-contact" onclick="goToContactPage()">✉ Contact</button>
+        </div>
+    </div>
+    -->
+
+    <hr class="section-divider" />
+
+    <!-- === EPISODES === -->
+    <div id="show-key" style="display: none;">{{showKey}}</div>
+
+    <div id="episodes">
+        <h2 class="section-header">Episodes</h2>
+        <div class="episodes-container">
+            {{ snippet_html(886) }}
+        </div>
+    </div>
+
+    <!-- === PLAYLISTS (for music shows) === -->
+    <!-- n8n removes this  playlist block if isMusicShow is false -->
+    <div class="show-playlists">
+        <hr class="section-divider" />
+        
+        <h2 class="section-header">Playlists</h2>
+        <div class="episodes-container">
+            {{ snippet_html(889) }}
+        </div>
+        <hr class="section-divider" />
+        
+    </div>
+
+    <!-- === DONATE === -->
+    <div class="donate-section">
+        <div class="donate-content">
+            <h2>Keep This Show On the Air</h2>
+            <p>{{donationAppeal}}</p>
+        </div>
+        <a class="btn-donate" href="/donate">Contribute</a>
+    </div>
+</div>
