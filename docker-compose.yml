@@ -1,0 +1,20 @@
+services:
+  cms:
+    build: .
+    container_name: kpfk-cms
+    restart: unless-stopped
+    env_file: .env
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cms.rule=Host(`cms.kpfk.org`)"
+      - "traefik.http.routers.cms.entrypoints=websecure"
+      - "traefik.http.routers.cms.tls.certresolver=letsencrypt"
+      - "traefik.http.services.cms.loadbalancer.server.port=3000"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

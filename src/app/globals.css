@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  /* KPFK Design Tokens */
+  --color-kpfk-red: #B22222;
+  --color-charcoal: #1A1A1A;
+  --color-off-white: #F9F7F2;
+  --color-action-yellow: #FFD700;
+
+  /* Semantic aliases */
+  --color-background: #F9F7F2;
+  --color-foreground: #1A1A1A;
+  --color-border: #1A1A1A;
+  --color-accent: #B22222;
+  --color-highlight: #FFD700;
+
+  /* Typography */
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: "Franklin Gothic", "Arial Narrow", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-off-white);
+  color: var(--color-charcoal);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-serif);
+}
