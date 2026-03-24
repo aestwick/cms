@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" role="img" aria-labelledby="title desc">
+  <title id="title">KPFK gift placeholder</title>
+  <desc id="desc">Simple placeholder used when a thank-you gift image is unavailable.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7f7f7"/>
+      <stop offset="100%" stop-color="#e6e6e6"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="400" height="300" fill="url(#bg)" rx="8" ry="8"/>
+  <rect x="16" y="16" width="368" height="268" fill="none" stroke="#d0d0d0" stroke-width="2" stroke-dasharray="6 8"/>
+  <text x="50%" y="46%" fill="#c41230" font-family="Arial, sans-serif" font-size="36" font-weight="700" text-anchor="middle">KPFK</text>
+  <text x="50%" y="64%" fill="#666666" font-family="Arial, sans-serif" font-size="16" font-weight="500" text-anchor="middle">Gift image coming soon</text>
+</svg>

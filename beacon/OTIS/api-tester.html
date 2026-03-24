@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPFK Confessor / Archive API Tester</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e1e4ed;
+    --dim: #8b8fa3;
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    color: var(--dim);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .controls label {
+    color: var(--dim);
+    font-size: 0.8rem;
+  }
+
+  .controls input[type="text"] {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    width: 360px;
+  }
+
+  .controls input[type="text"]:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+
+  button {
+    background: var(--blue);
+    color: #000;
+    border: none;
+    padding: 0.45rem 1rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  button.secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .summary {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+  }
+
+  .summary span { font-weight: 600; }
+  .summary .pass { color: var(--green); }
+  .summary .fail { color: var(--red); }
+  .summary .pending { color: var(--yellow); }
+  .summary .skipped { color: var(--dim); }
+
+  .section-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--purple);
+    margin: 1.5rem 0 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .endpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .endpoint.pass { border-left: 3px solid var(--green); }
+  .endpoint.fail { border-left: 3px solid var(--red); }
+  .endpoint.running { border-left: 3px solid var(--yellow); }
+
+  .endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .endpoint-header:hover { background: rgba(255,255,255,0.02); }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--border);
+  }
+
+  .status-dot.pass { background: var(--green); }
+  .status-dot.fail { background: var(--red); }
+  .status-dot.running { background: var(--yellow); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .endpoint-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .endpoint-url {
+    color: var(--dim);
+    font-size: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .endpoint-time {
+    color: var(--dim);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .endpoint-desc {
+    color: var(--dim);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chevron {
+    color: var(--dim);
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  .endpoint.open .chevron { transform: rotate(90deg); }
+
+  .endpoint-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 0.8rem;
+  }
+
+  .endpoint.open .endpoint-body { display: block; }
+
+  .response-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+  }
+
+  .response-info .http-status { font-weight: 600; }
+  .response-info .http-status.ok { color: var(--green); }
+  .response-info .http-status.err { color: var(--red); }
+
+  .response-data {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem;
+    font-size: 0.75rem;
+    max-height: 400px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .error-msg {
+    color: var(--red);
+    font-size: 0.8rem;
+    padding: 0.4rem 0;
+  }
+
+  .json-key { color: var(--blue); }
+  .json-str { color: var(--green); }
+  .json-num { color: var(--yellow); }
+  .json-bool { color: var(--purple); }
+  .json-null { color: var(--dim); }
+
+  .note {
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 6px;
+    padding: 0.8rem;
+    font-size: 0.8rem;
+    color: var(--yellow);
+    margin-bottom: 1.5rem;
+  }
+
+  .endpoint.warn { border-left: 3px solid var(--yellow); }
+  .status-dot.warn { background: var(--yellow); }
+
+  .endpoint.expected-fail { border-left: 3px solid var(--dim); }
+  .status-dot.expected-fail { background: var(--dim); }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .badge-warn {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--yellow);
+  }
+
+  .badge-issue {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--red);
+  }
+
+  .badge-slow {
+    background: rgba(139, 143, 163, 0.15);
+    color: var(--dim);
+  }
+
+  .php-warnings {
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--yellow);
+    margin-bottom: 0.5rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 150px;
+    overflow: auto;
+  }
+
+  .known-issue {
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: 4px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>KPFK Confessor / Archive API Tester</h1>
+<p class="subtitle">Tests all known endpoints on confessor.kpfk.org and archive.kpfk.org</p>
+
+<div class="note">
+  All requests use <code>&json=1</code> for JSON responses. The server has PHP warnings
+  enabled — responses sometimes contain <code>&lt;br /&gt;</code> error text before the
+  JSON. This tester strips those automatically. Slow endpoints get 45s before timing out.
+  If CORS blocks requests, use "Copy as cURL" on individual endpoints.
+</div>
+
+<div class="controls">
+  <label for="baseUrl">Base URL:</label>
+  <input type="text" id="baseUrl" value="https://confessor.kpfk.org/_nu_do_api.php">
+  <button id="runAll" onclick="runAll()">Run All</button>
+  <button id="runFailed" onclick="runFailed()" class="secondary">Rerun Failed</button>
+  <button class="secondary" onclick="resetAll()">Reset</button>
+</div>
+
+<div class="summary">
+  <div>Total: <span id="total">0</span></div>
+  <div class="pass">Pass: <span id="passCount">0</span></div>
+  <div style="color: var(--yellow)">Warn: <span id="warnCount">0</span></div>
+  <div class="fail">Fail: <span id="failCount">0</span></div>
+  <div class="pending">Running: <span id="runningCount">0</span></div>
+</div>
+
+<div id="endpoints"></div>
+
+<script>
+// ============================================================
+// Endpoint definitions — organized by category
+// ============================================================
+const ENDPOINTS = [
+  // --- Schedule & Show Lookup ---
+  {
+    category: 'Schedule & Show Lookup',
+    id: 'getshows',
+    name: 'getshows',
+    desc: 'All shows with scheduled times (slow — large response)',
+    params: 'req=getshows&before=1&after=1&json=1',
+    timeout: 45000,
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+    knownIssue: null,
+  },
+  {
+    id: 'getday-today',
+    name: 'getday (today)',
+    desc: 'All shows for today',
+    params: `req=getday&day=${new Date().getDay()}&json=1`,
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'getday-sunday',
+    name: 'getday (Sunday)',
+    desc: 'All shows for Sunday',
+    params: 'req=getday&day=0&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'getshow-now',
+    name: 'getshow (now)',
+    desc: 'Show airing right now',
+    params: `req=getshow&dte=${Math.floor(Date.now() / 1000)}&json=1`,
+    validate: (data) => data && (data.sh_name || data.sh_altid || typeof data === 'object'),
+  },
+  {
+    id: 'getnext',
+    name: 'getnext',
+    desc: 'Next show after now',
+    params: `req=getnext&dte=${Math.floor(Date.now() / 1000)}&json=1`,
+    validate: (data) => data && typeof data === 'object',
+  },
+  {
+    id: 'getcurrent',
+    name: 'getcurrent',
+    desc: 'Current + next show combo',
+    params: `req=getcurrent&dte=${Math.floor(Date.now() / 1000)}&json=1`,
+    timeout: 45000,
+    validate: (data) => data && (data.current !== undefined || data.next !== undefined),
+  },
+  {
+    id: 'getalfa',
+    name: 'getalfa',
+    desc: 'All shows alphabetically',
+    params: 'req=getalfa&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'getary',
+    name: 'getary',
+    desc: 'Shows by time slot (BROKEN)',
+    params: 'req=getary&json=1',
+    validate: (data) => typeof data === 'object',
+    knownIssue: 'Server crash: undefined constant sh_day_mask on line 599. Returns ONLY the PHP warning — no JSON payload at all. Endpoint is completely broken server-side.',
+    expectFail: true,
+  },
+  {
+    id: 'list',
+    name: 'list',
+    desc: 'Flat show list',
+    params: 'req=list&json=1',
+    validate: (data) => typeof data === 'object',
+  },
+  {
+    id: 'altids',
+    name: 'altids',
+    desc: 'All show slugs (altids)',
+    params: 'req=altids&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'memsys',
+    name: 'memsys',
+    desc: 'Membership system IDs',
+    params: 'req=memsys&json=1',
+    validate: (data) => typeof data === 'object',
+  },
+  {
+    id: 'getgone',
+    name: 'getgone',
+    desc: 'Discontinued shows',
+    params: 'req=getgone&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+
+  // --- Now Playing ---
+  {
+    category: 'Now Playing',
+    id: 'getnow',
+    name: 'getnow',
+    desc: 'Currently playing song/track',
+    params: 'req=getnow&json=1',
+    validate: (data) => typeof data === 'object',
+  },
+  {
+    id: 'nowshow',
+    name: 'nowshow',
+    desc: 'Current show (full detail)',
+    params: 'req=nowshow&json=1',
+    timeout: 45000,
+    validate: (data) => typeof data === 'object',
+  },
+  {
+    id: 'nowshort',
+    name: 'nowshort',
+    desc: 'Current show (short)',
+    params: 'req=nowshort&json=1',
+    timeout: 45000,
+    validate: (data) => typeof data === 'object',
+    knownIssue: 'Tends to time out. Server may be doing a heavy DB query.',
+  },
+  {
+    id: 'nowary',
+    name: 'nowary',
+    desc: 'Now-playing structured array',
+    params: 'req=nowary&json=1',
+    validate: (data) => typeof data === 'object',
+  },
+
+  // --- Playlists ---
+  {
+    category: 'Playlists & Show Lookup',
+    id: 'playlist-date',
+    name: 'playlist (by date)',
+    desc: 'Playlist for current time',
+    params: `req=playlist&date=${Math.floor(Date.now() / 1000)}&json=1`,
+    validate: (data) => typeof data === 'object',
+    allowEmpty: true,
+    knownIssue: 'Returns empty if no playlist is logged for the current timeslot (common for non-music shows).',
+  },
+  {
+    id: 'mostrecent-folkscene',
+    name: 'mostrecent (Folk Scene)',
+    desc: 'Most recent playlist for music show',
+    params: 'req=mostrecent&altid=folkscene&json=1',
+    validate: (data) => typeof data === 'object',
+    allowEmpty: true,
+    knownIssue: 'Returns empty if show has no playlists logged. Talk shows always return empty — only music shows have playlists.',
+  },
+  {
+    id: 'mostrecent-reggaecent',
+    name: 'mostrecent (Reggae Central)',
+    desc: 'Most recent playlist for music show',
+    params: 'req=mostrecent&altid=reggaecent&json=1',
+    validate: (data) => typeof data === 'object',
+    allowEmpty: true,
+  },
+  {
+    id: 'shotimes-folkscene',
+    name: 'shotimes (Folk Scene)',
+    desc: 'Scheduled times by altid',
+    params: 'req=shotimes&key=folkscene&json=1',
+    validate: (data) => typeof data === 'object',
+    allowEmpty: true,
+    knownIssue: 'Returns empty for some shows. May need different param name (altid vs key).',
+  },
+  {
+    id: 'key-dn',
+    name: 'key (Democracy Now)',
+    desc: 'Show detail by slug',
+    params: 'req=key&key=dn&json=1',
+    validate: (data) => data && (data.sh_name || data.sh_altid),
+  },
+  {
+    id: 'key-backgroundbriefing',
+    name: 'key (Background Briefing)',
+    desc: 'Show detail by slug',
+    params: 'req=key&key=backgroundbriefing&json=1',
+    validate: (data) => data && (data.sh_name || data.sh_altid),
+  },
+  {
+    id: 'key-folkscene',
+    name: 'key (Folk Scene)',
+    desc: 'Show detail by slug',
+    params: 'req=key&key=folkscene&json=1',
+    validate: (data) => data && (data.sh_name || data.sh_altid),
+  },
+
+  // --- Schedule Ranges ---
+  {
+    category: 'Schedule & Special Programming',
+    id: 'sched-week',
+    name: 'sched (1 week)',
+    desc: 'Schedule for past week',
+    params: 'req=sched&wks=1&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'sched-range',
+    name: 'sched (date range)',
+    desc: 'Schedule for specific range',
+    params: `req=sched&stdte=${Math.floor(Date.now() / 1000) - 86400 * 7}&endte=${Math.floor(Date.now() / 1000)}&json=1`,
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'special-week',
+    name: 'special (1 week)',
+    desc: 'Special programming past week',
+    params: `req=special&wks=1&endte=${Math.floor(Date.now() / 1000)}&json=1`,
+    validate: (data) => Array.isArray(data) || typeof data === 'object' || data === null || data === '',
+    knownIssue: 'Server bug: undefined $endte variable on line 2036. PHP notice prepended to JSON. We now pass endte explicitly to avoid this.',
+  },
+  {
+    id: 'special-range',
+    name: 'special (date range)',
+    desc: 'Special programming for date range',
+    params: `req=special&stdte=${Math.floor(Date.now() / 1000) - 86400 * 7}&endte=${Math.floor(Date.now() / 1000)}&json=1`,
+    validate: (data) => Array.isArray(data) || typeof data === 'object' || data === null || data === '',
+  },
+  {
+    id: 'jsched',
+    name: 'jsched',
+    desc: 'Pre-built JSON schedule',
+    params: 'req=jsched&json=1',
+    validate: (data) => typeof data === 'object' || typeof data === 'string',
+  },
+
+  // --- Fund Drive ---
+  {
+    category: 'Fund Drive',
+    id: 'pledge',
+    name: 'pledge',
+    desc: 'Current pledge/drive config',
+    params: 'req=pledge&json=1',
+    validate: (data) => typeof data === 'object',
+  },
+
+  // --- Archive ---
+  {
+    category: 'Archive (Audio Files)',
+    id: 'fil-dn',
+    name: 'fil (Democracy Now)',
+    desc: 'Recent episodes for dn',
+    params: 'req=fil&id=dn&num=3&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'fil-backgroundbriefing',
+    name: 'fil (Background Briefing)',
+    desc: 'Recent episodes for backgroundbriefing',
+    params: 'req=fil&id=backgroundbriefing&num=3&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+  {
+    id: 'fil-folkscene',
+    name: 'fil (Folk Scene)',
+    desc: 'Recent episodes for folkscene',
+    params: 'req=fil&id=folkscene&num=3&json=1',
+    validate: (data) => Array.isArray(data) || typeof data === 'object',
+  },
+];
+
+// ============================================================
+// State
+// ============================================================
+const state = {};
+
+// ============================================================
+// Render
+// ============================================================
+function render() {
+  const container = document.getElementById('endpoints');
+  let html = '';
+  let currentCategory = null;
+
+  let total = 0, pass = 0, fail = 0, running = 0, warn = 0;
+
+  for (const ep of ENDPOINTS) {
+    if (ep.category && ep.category !== currentCategory) {
+      currentCategory = ep.category;
+      html += `<div class="section-header">${currentCategory}</div>`;
+    }
+
+    const s = state[ep.id] || {};
+    // Show as "warn" if it passed but had PHP warnings,
+    // or "expected-fail" if the endpoint is known broken server-side
+    let displayStatus = s.status || '';
+    if (s.status === 'pass' && s.phpWarnings) displayStatus = 'warn';
+    if (s.status === 'fail' && ep.expectFail) displayStatus = 'expected-fail';
+    const isOpen = s.open || false;
+    total++;
+    if (s.status === 'pass' && s.phpWarnings) warn++;
+    else if (s.status === 'pass') pass++;
+    if (s.status === 'fail' && !ep.expectFail) fail++;
+    if (s.status === 'fail' && ep.expectFail) warn++;
+    if (s.status === 'running') running++;
+
+    // Build badges
+    let badges = '';
+    if (ep.expectFail) badges += '<span class="badge badge-slow">BROKEN</span>';
+    else if (ep.timeout && ep.timeout > 15000) badges += '<span class="badge badge-slow">SLOW</span>';
+    if (s.phpWarnings) badges += '<span class="badge badge-warn">PHP WARN</span>';
+    if (s.knownIssue || ep.knownIssue) badges += '<span class="badge badge-issue">KNOWN ISSUE</span>';
+
+    html += `
+      <div class="endpoint ${displayStatus} ${isOpen ? 'open' : ''}" id="ep-${ep.id}">
+        <div class="endpoint-header" onclick="toggleEndpoint('${ep.id}')">
+          <span class="status-dot ${displayStatus}"></span>
+          <span class="endpoint-name">${ep.name}</span>
+          <span class="endpoint-desc">${ep.desc}</span>
+          ${badges}
+          <span class="endpoint-url">?${ep.params.replace('&json=1', '')}</span>
+          ${s.time ? `<span class="endpoint-time">${s.time}ms</span>` : ''}
+          <span class="chevron">&#9654;</span>
+        </div>
+        <div class="endpoint-body">
+          <div style="display:flex; gap:0.5rem; margin-bottom:0.6rem;">
+            <button onclick="runOne('${ep.id}')" style="font-size:0.7rem; padding:0.3rem 0.6rem;">
+              Run
+            </button>
+            <button class="secondary" onclick="copyCurl('${ep.id}')" style="font-size:0.7rem; padding:0.3rem 0.6rem;">
+              Copy as cURL
+            </button>
+            <button class="secondary" onclick="openInTab('${ep.id}')" style="font-size:0.7rem; padding:0.3rem 0.6rem;">
+              Open in Tab
+            </button>
+          </div>
+          ${(s.knownIssue || ep.knownIssue) ? `<div class="known-issue">Known issue: ${escapeHtml(s.knownIssue || ep.knownIssue)}</div>` : ''}
+          ${s.phpWarnings ? `<div class="php-warnings">PHP warnings stripped from response:\n${escapeHtml(s.phpWarnings)}</div>` : ''}
+          ${s.error ? `<div class="error-msg">${escapeHtml(s.error)}</div>` : ''}
+          ${s.httpStatus ? `
+            <div class="response-info">
+              <span>HTTP <span class="http-status ${s.httpStatus < 400 ? 'ok' : 'err'}">${s.httpStatus}</span></span>
+              ${s.contentType ? `<span>Content-Type: ${s.contentType}</span>` : ''}
+              ${s.size ? `<span>${s.size}</span>` : ''}
+            </div>
+          ` : ''}
+          ${s.data !== undefined ? `
+            <div class="response-data">${formatJson(s.data)}</div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+  document.getElementById('total').textContent = total;
+  document.getElementById('passCount').textContent = pass;
+  document.getElementById('warnCount').textContent = warn;
+  document.getElementById('failCount').textContent = fail;
+  document.getElementById('runningCount').textContent = running;
+}
+
+// ============================================================
+// Test runner
+// ============================================================
+
+// Strip PHP warnings/notices that get prepended to JSON responses.
+// The KPFK server has display_errors=1, so <br /> warning blocks
+// appear before the actual JSON payload.
+function stripPhpWarnings(text) {
+  // Remove everything up to the first [ or { which starts the JSON
+  const jsonStart = text.search(/[\[{]/);
+  if (jsonStart <= 0) return { cleaned: text, warnings: null };
+  const warnings = text.substring(0, jsonStart).trim();
+  const cleaned = text.substring(jsonStart);
+  return { cleaned, warnings: warnings || null };
+}
+
+async function runOne(id) {
+  const ep = ENDPOINTS.find(e => e.id === id);
+  if (!ep) return;
+
+  const baseUrl = document.getElementById('baseUrl').value.trim();
+  const url = `${baseUrl}?${ep.params}`;
+  const timeout = ep.timeout || 15000;
+
+  state[id] = { status: 'running', open: state[id]?.open || false };
+  render();
+
+  const start = performance.now();
+
+  try {
+    const resp = await fetch(url, {
+      method: 'GET',
+      signal: AbortSignal.timeout(timeout),
+    });
+
+    const elapsed = Math.round(performance.now() - start);
+    const contentType = resp.headers.get('content-type') || '';
+    const rawText = await resp.text();
+    const size = formatBytes(rawText.length);
+
+    let parsed = null;
+    let parseError = null;
+    let phpWarnings = null;
+
+    // First try parsing raw text as JSON
+    try {
+      parsed = JSON.parse(rawText);
+    } catch (e) {
+      // If that fails, try stripping PHP warnings first
+      const { cleaned, warnings } = stripPhpWarnings(rawText);
+      phpWarnings = warnings;
+
+      if (cleaned && cleaned.length > 0) {
+        try {
+          parsed = JSON.parse(cleaned);
+        } catch (e2) {
+          // Still can't parse — genuine failure
+        }
+      }
+
+      if (parsed === null) {
+        if (rawText.length === 0) {
+          parseError = 'Empty response (0 bytes)';
+        } else {
+          parseError = `Not valid JSON. Raw (first 2000 chars): ${rawText.substring(0, 2000)}`;
+        }
+      }
+    }
+
+    const isValid = parsed !== null && (!ep.validate || ep.validate(parsed));
+
+    // Determine final status — if we got valid JSON after stripping
+    // warnings, that's a "warn" (shows as pass with a note)
+    let status = 'fail';
+    let errorMsg = null;
+
+    if (!resp.ok) {
+      errorMsg = `HTTP ${resp.status}`;
+    } else if (parsed === null && ep.allowEmpty && rawText.length === 0) {
+      // Empty response is OK for endpoints that explicitly allow it
+      // (playlists, mostrecent, shotimes — server returns nothing when no data)
+      status = 'pass';
+      errorMsg = null;
+    } else if (parsed === null) {
+      errorMsg = parseError;
+    } else if (!isValid) {
+      errorMsg = 'Response parsed but failed validation — unexpected shape';
+    } else {
+      status = 'pass';
+    }
+
+    state[id] = {
+      status,
+      open: state[id]?.open || false,
+      httpStatus: resp.status,
+      contentType,
+      size,
+      time: elapsed,
+      data: parsed !== null ? parsed : rawText.substring(0, 5000),
+      error: errorMsg,
+      phpWarnings,
+      knownIssue: ep.knownIssue || null,
+    };
+  } catch (err) {
+    const elapsed = Math.round(performance.now() - start);
+    const timeoutSec = Math.round(timeout / 1000);
+    state[id] = {
+      status: 'fail',
+      open: state[id]?.open || false,
+      time: elapsed,
+      error: err.name === 'TimeoutError'
+        ? `Request timed out after ${timeoutSec}s`
+        : err.name === 'TypeError' && err.message.includes('fetch')
+        ? 'Network error — CORS blocked or server unreachable. Try "Copy as cURL" and run in terminal.'
+        : `${err.name}: ${err.message}`,
+      knownIssue: ep.knownIssue || null,
+    };
+  }
+
+  render();
+}
+
+async function runAll() {
+  document.getElementById('runAll').disabled = true;
+
+  // Run in batches of 2 — server is slow, don't overload it
+  const batchSize = 2;
+  for (let i = 0; i < ENDPOINTS.length; i += batchSize) {
+    const batch = ENDPOINTS.slice(i, i + batchSize);
+    await Promise.all(batch.map(ep => runOne(ep.id)));
+  }
+
+  document.getElementById('runAll').disabled = false;
+}
+
+// Only re-run endpoints that failed or haven't been tested yet.
+// Skips endpoints that already passed (or passed with warnings).
+async function runFailed() {
+  document.getElementById('runFailed').disabled = true;
+
+  const toRun = ENDPOINTS.filter(ep => {
+    const s = state[ep.id];
+    return !s || s.status === 'fail' || !s.status;
+  });
+
+  const batchSize = 2;
+  for (let i = 0; i < toRun.length; i += batchSize) {
+    const batch = toRun.slice(i, i + batchSize);
+    await Promise.all(batch.map(ep => runOne(ep.id)));
+  }
+
+  document.getElementById('runFailed').disabled = false;
+}
+
+function resetAll() {
+  for (const ep of ENDPOINTS) {
+    state[ep.id] = { open: false };
+  }
+  render();
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+function toggleEndpoint(id) {
+  if (!state[id]) state[id] = {};
+  state[id].open = !state[id].open;
+  render();
+}
+
+function copyCurl(id) {
+  const ep = ENDPOINTS.find(e => e.id === id);
+  const baseUrl = document.getElementById('baseUrl').value.trim();
+  const url = `${baseUrl}?${ep.params}`;
+  const cmd = `curl -s '${url}' | python3 -m json.tool`;
+  navigator.clipboard.writeText(cmd).then(() => {
+    alert('cURL command copied to clipboard');
+  });
+}
+
+function openInTab(id) {
+  const ep = ENDPOINTS.find(e => e.id === id);
+  const baseUrl = document.getElementById('baseUrl').value.trim();
+  window.open(`${baseUrl}?${ep.params}`, '_blank');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function formatJson(data) {
+  if (typeof data === 'string') return escapeHtml(data);
+
+  try {
+    const str = JSON.stringify(data, null, 2);
+    // Truncate very large responses for display
+    const truncated = str.length > 50000 ? str.substring(0, 50000) + '\n\n... (truncated)' : str;
+    return syntaxHighlight(truncated);
+  } catch {
+    return escapeHtml(String(data));
+  }
+}
+
+function syntaxHighlight(json) {
+  // Escape HTML first, then apply syntax coloring
+  json = escapeHtml(json);
+  return json.replace(
+    /("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?|\bnull\b)/g,
+    function (match) {
+      let cls = 'json-num';
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'json-key';
+        } else {
+          cls = 'json-str';
+        }
+      } else if (/true|false/.test(match)) {
+        cls = 'json-bool';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return `<span class="${cls}">${match}</span>`;
+    }
+  );
+}
+
+// ============================================================
+// Init
+// ============================================================
+render();
+</script>
+</body>
+</html>
