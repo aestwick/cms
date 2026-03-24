@@ -45,11 +45,11 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
 
   if (success) {
     return (
-      <div className="border border-charcoal/10 p-6 text-center">
-        <p className="font-serif text-lg font-bold text-charcoal">
+      <div className="border border-charcoal/10 p-8 text-center">
+        <p className="font-serif text-xl font-bold text-charcoal">
           Message sent!
         </p>
-        <p className="mt-1 text-sm text-charcoal/60">
+        <p className="mt-2 text-base text-charcoal/60">
           Your message has been forwarded to {showTitle}. They&apos;ll respond if
           they can.
         </p>
@@ -58,10 +58,10 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-charcoal">
+          <label className="block text-base font-medium text-charcoal">
             Name <span className="text-kpfk-red">*</span>
           </label>
           <input
@@ -71,11 +71,11 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
             onChange={(e) =>
               setForm((prev) => ({ ...prev, sender_name: e.target.value }))
             }
-            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+            className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-charcoal">
+          <label className="block text-base font-medium text-charcoal">
             Email <span className="text-kpfk-red">*</span>
           </label>
           <input
@@ -85,12 +85,12 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
             onChange={(e) =>
               setForm((prev) => ({ ...prev, sender_email: e.target.value }))
             }
-            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+            className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
           />
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-charcoal">
+        <label className="block text-base font-medium text-charcoal">
           Subject <span className="text-kpfk-red">*</span>
         </label>
         <input
@@ -100,33 +100,33 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
           onChange={(e) =>
             setForm((prev) => ({ ...prev, subject: e.target.value }))
           }
-          className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+          className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-charcoal">
+        <label className="block text-base font-medium text-charcoal">
           Message <span className="text-kpfk-red">*</span>
         </label>
         <textarea
           required
-          rows={5}
+          rows={6}
           value={form.message}
           onChange={(e) =>
             setForm((prev) => ({ ...prev, message: e.target.value }))
           }
-          className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+          className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
         />
       </div>
 
       {/* Turnstile widget placeholder — requires NEXT_PUBLIC_TURNSTILE_SITE_KEY */}
       <div id="turnstile-widget" />
 
-      {error && <p className="text-sm text-kpfk-red">{error}</p>}
+      {error && <p className="text-base text-kpfk-red">{error}</p>}
 
       <button
         type="submit"
         disabled={submitting}
-        className="border-2 border-charcoal bg-charcoal px-6 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+        className="border-2 border-charcoal bg-charcoal px-7 py-3 text-base font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
       >
         {submitting ? "Sending..." : "Send Message"}
       </button>

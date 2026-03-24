@@ -39,9 +39,9 @@ export function NowPlayingWidget() {
   if (!data) return null;
 
   return (
-    <div className="hidden items-center gap-2 text-sm sm:flex">
-      <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-kpfk-red" />
-      <span className="font-mono text-xs text-charcoal/50">ON NOW</span>
+    <div className="hidden items-center gap-3 text-base sm:flex">
+      <span className="inline-block h-2.5 w-2.5 animate-pulse rounded-full bg-kpfk-red" />
+      <span className="font-mono text-sm text-charcoal/50">ON NOW</span>
       {data.show_slug ? (
         <Link
           href={`/on-air/${data.show_slug}`}

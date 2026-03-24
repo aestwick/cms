@@ -33,16 +33,16 @@ export default async function OnAirPage() {
   const allShows = (shows ?? []) as Show[];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
       <h1 className="font-serif text-4xl font-bold text-charcoal">On Air</h1>
-      <p className="mt-2 text-charcoal/60">
+      <p className="mt-3 text-lg text-charcoal/60">
         All active shows on KPFK 90.7 FM
       </p>
 
       {allShows.length === 0 ? (
-        <p className="mt-8 text-charcoal/50">No shows available yet.</p>
+        <p className="mt-10 text-base text-charcoal/50">No shows available yet.</p>
       ) : (
-        <div className="mt-8 grid grid-cols-1 gap-px border border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-px border border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-3">
           {allShows.map((show) => {
             const primaryHost = show.cms_show_hosts?.find((h) => h.is_primary);
             const hostName = primaryHost?.name || show.cms_show_hosts?.[0]?.name;
@@ -51,35 +51,35 @@ export default async function OnAirPage() {
               <Link
                 key={show.id}
                 href={`/on-air/${show.slug}`}
-                className="flex flex-col bg-off-white p-5 transition-colors hover:bg-charcoal/[0.02]"
+                className="flex flex-col bg-off-white p-6 transition-colors hover:bg-charcoal/[0.02]"
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-4">
                   {show.logo_path ? (
-                    <div className="h-12 w-12 flex-shrink-0 border border-charcoal/10 bg-charcoal/5" />
+                    <div className="h-14 w-14 flex-shrink-0 border border-charcoal/10 bg-charcoal/5" />
                   ) : (
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5">
-                      <span className="font-serif text-lg font-bold text-charcoal/30">
+                    <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5">
+                      <span className="font-serif text-xl font-bold text-charcoal/30">
                         {show.title.charAt(0)}
                       </span>
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <h2 className="font-serif text-lg font-bold leading-tight text-charcoal">
+                    <h2 className="font-serif text-xl font-bold leading-tight text-charcoal">
                       {show.title}
                     </h2>
                     {hostName && (
-                      <p className="mt-0.5 text-sm text-charcoal/50">
+                      <p className="mt-1 text-base text-charcoal/50">
                         with {hostName}
                       </p>
                     )}
                   </div>
                 </div>
                 {show.tagline && (
-                  <p className="mt-2 text-sm leading-relaxed text-charcoal/60">
+                  <p className="mt-3 text-base leading-relaxed text-charcoal/60">
                     {show.tagline}
                   </p>
                 )}
-                <div className="mt-auto pt-3">
+                <div className="mt-auto pt-4">
                   <span className="font-mono text-xs uppercase text-charcoal/30">
                     {show.show_type}
                   </span>

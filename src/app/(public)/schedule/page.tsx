@@ -58,51 +58,51 @@ export default async function SchedulePage() {
   const orderedDays = Array.from({ length: 7 }, (_, i) => (today + i) % 7);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
       <h1 className="font-serif text-4xl font-bold text-charcoal">Schedule</h1>
-      <p className="mt-2 text-charcoal/60">
+      <p className="mt-3 text-lg text-charcoal/60">
         KPFK 90.7 FM weekly broadcast schedule
       </p>
 
       {slots.length === 0 ? (
-        <p className="mt-8 text-charcoal/50">Schedule coming soon.</p>
+        <p className="mt-10 text-base text-charcoal/50">Schedule coming soon.</p>
       ) : (
-        <div className="mt-8 space-y-8">
+        <div className="mt-10 space-y-10">
           {orderedDays.map((dayIndex) => (
             <section key={dayIndex}>
-              <h2 className="flex items-center gap-3 border-b-2 border-charcoal pb-2 font-serif text-xl font-bold text-charcoal">
+              <h2 className="flex items-center gap-3 border-b-2 border-charcoal pb-3 font-serif text-2xl font-bold text-charcoal">
                 {DAY_NAMES[dayIndex]}
                 {dayIndex === today && (
-                  <span className="font-mono text-xs font-normal text-kpfk-red">
+                  <span className="font-mono text-sm font-normal text-kpfk-red">
                     TODAY
                   </span>
                 )}
               </h2>
 
               {slotsByDay[dayIndex].length === 0 ? (
-                <p className="mt-3 text-sm text-charcoal/40">
+                <p className="mt-4 text-base text-charcoal/40">
                   No scheduled programming
                 </p>
               ) : (
-                <div className="mt-3 divide-y divide-charcoal/10 border border-charcoal/10">
+                <div className="mt-4 divide-y divide-charcoal/10 border border-charcoal/10">
                   {slotsByDay[dayIndex].map((slot) => (
                     <div
                       key={slot.id}
-                      className="flex items-center gap-4 px-4 py-3 transition-colors hover:bg-charcoal/[0.02]"
+                      className="flex items-center gap-5 px-5 py-4 transition-colors hover:bg-charcoal/[0.02]"
                     >
-                      <span className="w-40 flex-shrink-0 font-mono text-sm text-charcoal/50">
+                      <span className="w-44 flex-shrink-0 font-mono text-base text-charcoal/50">
                         {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
                       </span>
                       <div>
                         {slot.cms_shows?.[0] ? (
                           <Link
                             href={`/on-air/${slot.cms_shows[0].slug}`}
-                            className="font-serif text-lg font-medium text-charcoal hover:text-kpfk-red"
+                            className="font-serif text-xl font-medium text-charcoal hover:text-kpfk-red"
                           >
                             {slot.label || slot.cms_shows[0].title}
                           </Link>
                         ) : (
-                          <span className="font-serif text-lg font-medium text-charcoal">
+                          <span className="font-serif text-xl font-medium text-charcoal">
                             {slot.label || "Programming"}
                           </span>
                         )}

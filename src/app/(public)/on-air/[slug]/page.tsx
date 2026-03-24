@@ -98,39 +98,39 @@ export default async function ShowPage({ params }: PageProps) {
   }
 
   return (
-    <article className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <article className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
       {/* Masthead */}
-      <header className="border-b-2 border-charcoal pb-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
+      <header className="border-b-2 border-charcoal pb-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-8">
           {typedShow.logo_path ? (
-            <div className="h-24 w-24 flex-shrink-0 border border-charcoal/10 bg-charcoal/5" />
+            <div className="h-28 w-28 flex-shrink-0 border border-charcoal/10 bg-charcoal/5" />
           ) : (
-            <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5">
-              <span className="font-serif text-3xl font-bold text-charcoal/20">
+            <div className="flex h-28 w-28 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5">
+              <span className="font-serif text-4xl font-bold text-charcoal/20">
                 {typedShow.title.charAt(0)}
               </span>
             </div>
           )}
           <div>
-            <span className="font-mono text-xs uppercase text-charcoal/40">
+            <span className="font-mono text-sm uppercase text-charcoal/40">
               {typedShow.show_type}
             </span>
             <h1 className="font-serif text-4xl font-bold leading-tight text-charcoal">
               {typedShow.title}
             </h1>
             {typedShow.tagline && (
-              <p className="mt-1 text-lg text-charcoal/60">{typedShow.tagline}</p>
+              <p className="mt-2 text-xl text-charcoal/60">{typedShow.tagline}</p>
             )}
           </div>
         </div>
 
         {/* Schedule slots */}
         {scheduleSlots && scheduleSlots.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="mt-5 flex flex-wrap gap-3">
             {scheduleSlots.map((slot, i) => (
               <span
                 key={i}
-                className="border border-charcoal/15 px-2.5 py-1 font-mono text-xs text-charcoal/60"
+                className="border border-charcoal/15 px-3 py-1.5 font-mono text-sm text-charcoal/60"
               >
                 {dayNames[slot.day_of_week]}s {formatTime(slot.start_time)}–{formatTime(slot.end_time)}
               </span>
@@ -139,15 +139,15 @@ export default async function ShowPage({ params }: PageProps) {
         )}
       </header>
 
-      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-3">
         {/* Main content */}
-        <div className="lg:col-span-2 space-y-10">
+        <div className="space-y-12 lg:col-span-2">
           {/* About */}
           {typedShow.description && (
             <section>
               <h2 className="font-serif text-2xl font-bold text-charcoal">About the Show</h2>
               <div
-                className="prose mt-4 max-w-none text-charcoal/80"
+                className="prose mt-5 max-w-none text-base leading-relaxed text-charcoal/80"
                 dangerouslySetInnerHTML={{ __html: typedShow.description }}
               />
             </section>
@@ -158,16 +158,16 @@ export default async function ShowPage({ params }: PageProps) {
             <section>
               <h2 className="font-serif text-2xl font-bold text-charcoal">History &amp; Legacy</h2>
               <div
-                className="prose mt-4 max-w-none text-charcoal/80"
+                className="prose mt-5 max-w-none text-base leading-relaxed text-charcoal/80"
                 dangerouslySetInnerHTML={{ __html: typedShow.history }}
               />
             </section>
           )}
 
           {/* Episodes placeholder */}
-          <section className="border border-charcoal/10 p-6">
+          <section className="border border-charcoal/10 p-8">
             <h2 className="font-serif text-xl font-bold text-charcoal">Recent Episodes</h2>
-            <p className="mt-2 text-sm text-charcoal/40">
+            <p className="mt-3 text-base text-charcoal/40">
               Episode archive coming soon — powered by Confessor.
             </p>
           </section>
@@ -178,7 +178,7 @@ export default async function ShowPage({ params }: PageProps) {
               <h2 className="font-serif text-2xl font-bold text-charcoal">
                 Contact {typedShow.title}
               </h2>
-              <div className="mt-4">
+              <div className="mt-5">
                 <ShowContactForm showId={typedShow.id} showTitle={typedShow.title} />
               </div>
             </section>
@@ -189,27 +189,27 @@ export default async function ShowPage({ params }: PageProps) {
         <aside className="space-y-8">
           {/* Hosts */}
           {hosts.length > 0 && (
-            <section className="border border-charcoal/10 p-5">
+            <section className="border border-charcoal/10 p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
                 {hosts.length === 1 ? "Host" : "Hosts"}
               </h3>
-              <div className="mt-3 space-y-4">
+              <div className="mt-4 space-y-5">
                 {hosts.map((host) => (
                   <div key={host.id}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {host.photo_path ? (
-                        <div className="h-10 w-10 rounded-full border border-charcoal/10 bg-charcoal/5" />
+                        <div className="h-12 w-12 rounded-full border border-charcoal/10 bg-charcoal/5" />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal/10 bg-charcoal/5">
-                          <span className="text-sm font-bold text-charcoal/30">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-charcoal/10 bg-charcoal/5">
+                          <span className="text-base font-bold text-charcoal/30">
                             {host.name.charAt(0)}
                           </span>
                         </div>
                       )}
                       <div>
-                        <p className="text-sm font-medium text-charcoal">{host.name}</p>
+                        <p className="text-base font-medium text-charcoal">{host.name}</p>
                         {host.is_primary && (
-                          <span className="font-mono text-[10px] uppercase text-charcoal/30">
+                          <span className="font-mono text-xs uppercase text-charcoal/30">
                             Primary host
                           </span>
                         )}
@@ -217,7 +217,7 @@ export default async function ShowPage({ params }: PageProps) {
                     </div>
                     {host.bio && (
                       <div
-                        className="mt-2 text-sm leading-relaxed text-charcoal/60"
+                        className="mt-3 text-base leading-relaxed text-charcoal/60"
                         dangerouslySetInnerHTML={{ __html: host.bio }}
                       />
                     )}
@@ -229,13 +229,13 @@ export default async function ShowPage({ params }: PageProps) {
 
           {/* Contact email */}
           {showEmail && typedShow.contact_email && (
-            <section className="border border-charcoal/10 p-5">
+            <section className="border border-charcoal/10 p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
                 Email
               </h3>
               <a
                 href={`mailto:${typedShow.contact_email}`}
-                className="mt-2 block text-sm text-kpfk-red hover:text-kpfk-red/80"
+                className="mt-3 block text-base text-kpfk-red hover:text-kpfk-red/80"
               >
                 {typedShow.contact_email}
               </a>
@@ -244,11 +244,11 @@ export default async function ShowPage({ params }: PageProps) {
 
           {/* Links */}
           {(typedShow.website_url || typedShow.rss_url || socialEntries.length > 0) && (
-            <section className="border border-charcoal/10 p-5">
+            <section className="border border-charcoal/10 p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
                 Links
               </h3>
-              <ul className="mt-3 space-y-2 text-sm">
+              <ul className="mt-4 space-y-3 text-base">
                 {typedShow.website_url && (
                   <li>
                     <a
@@ -290,18 +290,18 @@ export default async function ShowPage({ params }: PageProps) {
           )}
 
           {/* Donate CTA */}
-          <section className="border-2 border-kpfk-red p-5 text-center">
-            <p className="font-serif text-lg font-bold text-charcoal">
+          <section className="border-2 border-kpfk-red p-6 text-center">
+            <p className="font-serif text-xl font-bold text-charcoal">
               Support {typedShow.title}
             </p>
-            <p className="mt-1 text-sm text-charcoal/60">
+            <p className="mt-2 text-base text-charcoal/60">
               Keep community radio on the air.
             </p>
             <a
               href="https://donate.kpfk.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-block border-2 border-kpfk-red bg-kpfk-red px-6 py-2 text-sm font-bold text-off-white transition-colors hover:bg-off-white hover:text-kpfk-red"
+              className="mt-5 inline-block border-2 border-kpfk-red bg-kpfk-red px-7 py-3 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-kpfk-red"
             >
               Donate Now
             </a>
