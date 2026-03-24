@@ -20,8 +20,14 @@
   --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
   background-color: var(--color-off-white);
   color: var(--color-charcoal);
 }
