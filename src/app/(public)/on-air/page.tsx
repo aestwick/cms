@@ -1,6 +1,15 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type { Metadata } from "next";
+
+const SUPABASE_STORAGE_URL =
+  "https://czjhwhfqohpmwprhasve.supabase.co/storage/v1/object/public";
+
+function resolveImageUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return `${SUPABASE_STORAGE_URL}/${path}`;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +64,15 @@ export default async function OnAirPage() {
               >
                 <div className="flex items-start gap-4">
                   {show.logo_path ? (
-                    <div className="h-14 w-14 flex-shrink-0 border border-charcoal/10 bg-charcoal/5" />
+                    <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-charcoal/5">
+                      <Image
+                        src={resolveImageUrl(show.logo_path)}
+                        alt={`${show.title} logo`}
+                        fill
+                        className="object-contain"
+                        sizes="56px"
+                      />
+                    </div>
                   ) : (
                     <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5">
                       <span className="font-serif text-xl font-bold text-charcoal/30">

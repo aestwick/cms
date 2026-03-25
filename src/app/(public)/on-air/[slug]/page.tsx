@@ -1,7 +1,16 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { ShowContactForm } from "@/components/show-contact-form";
 import type { Metadata } from "next";
+
+const SUPABASE_STORAGE_URL =
+  "https://czjhwhfqohpmwprhasve.supabase.co/storage/v1/object/public";
+
+function resolveImageUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return `${SUPABASE_STORAGE_URL}/${path}`;
+}
 
 interface ShowHost {
   id: string;
@@ -103,7 +112,15 @@ export default async function ShowPage({ params }: PageProps) {
       <header className="border-b-2 border-charcoal pb-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-8">
           {typedShow.logo_path ? (
-            <div className="h-28 w-28 flex-shrink-0 border border-charcoal/10 bg-charcoal/5" />
+            <div className="relative h-28 w-28 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-charcoal/5">
+              <Image
+                src={resolveImageUrl(typedShow.logo_path)}
+                alt={`${typedShow.title} logo`}
+                fill
+                className="object-contain"
+                sizes="112px"
+              />
+            </div>
           ) : (
             <div className="flex h-28 w-28 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5">
               <span className="font-serif text-4xl font-bold text-charcoal/20">
@@ -198,7 +215,15 @@ export default async function ShowPage({ params }: PageProps) {
                   <div key={host.id}>
                     <div className="flex items-center gap-4">
                       {host.photo_path ? (
-                        <div className="h-12 w-12 rounded-full border border-charcoal/10 bg-charcoal/5" />
+                        <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-charcoal/10 bg-charcoal/5">
+                          <Image
+                            src={resolveImageUrl(host.photo_path)}
+                            alt={`${host.name} photo`}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        </div>
                       ) : (
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-charcoal/10 bg-charcoal/5">
                           <span className="text-base font-bold text-charcoal/30">
