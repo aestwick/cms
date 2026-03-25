@@ -52,8 +52,13 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
   const [shows, setShows] = useState<ShowOption[]>([]);
 
   useEffect(() => {
+    // Try /api/shows first (admin/editor), fall back to /api/posts/shows (host-accessible)
     fetch("/api/shows")
-      .then((res) => (res.ok ? res.json() : []))
+      .then((res) => {
+        if (res.ok) return res.json();
+        // Hosts don't have access to /api/shows — use dedicated endpoint
+        return fetch("/api/posts/shows").then((r) => (r.ok ? r.json() : []));
+      })
       .then((data) => setShows(data))
       .catch(() => {});
   }, []);

@@ -9,7 +9,7 @@ interface PageProps {
 
 export default async function EditPostPage({ params }: PageProps) {
   const { id } = await params;
-  const user = await requireRole("admin", "editor");
+  const user = await requireRole("admin", "editor", "host");
   const supabase = getSupabaseAdmin();
 
   const { data: post } = await supabase
@@ -21,6 +21,21 @@ export default async function EditPostPage({ params }: PageProps) {
     .single();
 
   if (!post) notFound();
+
+  // Hosts can only edit posts scoped to their shows
+  if (user.role === "host" && post.show_id) {
+    const { data: hostLink } = await supabase
+      .from("cms_show_hosts")
+      .select("id")
+      .eq("profile_id", user.id)
+      .eq("show_id", post.show_id)
+      .single();
+
+    if (!hostLink) notFound();
+  } else if (user.role === "host") {
+    // Hosts cannot edit station-wide posts
+    notFound();
+  }
 
   return (
     <div>

@@ -100,7 +100,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   const user = await getCmsUser();
-  if (!user || user.role !== "admin") {
+  if (!user || !["admin", "editor"].includes(user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -3,15 +3,36 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import Link from "next/link";
 
 export default async function BlogListPage() {
-  const user = await requireRole("admin", "editor");
+  const user = await requireRole("admin", "editor", "host");
   const supabase = getSupabaseAdmin();
 
-  const { data: posts } = await supabase
+  let query = supabase
     .from("cms_posts")
     .select("id, title, slug, status, published_at, is_featured, show_id, author_id, created_at, cms_shows(title)")
     .eq("station_id", user.station_id)
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
+
+  // Hosts can only see posts scoped to their shows
+  if (user.role === "host") {
+    const { data: hostShows } = await supabase
+      .from("cms_show_hosts")
+      .select("show_id")
+      .eq("profile_id", user.id);
+
+    const showIds = (hostShows ?? []).map((h) => h.show_id);
+    if (showIds.length === 0) {
+      return (
+        <div>
+          <h1 className="text-2xl font-bold text-charcoal">Blog Posts</h1>
+          <p className="mt-4 text-sm text-charcoal/50">You are not assigned to any shows yet.</p>
+        </div>
+      );
+    }
+    query = query.in("show_id", showIds);
+  }
+
+  const { data: posts } = await query;
 
   function formatDate(d: string | null) {
     if (!d) return "—";

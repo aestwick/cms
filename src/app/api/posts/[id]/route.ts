@@ -26,8 +26,11 @@ export async function GET(
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
-  // Hosts can only view their own show's posts
-  if (user.role === "host" && data.show_id) {
+  // Hosts can only view their own show's posts (not station-wide posts)
+  if (user.role === "host") {
+    if (!data.show_id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
     const { data: hostLink } = await supabase
       .from("cms_show_hosts")
       .select("id")
@@ -70,8 +73,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
-  // Hosts can only edit their own show's posts
-  if (user.role === "host" && oldData.show_id) {
+  // Hosts can only edit their own show's posts (not station-wide posts)
+  if (user.role === "host") {
+    if (!oldData.show_id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
     const { data: hostLink } = await supabase
       .from("cms_show_hosts")
       .select("id")

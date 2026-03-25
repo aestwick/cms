@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type { Metadata } from "next";
 
@@ -77,12 +78,12 @@ export default async function PublicPage({ params }: PageProps) {
           <ul className="mt-4 space-y-2">
             {childPages.map((child) => (
               <li key={child.id}>
-                <a
+                <Link
                   href={`/p/${child.slug}`}
                   className="text-base text-kpfk-red hover:underline"
                 >
                   {child.title}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

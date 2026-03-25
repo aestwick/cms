@@ -54,6 +54,11 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   if (!post) notFound();
 
+  // Normalize Supabase join (may return array)
+  const showData = Array.isArray(post.cms_shows)
+    ? (post.cms_shows[0] as { id: string; title: string; slug: string } | undefined) ?? null
+    : (post.cms_shows as { id: string; title: string; slug: string } | null);
+
   const publishedDate = post.published_at
     ? new Date(post.published_at).toLocaleDateString("en-US", {
         weekday: "long",
@@ -85,12 +90,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       {/* Header */}
       <header className="border-b border-charcoal/10 pb-8">
-        {post.cms_shows && (
+        {showData && (
           <Link
-            href={`/on-air/${post.cms_shows.slug}`}
+            href={`/on-air/${showData.slug}`}
             className="inline-block text-sm font-medium text-kpfk-red hover:underline"
           >
-            {post.cms_shows.title}
+            {showData.title}
           </Link>
         )}
         <h1 className="mt-2 font-serif text-4xl font-bold leading-tight text-charcoal">

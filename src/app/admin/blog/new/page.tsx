@@ -2,7 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { PostForm } from "@/components/post-form";
 
 export default async function NewPostPage() {
-  await requireRole("admin", "editor");
+  await requireRole("admin", "editor", "host");
 
   return (
     <div>

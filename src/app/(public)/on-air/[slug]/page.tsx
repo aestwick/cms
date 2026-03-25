@@ -214,7 +214,7 @@ export default async function ShowPage({ params }: PageProps) {
                       </Link>
                     </h3>
                     <p className="mt-1 text-base text-charcoal/60">
-                      {post.excerpt || post.body.replace(/<[^>]*>/g, "").slice(0, 150) + "…"}
+                      {post.excerpt || (post.body ? post.body.replace(/<[^>]*>/g, "").slice(0, 200) + "…" : "")}
                     </p>
                   </article>
                 ))}
