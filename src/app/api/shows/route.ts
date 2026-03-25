@@ -12,7 +12,7 @@ export async function GET() {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("cms_shows")
-    .select("id, title, slug, show_type, is_active, is_claimed, sort_order, created_at, updated_at")
+    .select("id, title, slug, show_type, is_active, is_claimed, sort_order, created_at, updated_at, cms_show_hosts(name, is_primary)")
     .eq("station_id", user.station_id)
     .is("deleted_at", null)
     .order("sort_order", { ascending: true })

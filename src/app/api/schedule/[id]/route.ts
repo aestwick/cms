@@ -44,7 +44,7 @@ export async function PATCH(
     .update(updateFields)
     .eq("id", id)
     .eq("station_id", user.station_id)
-    .select("*, cms_shows(id, title, slug)")
+    .select("*, cms_shows(id, title, slug, cms_show_hosts(name, is_primary))")
     .single();
 
   if (error) {
