@@ -5,6 +5,8 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { resolveImageUrl, formatDate, formatTime } from "@/lib/format";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 const categoryLabels: Record<string, string> = {
   community: "Community",
   sponsored: "Sponsored",

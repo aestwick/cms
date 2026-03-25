@@ -130,18 +130,17 @@ function EventCard({
   event: UnifiedEvent;
   featured?: boolean;
 }) {
-  const href =
-    event.source === "beacon" && event.ticket_url
-      ? event.ticket_url
-      : `/events/${event.slug}`;
   const isExternal = event.source === "beacon";
+  const href = isExternal
+    ? event.ticket_url || `https://events.kpfk.org/public/${event.slug}`
+    : `/events/${event.slug}`;
 
   const card = (
     <div className={featured ? "flex flex-col gap-5 sm:flex-row" : ""}>
       {event.image_url && (
         <div
           className={`relative overflow-hidden bg-charcoal/5 ${
-            featured ? "h-48 w-full sm:h-auto sm:w-64" : "h-40 w-full"
+            featured ? "h-48 w-full sm:h-48 sm:w-64" : "h-40 w-full"
           }`}
         >
           <Image

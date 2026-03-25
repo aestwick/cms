@@ -26,7 +26,8 @@ export default async function EventsListPage() {
     .order("starts_at", { ascending: false });
 
   const now = new Date().toISOString();
-  const upcoming = events?.filter((e) => e.starts_at >= now) ?? [];
+  // Upcoming: soonest first (ASC). Past: most recent first (already DESC from query).
+  const upcoming = (events?.filter((e) => e.starts_at >= now) ?? []).reverse();
   const past = events?.filter((e) => e.starts_at < now) ?? [];
 
   return (

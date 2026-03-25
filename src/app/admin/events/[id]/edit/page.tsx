@@ -5,10 +5,18 @@ import { EventForm } from "@/components/event-form";
 
 function toLocalDatetime(iso: string | null): string {
   if (!iso) return "";
-  const d = new Date(iso);
-  // Format as YYYY-MM-DDTHH:mm for datetime-local input
-  const pad = (n: number) => n.toString().padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  // Format as YYYY-MM-DDTHH:mm in LA timezone for datetime-local input
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date(iso));
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "00";
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
 }
 
 export default async function EditEventPage({
