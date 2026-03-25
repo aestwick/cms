@@ -215,7 +215,15 @@ export default async function ShowPage({ params }: PageProps) {
                   <div key={host.id}>
                     <div className="flex items-center gap-4">
                       {host.photo_path ? (
-                        <div className="h-12 w-12 rounded-full border border-charcoal/10 bg-charcoal/5" />
+                        <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-charcoal/10 bg-charcoal/5">
+                          <Image
+                            src={resolveImageUrl(host.photo_path)}
+                            alt={`${host.name} photo`}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        </div>
                       ) : (
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-charcoal/10 bg-charcoal/5">
                           <span className="text-base font-bold text-charcoal/30">
