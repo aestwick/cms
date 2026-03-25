@@ -1,5 +1,6 @@
 import { requireRole } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { formatDate, formatTime } from "@/lib/format";
 import Link from "next/link";
 
 const categoryLabels: Record<string, string> = {
@@ -10,23 +11,6 @@ const categoryLabels: Record<string, string> = {
   protest: "Protest",
   other: "Other",
 };
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "America/Los_Angeles",
-  });
-}
-
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "America/Los_Angeles",
-  });
-}
 
 export default async function EventsListPage() {
   const user = await requireRole("admin", "editor");
@@ -111,8 +95,8 @@ interface EventRow {
 
 function EventTable({ events }: { events: EventRow[] }) {
   return (
-    <div className="border border-charcoal/20">
-      <table className="w-full text-sm">
+    <div className="overflow-x-auto border border-charcoal/20">
+      <table className="w-full min-w-[600px] text-sm">
         <thead>
           <tr className="border-b border-charcoal/10 bg-charcoal/5 text-left">
             <th className="px-4 py-2 font-medium text-charcoal/60">Title</th>

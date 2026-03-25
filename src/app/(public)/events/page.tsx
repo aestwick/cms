@@ -2,15 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getBeaconEvents } from "@/lib/beacon";
+import { resolveImageUrl, formatDate, formatTime } from "@/lib/format";
 import type { Metadata } from "next";
-
-const SUPABASE_STORAGE_URL =
-  "https://czjhwhfqohpmwprhasve.supabase.co/storage/v1/object/public";
-
-function resolveImageUrl(path: string): string {
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  return `${SUPABASE_STORAGE_URL}/${path}`;
-}
 
 export const dynamic = "force-dynamic";
 
@@ -44,23 +37,6 @@ interface UnifiedEvent {
   is_highlighted?: boolean;
   source: "cms" | "beacon";
   ticket_url?: string | null;
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    timeZone: "America/Los_Angeles",
-  });
-}
-
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "America/Los_Angeles",
-  });
 }
 
 export default async function EventsPage() {
@@ -196,7 +172,7 @@ function EventCard({
           {event.title}
         </h2>
         <p className="mt-2 text-base text-charcoal/60">
-          {formatDate(event.starts_at)}
+          {formatDate(event.starts_at, { weekday: "short", year: undefined })}
           {!event.is_all_day && (
             <span className="ml-1 text-charcoal/40">
               at {formatTime(event.starts_at)}

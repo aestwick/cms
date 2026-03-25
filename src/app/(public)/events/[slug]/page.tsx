@@ -2,15 +2,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { resolveImageUrl, formatDate, formatTime } from "@/lib/format";
 import type { Metadata } from "next";
-
-const SUPABASE_STORAGE_URL =
-  "https://czjhwhfqohpmwprhasve.supabase.co/storage/v1/object/public";
-
-function resolveImageUrl(path: string): string {
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  return `${SUPABASE_STORAGE_URL}/${path}`;
-}
 
 const categoryLabels: Record<string, string> = {
   community: "Community",
@@ -25,23 +18,11 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "America/Los_Angeles",
-  });
-}
-
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "America/Los_Angeles",
-  });
-}
+const detailDateOpts: Intl.DateTimeFormatOptions = {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+};
 
 export async function generateMetadata({
   params,
@@ -61,7 +42,7 @@ export async function generateMetadata({
 
   return {
     title: `${event.title} — KPFK 90.7 FM`,
-    description: `${event.title} on ${formatDate(event.starts_at)}${event.venue_name ? ` at ${event.venue_name}` : ""}`,
+    description: `${event.title} on ${formatDate(event.starts_at, detailDateOpts)}${event.venue_name ? ` at ${event.venue_name}` : ""}`,
   };
 }
 
@@ -151,7 +132,7 @@ export default async function EventDetailPage({ params }: PageProps) {
               When
             </h3>
             <p className="mt-3 text-base font-medium text-charcoal">
-              {formatDate(event.starts_at)}
+              {formatDate(event.starts_at, detailDateOpts)}
             </p>
             {!event.is_all_day && (
               <p className="mt-1 text-base text-charcoal/60">
