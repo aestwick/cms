@@ -31,15 +31,20 @@ export default async function ShowsListPage() {
         </Link>
       </div>
 
-      <div className="mt-6 border border-charcoal/20">
+      {/* Desktop table */}
+      <div className="mt-6 hidden border border-charcoal/20 md:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-charcoal/10 bg-charcoal/5 text-left">
               <th className="px-4 py-2 font-medium text-charcoal/60">Title</th>
               <th className="px-4 py-2 font-medium text-charcoal/60">Slug</th>
               <th className="px-4 py-2 font-medium text-charcoal/60">Type</th>
-              <th className="px-4 py-2 font-medium text-charcoal/60">Status</th>
-              <th className="px-4 py-2 font-medium text-charcoal/60">Claimed</th>
+              <th className="px-4 py-2 font-medium text-charcoal/60">
+                Status
+              </th>
+              <th className="px-4 py-2 font-medium text-charcoal/60">
+                Claimed
+              </th>
               <th className="px-4 py-2 font-medium text-charcoal/60" />
             </tr>
           </thead>
@@ -101,6 +106,53 @@ export default async function ShowsListPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list */}
+      <div className="mt-6 space-y-3 md:hidden">
+        {shows?.map((show) => (
+          <Link
+            key={show.id}
+            href={`/admin/shows/${show.id}/edit`}
+            className="block border border-charcoal/20 p-4 active:bg-charcoal/[0.03]"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate font-medium text-charcoal">
+                  {show.title}
+                </h3>
+                <p className="mt-0.5 truncate font-mono text-xs text-charcoal/40">
+                  /on-air/{show.slug}
+                </p>
+              </div>
+              <span className="flex-shrink-0 rounded border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
+                {show.show_type}
+              </span>
+            </div>
+            <div className="mt-2 flex items-center gap-4 text-xs text-charcoal/50">
+              <span className="flex items-center gap-1.5">
+                <span
+                  className={`inline-block h-2 w-2 rounded-full ${
+                    show.is_active ? "bg-green-600" : "bg-charcoal/20"
+                  }`}
+                />
+                {show.is_active ? "Active" : "Inactive"}
+              </span>
+              {show.is_claimed && <span>Claimed</span>}
+            </div>
+          </Link>
+        ))}
+        {(!shows || shows.length === 0) && (
+          <p className="py-8 text-center text-sm text-charcoal/40">
+            No shows yet.{" "}
+            <Link
+              href="/admin/shows/new"
+              className="text-kpfk-red hover:underline"
+            >
+              Create one
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

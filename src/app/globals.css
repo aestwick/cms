@@ -14,6 +14,9 @@
   --color-accent: #B22222;
   --color-highlight: #FFD700;
 
+  /* Layout */
+  --admin-sidebar-width: 14rem;
+
   /* Typography */
   --font-serif: Georgia, "Times New Roman", serif;
   --font-sans: "Franklin Gothic", "Arial Narrow", Arial, sans-serif;
