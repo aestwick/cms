@@ -9,6 +9,7 @@ interface Host {
   photo_path: string;
   email: string;
   is_primary: boolean;
+  role: string;
   sort_order: number;
 }
 
@@ -17,12 +18,20 @@ interface HostManagerProps {
   initialHosts: Host[];
 }
 
+const ROLE_OPTIONS = [
+  { value: "host", label: "Host" },
+  { value: "co-host", label: "Co-host" },
+  { value: "producer", label: "Producer" },
+  { value: "contributor", label: "Contributor" },
+];
+
 const emptyHost: Host = {
   name: "",
   bio: "",
   photo_path: "",
   email: "",
   is_primary: false,
+  role: "host",
   sort_order: 0,
 };
 
@@ -36,6 +45,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
           photo_path: h.photo_path || "",
           email: h.email || "",
           is_primary: h.is_primary,
+          role: h.role || "host",
           sort_order: h.sort_order,
         }))
       : []
@@ -119,6 +129,17 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                 <span className="font-mono text-xs text-charcoal/30">
                   #{index + 1}
                 </span>
+                <select
+                  value={host.role}
+                  onChange={(e) => updateHost(index, "role", e.target.value)}
+                  className="border border-charcoal/20 bg-off-white px-2 py-1.5 text-xs text-charcoal focus:border-charcoal focus:outline-none"
+                >
+                  {ROLE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
                 <button
                   type="button"
                   onClick={() => setPrimary(index)}
