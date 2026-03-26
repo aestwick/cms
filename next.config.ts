@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "events.kpfk.org",
       },
+      {
+        protocol: "https",
+        hostname: "admin.kpfk.org",
+        pathname: "/images/**",
+      },
     ],
   },
 };
