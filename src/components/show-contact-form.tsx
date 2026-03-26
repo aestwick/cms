@@ -9,6 +9,7 @@ interface ShowContactFormProps {
 }
 
 export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
+  const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     sender_name: "",
     sender_email: "",
@@ -74,6 +75,18 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
           they can.
         </p>
       </div>
+    );
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="border-2 border-charcoal bg-charcoal px-7 py-3 text-base font-medium text-off-white hover:bg-charcoal/90"
+      >
+        Contact {showTitle}
+      </button>
     );
   }
 
