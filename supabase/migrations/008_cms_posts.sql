@@ -1,4 +1,4 @@
--- Migration 006: Blog posts
+-- Migration 008: Blog posts
 -- Phase 4: Blog + Pages
 
 CREATE TABLE cms_posts (
