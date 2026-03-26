@@ -97,11 +97,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 /*  SVG Icons                                                          */
 /* ------------------------------------------------------------------ */
 
-function IconGlobe({ className }: { className?: string }) {
+function IconChrome({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.819 7.544l-3.953 6.848c.394.018.79.027 1.189.027h-.328C19.462 22.055 24 17.494 24 12c0-.632-.049-1.252-.144-1.858zM12 8.009a3.991 3.991 0 1 0 0 7.982 3.991 3.991 0 0 0 0-7.982z" />
     </svg>
   );
 }
@@ -206,6 +205,7 @@ const SOCIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
   linkedin: IconLinkedin,
   spotify: IconSpotify,
   apple_podcasts: IconApplePodcasts,
+  rss: IconRss,
 };
 
 const SOCIAL_LABELS: Record<string, string> = {
@@ -229,6 +229,7 @@ const SOCIAL_LABELS: Record<string, string> = {
   twitch: "Twitch",
   discord: "Discord",
   telegram: "Telegram",
+  rss: "RSS Feed",
 };
 
 const TAG_CATEGORY_COLORS: Record<string, string> = {
@@ -651,7 +652,7 @@ export default async function ShowPage({ params }: PageProps) {
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 text-base text-charcoal/70 transition-colors hover:text-kpfk-red"
                       >
-                        <IconGlobe className="h-5 w-5 flex-shrink-0" />
+                        <IconChrome className="h-5 w-5 flex-shrink-0" />
                         <span>Website</span>
                       </a>
                     </li>
@@ -688,7 +689,7 @@ export default async function ShowPage({ params }: PageProps) {
                           {Icon ? (
                             <Icon className="h-5 w-5 flex-shrink-0" />
                           ) : (
-                            <IconGlobe className="h-5 w-5 flex-shrink-0" />
+                            <IconChrome className="h-5 w-5 flex-shrink-0" />
                           )}
                           <span>{label}</span>
                         </a>

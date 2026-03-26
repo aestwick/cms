@@ -58,6 +58,7 @@ const PLATFORM_PATTERNS: [RegExp, string][] = [
   [/twitch\.tv/i, "twitch"],
   [/discord\.gg|discord\.com/i, "discord"],
   [/t\.me|telegram\.me/i, "telegram"],
+  [/\.rss$|\/feed\/?$|\/rss\/?$|feeds\.|feedburner\./i, "rss"],
 ];
 
 const PLATFORM_LABELS: Record<string, string> = {
@@ -81,6 +82,7 @@ const PLATFORM_LABELS: Record<string, string> = {
   twitch: "Twitch",
   discord: "Discord",
   telegram: "Telegram",
+  rss: "RSS Feed",
 };
 
 function detectPlatform(url: string): string {
