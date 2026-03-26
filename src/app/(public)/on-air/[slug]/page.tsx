@@ -32,6 +32,14 @@ interface ShowTag {
   };
 }
 
+interface GalleryPhoto {
+  id: string;
+  image_path: string;
+  alt_text: string | null;
+  caption: string | null;
+  sort_order: number;
+}
+
 interface Show {
   id: string;
   station_id: string;
@@ -357,6 +365,15 @@ export default async function ShowPage({ params }: PageProps) {
     }
   }
 
+  // Fetch gallery photos
+  const { data: galleryPhotos } = await supabase
+    .from("cms_show_gallery")
+    .select("id, image_path, alt_text, caption, sort_order")
+    .eq("show_id", typedShow.id)
+    .order("sort_order", { ascending: true });
+
+  const gallery = (galleryPhotos ?? []) as GalleryPhoto[];
+
   const hasLinks = typedShow.website_url || typedShow.rss_url || socialEntries.length > 0;
   const donateHeading = typedShow.donation_cta_heading || `Support ${typedShow.title}`;
   const donateBody = typedShow.donation_cta_body || "Keep community radio on the air.";
@@ -509,6 +526,33 @@ export default async function ShowPage({ params }: PageProps) {
                   className="prose mt-5 max-w-none text-base leading-relaxed text-charcoal/80"
                   dangerouslySetInnerHTML={{ __html: typedShow.history }}
                 />
+              </section>
+            )}
+
+            {/* Photo Gallery */}
+            {gallery.length > 0 && (
+              <section>
+                <h2 className="font-serif text-2xl font-bold text-charcoal">Photos</h2>
+                <div className="mt-5 space-y-6">
+                  {gallery.map((photo) => (
+                    <figure key={photo.id} className="border border-charcoal/10">
+                      <div className="relative aspect-[3/2] w-full overflow-hidden bg-charcoal/5">
+                        <Image
+                          src={resolveImageUrl(photo.image_path)}
+                          alt={photo.alt_text || ""}
+                          fill
+                          className="object-cover"
+                          sizes="(min-width: 1024px) 600px, 100vw"
+                        />
+                      </div>
+                      {photo.caption && (
+                        <figcaption className="px-4 py-3 text-sm text-charcoal/60">
+                          {photo.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
               </section>
             )}
 
