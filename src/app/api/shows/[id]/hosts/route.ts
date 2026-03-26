@@ -62,6 +62,7 @@ export async function POST(
       photo_path: body.photo_path || null,
       email: body.email || null,
       is_primary: body.is_primary ?? false,
+      role: body.role || "host",
       sort_order: body.sort_order ?? 0,
     })
     .select()
@@ -93,6 +94,7 @@ export async function PUT(
     photo_path?: string;
     email?: string;
     is_primary?: boolean;
+    role?: string;
     sort_order?: number;
   }> = body.hosts;
 
@@ -113,6 +115,7 @@ export async function PUT(
           photo_path: h.photo_path || null,
           email: h.email || null,
           is_primary: h.is_primary ?? (i === 0),
+          role: h.role || "host",
           sort_order: h.sort_order ?? i,
         }))
       )

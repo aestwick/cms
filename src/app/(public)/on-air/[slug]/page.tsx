@@ -20,6 +20,7 @@ interface ShowHost {
   bio: string | null;
   photo_path: string | null;
   is_primary: boolean;
+  role: string;
 }
 
 interface ShowTag {
@@ -591,14 +592,14 @@ export default async function ShowPage({ params }: PageProps) {
           {/* Sidebar (1/3) with left border                            */}
           {/* ======================================================== */}
           <aside className="mt-12 space-y-8 border-charcoal/10 lg:mt-0 lg:border-l lg:pl-10">
-            {/* Hosts — rectangular portraits */}
-            {hosts.length > 0 && (
+            {/* Hosts — rectangular portraits (excludes producers) */}
+            {hosts.filter((h) => h.role !== "producer").length > 0 && (
               <section>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
-                  {hosts.length === 1 ? "Host" : "Hosts"}
+                  {hosts.filter((h) => h.role !== "producer").length === 1 ? "Host" : "Hosts"}
                 </h3>
                 <div className="mt-4 space-y-6">
-                  {hosts.map((host) => (
+                  {hosts.filter((h) => h.role !== "producer").map((host) => (
                     <div key={host.id}>
                       <div className="flex items-start gap-4">
                         {host.photo_path ? (
@@ -620,11 +621,55 @@ export default async function ShowPage({ params }: PageProps) {
                         )}
                         <div>
                           <p className="text-lg font-medium text-charcoal">{host.name}</p>
-                          {host.is_primary && (
-                            <span className="font-mono text-xs uppercase text-charcoal/30">
-                              Primary host
+                          <span className="font-mono text-xs capitalize text-charcoal/30">
+                            {host.role === "co-host" ? "Co-host" : host.role}
+                          </span>
+                        </div>
+                      </div>
+                      {host.bio && (
+                        <div
+                          className="mt-3 text-base leading-relaxed text-charcoal/60"
+                          dangerouslySetInnerHTML={{ __html: host.bio }}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Producers */}
+            {hosts.filter((h) => h.role === "producer").length > 0 && (
+              <section>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
+                  {hosts.filter((h) => h.role === "producer").length === 1 ? "Producer" : "Producers"}
+                </h3>
+                <div className="mt-4 space-y-6">
+                  {hosts.filter((h) => h.role === "producer").map((host) => (
+                    <div key={host.id}>
+                      <div className="flex items-start gap-4">
+                        {host.photo_path ? (
+                          <div className="relative h-[100px] w-[80px] flex-shrink-0 overflow-hidden border border-charcoal/10 bg-charcoal/5">
+                            <Image
+                              src={resolveImageUrl(host.photo_path)}
+                              alt={`${host.name} photo`}
+                              fill
+                              className="object-cover"
+                              sizes="80px"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex h-[100px] w-[80px] items-center justify-center border border-charcoal/10 bg-charcoal/5">
+                            <span className="text-2xl font-bold text-charcoal/20">
+                              {host.name.charAt(0)}
                             </span>
-                          )}
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-lg font-medium text-charcoal">{host.name}</p>
+                          <span className="font-mono text-xs text-charcoal/30">
+                            Producer
+                          </span>
                         </div>
                       </div>
                       {host.bio && (
