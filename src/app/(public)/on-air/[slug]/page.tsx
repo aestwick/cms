@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { ShowContactForm } from "@/components/show-contact-form";
+import { EpisodeArchive } from "@/components/episode-archive";
 import type { Metadata } from "next";
 
 const SUPABASE_STORAGE_URL =
@@ -30,6 +31,7 @@ interface Show {
   description: string | null;
   history: string | null;
   show_type: string;
+  program_slug: string | null;
   logo_path: string | null;
   banner_path: string | null;
   contact_preference: string;
@@ -222,13 +224,20 @@ export default async function ShowPage({ params }: PageProps) {
             </section>
           )}
 
-          {/* Episodes placeholder */}
-          <section className="border border-charcoal/10 p-8">
-            <h2 className="font-serif text-xl font-bold text-charcoal">Recent Episodes</h2>
-            <p className="mt-3 text-base text-charcoal/40">
-              Episode archive coming soon — powered by Confessor.
-            </p>
-          </section>
+          {/* Episode archive */}
+          {typedShow.program_slug ? (
+            <EpisodeArchive
+              programSlug={typedShow.program_slug}
+              showTitle={typedShow.title}
+            />
+          ) : (
+            <section className="border border-charcoal/10 p-8">
+              <h2 className="font-serif text-xl font-bold text-charcoal">Recent Episodes</h2>
+              <p className="mt-3 text-base text-charcoal/40">
+                Episode archive not yet available for this show.
+              </p>
+            </section>
+          )}
 
           {/* Contact form */}
           {showContact && (
