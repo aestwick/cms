@@ -14,12 +14,20 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
     subject: "",
     message: "",
   });
+  const [honeypot, setHoneypot] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // If honeypot is filled, silently "succeed" without submitting
+    if (honeypot) {
+      setSuccess(true);
+      return;
+    }
+
     setSubmitting(true);
     setError("");
 
@@ -29,6 +37,7 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
       body: JSON.stringify({
         show_id: showId,
         ...form,
+        website_url_confirm: honeypot,
       }),
     });
 
@@ -115,6 +124,20 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
             setForm((prev) => ({ ...prev, message: e.target.value }))
           }
           className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
+        />
+      </div>
+
+      {/* Honeypot — hidden from real users, filled by bots */}
+      <div aria-hidden="true" className="absolute left-[-9999px] top-[-9999px]">
+        <label htmlFor="website_url_confirm">Leave this blank</label>
+        <input
+          type="text"
+          id="website_url_confirm"
+          name="website_url_confirm"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
         />
       </div>
 

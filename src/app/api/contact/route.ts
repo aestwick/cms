@@ -6,7 +6,12 @@ import { headers } from "next/headers";
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  const { show_id, sender_name, sender_email, subject, message } = body;
+  const { show_id, sender_name, sender_email, subject, message, website_url_confirm } = body;
+
+  // Honeypot check — if filled, silently accept (bots think it succeeded)
+  if (website_url_confirm) {
+    return NextResponse.json({ success: true }, { status: 201 });
+  }
 
   // Basic validation
   if (!sender_name || !sender_email || !subject || !message) {
