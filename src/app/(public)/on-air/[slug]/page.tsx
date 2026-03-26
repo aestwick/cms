@@ -319,10 +319,10 @@ export default async function ShowPage({ params }: PageProps) {
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-6 pb-8 sm:px-8">
-            <div className="flex items-end gap-6">
+          <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-6 pb-6 sm:px-8">
+            <div className="flex items-end gap-5">
               {typedShow.logo_path && (
-                <div className="relative hidden h-36 w-36 flex-shrink-0 overflow-hidden border-2 border-off-white/20 bg-charcoal/50 backdrop-blur sm:block lg:h-40 lg:w-40">
+                <div className="relative hidden h-32 w-32 flex-shrink-0 overflow-hidden border-2 border-off-white/20 bg-charcoal/50 backdrop-blur sm:block lg:h-36 lg:w-36">
                   <Image
                     src={resolveImageUrl(typedShow.logo_path)}
                     alt={`${typedShow.title} logo`}
@@ -368,9 +368,9 @@ export default async function ShowPage({ params }: PageProps) {
         </header>
       ) : (
         <header className="relative w-full overflow-hidden border-b-2 border-charcoal bg-charcoal/[0.03]">
-          <div className="mx-auto flex max-w-7xl items-end gap-6 px-6 py-12 sm:px-8 sm:py-16">
+          <div className="mx-auto flex max-w-7xl items-end gap-5 px-6 py-8 sm:px-8 sm:py-10">
             {typedShow.logo_path ? (
-              <div className="relative h-36 w-36 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-off-white sm:h-44 sm:w-44">
+              <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-off-white sm:h-36 sm:w-36">
                 <Image
                   src={resolveImageUrl(typedShow.logo_path)}
                   alt={`${typedShow.title} logo`}
@@ -380,7 +380,7 @@ export default async function ShowPage({ params }: PageProps) {
                 />
               </div>
             ) : (
-              <div className="flex h-36 w-36 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5 sm:h-44 sm:w-44">
+              <div className="flex h-32 w-32 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5 sm:h-36 sm:w-36">
                 <span className="font-serif text-6xl font-bold text-charcoal/15 sm:text-7xl">
                   {typedShow.title.charAt(0)}
                 </span>
