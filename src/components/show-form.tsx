@@ -17,13 +17,7 @@ export interface ShowFormData {
   contact_email: string;
   website_url: string;
   rss_url: string;
-  social_links: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    youtube?: string;
-    tiktok?: string;
-  };
+  social_links: Record<string, string>;
   donation_cta_heading: string;
   donation_cta_body: string;
   donation_cta_url: string;
@@ -33,6 +27,98 @@ export interface ShowFormData {
   status_note: string;
   returns_at: string;
   schedule_note: string;
+}
+
+// --- Social link auto-detection ---
+
+interface SocialLinkEntry {
+  id: string;
+  url: string;
+  platform: string;
+}
+
+const PLATFORM_PATTERNS: [RegExp, string][] = [
+  [/facebook\.com|fb\.com|fb\.me/i, "facebook"],
+  [/twitter\.com|x\.com/i, "twitter"],
+  [/instagram\.com/i, "instagram"],
+  [/youtube\.com|youtu\.be/i, "youtube"],
+  [/tiktok\.com/i, "tiktok"],
+  [/threads\.net/i, "threads"],
+  [/mastodon\.|mstdn\.|mas\.to/i, "mastodon"],
+  [/bsky\.app|bsky\.social/i, "bluesky"],
+  [/linkedin\.com/i, "linkedin"],
+  [/spotify\.com/i, "spotify"],
+  [/podcasts\.apple\.com|itunes\.apple\.com/i, "apple_podcasts"],
+  [/podcasts\.google\.com/i, "google_podcasts"],
+  [/soundcloud\.com/i, "soundcloud"],
+  [/bandcamp\.com/i, "bandcamp"],
+  [/patreon\.com/i, "patreon"],
+  [/substack\.com/i, "substack"],
+  [/tumblr\.com/i, "tumblr"],
+  [/twitch\.tv/i, "twitch"],
+  [/discord\.gg|discord\.com/i, "discord"],
+  [/t\.me|telegram\.me/i, "telegram"],
+];
+
+const PLATFORM_LABELS: Record<string, string> = {
+  facebook: "Facebook",
+  twitter: "X / Twitter",
+  instagram: "Instagram",
+  youtube: "YouTube",
+  tiktok: "TikTok",
+  threads: "Threads",
+  mastodon: "Mastodon",
+  bluesky: "Bluesky",
+  linkedin: "LinkedIn",
+  spotify: "Spotify",
+  apple_podcasts: "Apple Podcasts",
+  google_podcasts: "Google Podcasts",
+  soundcloud: "SoundCloud",
+  bandcamp: "Bandcamp",
+  patreon: "Patreon",
+  substack: "Substack",
+  tumblr: "Tumblr",
+  twitch: "Twitch",
+  discord: "Discord",
+  telegram: "Telegram",
+};
+
+function detectPlatform(url: string): string {
+  if (!url) return "";
+  for (const [pattern, platform] of PLATFORM_PATTERNS) {
+    if (pattern.test(url)) return platform;
+  }
+  return "";
+}
+
+let nextLinkId = 0;
+function makeLinkId() {
+  return `link_${++nextLinkId}`;
+}
+
+function socialLinksToEntries(links: Record<string, string>): SocialLinkEntry[] {
+  const entries = Object.entries(links)
+    .filter(([, url]) => url)
+    .map(([platform, url]) => ({ id: makeLinkId(), url, platform }));
+  return entries.length > 0 ? entries : [{ id: makeLinkId(), url: "", platform: "" }];
+}
+
+function entriesToSocialLinks(entries: SocialLinkEntry[]): Record<string, string> {
+  const result: Record<string, string> = {};
+  const usedKeys = new Set<string>();
+  for (const entry of entries) {
+    if (!entry.url.trim()) continue;
+    const key = entry.platform || `other_${entry.id}`;
+    // Handle duplicate platforms by appending a suffix
+    let finalKey = key;
+    let i = 2;
+    while (usedKeys.has(finalKey)) {
+      finalKey = `${key}_${i++}`;
+    }
+    usedKeys.add(finalKey);
+    result[finalKey] = entry.url.trim();
+  }
+  return result;
 }
 
 interface TagOption {
@@ -93,21 +179,37 @@ const TAG_CATEGORY_COLORS: Record<string, string> = {
 
 export function ShowForm({ initialData, showId, mode, allTags = [], initialTagIds = [] }: ShowFormProps) {
   const router = useRouter();
-  const [form, setForm] = useState<ShowFormData>({ ...emptyShow, ...initialData });
+  const merged = { ...emptyShow, ...initialData };
+  const [form, setForm] = useState<ShowFormData>(merged);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [slugManual, setSlugManual] = useState(mode === "edit");
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialTagIds);
+  const [socialEntries, setSocialEntries] = useState<SocialLinkEntry[]>(
+    socialLinksToEntries(merged.social_links || {})
+  );
 
   function updateField<K extends keyof ShowFormData>(key: K, value: ShowFormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function updateSocialLink(platform: string, url: string) {
-    setForm((prev) => ({
-      ...prev,
-      social_links: { ...prev.social_links, [platform]: url },
-    }));
+  function updateSocialEntry(id: string, url: string) {
+    setSocialEntries((prev) =>
+      prev.map((entry) =>
+        entry.id === id ? { ...entry, url, platform: detectPlatform(url) } : entry
+      )
+    );
+  }
+
+  function addSocialEntry() {
+    setSocialEntries((prev) => [...prev, { id: makeLinkId(), url: "", platform: "" }]);
+  }
+
+  function removeSocialEntry(id: string) {
+    setSocialEntries((prev) => {
+      const next = prev.filter((e) => e.id !== id);
+      return next.length > 0 ? next : [{ id: makeLinkId(), url: "", platform: "" }];
+    });
   }
 
   function handleTitleChange(title: string) {
@@ -122,13 +224,21 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
     setSaving(true);
     setError("");
 
+    // Convert dynamic entries to Record, stripping empties
+    const cleanedLinks = entriesToSocialLinks(socialEntries);
+    const payload = { ...form, social_links: cleanedLinks };
+
+    // Also clean up the entries in the UI to remove empty rows
+    const cleaned = socialEntries.filter((e) => e.url.trim());
+    setSocialEntries(cleaned.length > 0 ? cleaned : [{ id: makeLinkId(), url: "", platform: "" }]);
+
     const url = mode === "create" ? "/api/shows" : `/api/shows/${showId}`;
     const method = mode === "create" ? "POST" : "PATCH";
 
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
@@ -378,23 +488,41 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
       {/* === Social Links === */}
       <section>
         <h2 className="text-lg font-bold text-charcoal">Social Media</h2>
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-          {(["facebook", "twitter", "instagram", "youtube", "tiktok"] as const).map(
-            (platform) => (
-              <div key={platform}>
-                <label className="block text-sm font-medium capitalize text-charcoal">
-                  {platform}
-                </label>
-                <input
-                  type="url"
-                  value={(form.social_links as Record<string, string>)[platform] || ""}
-                  onChange={(e) => updateSocialLink(platform, e.target.value)}
-                  placeholder={`https://${platform}.com/...`}
-                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
-                />
-              </div>
-            )
-          )}
+        <p className="mt-1 text-xs text-charcoal/40">
+          Paste any social or podcast URL — the platform is detected automatically.
+        </p>
+        <div className="mt-4 space-y-3">
+          {socialEntries.map((entry) => (
+            <div key={entry.id} className="flex items-center gap-2">
+              <span className="w-28 flex-shrink-0 text-xs font-medium text-charcoal/50">
+                {entry.platform ? (PLATFORM_LABELS[entry.platform] || entry.platform) : "Link"}
+              </span>
+              <input
+                type="url"
+                value={entry.url}
+                onChange={(e) => updateSocialEntry(entry.id, e.target.value)}
+                placeholder="https://..."
+                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => removeSocialEntry(entry.id)}
+                className="flex-shrink-0 px-2 py-2 text-charcoal/30 hover:text-kpfk-red"
+                title="Remove link"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addSocialEntry}
+            className="mt-1 text-sm font-medium text-charcoal/50 hover:text-charcoal"
+          >
+            + Add another link
+          </button>
         </div>
       </section>
 
