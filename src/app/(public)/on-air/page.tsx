@@ -59,7 +59,7 @@ interface Show {
   logo_path: string | null;
   banner_path: string | null;
   broadcast_status: string;
-  cms_show_hosts: { name: string; is_primary: boolean; role: string }[];
+  cms_show_hosts: { name: string; role: string }[];
   cms_show_tags: ShowTag[];
 }
 
@@ -84,7 +84,7 @@ export default async function OnAirPage({
   // Fetch shows with their tags
   const { data: shows } = await supabase
     .from("cms_shows")
-    .select("id, title, slug, tagline, show_type, logo_path, banner_path, broadcast_status, cms_show_hosts(name, is_primary, role), cms_show_tags(tag_id, cms_tags(id, name, slug, category))")
+    .select("id, title, slug, tagline, show_type, logo_path, banner_path, broadcast_status, cms_show_hosts(name, role), cms_show_tags(tag_id, cms_tags(id, name, slug, category))")
     .eq("is_active", true)
     .is("deleted_at", null)
     .order("sort_order", { ascending: true })
@@ -178,8 +178,7 @@ export default async function OnAirPage({
         <div className="mt-10 grid grid-cols-1 gap-px border border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-3">
           {filteredShows.map((show) => {
             const hostsOnly = (show.cms_show_hosts ?? []).filter((h) => h.role !== "producer");
-            const primaryHost = hostsOnly.find((h) => h.is_primary);
-            const hostName = primaryHost?.name || hostsOnly[0]?.name;
+            const hostName = hostsOnly[0]?.name;
             const status = show.broadcast_status || "active";
             const isNonActive = status === "hiatus" || status === "online_only";
             const showTags = (show.cms_show_tags ?? [])

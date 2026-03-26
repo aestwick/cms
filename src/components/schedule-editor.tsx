@@ -58,7 +58,6 @@ interface ConfessorPreviewResponse {
 // ─── Types ───────────────────────────────────────────────────
 interface Host {
   name: string;
-  is_primary: boolean;
 }
 
 interface Show {
@@ -158,8 +157,7 @@ function slotColor(showId: string | null): string {
 
 function getPrimaryHost(hosts?: Host[]): string | null {
   if (!hosts || hosts.length === 0) return null;
-  const primary = hosts.find((h) => h.is_primary);
-  return primary?.name || hosts[0]?.name || null;
+  return hosts[0]?.name || null;
 }
 
 // ─── TimePicker ─────────────────────────────────────────────

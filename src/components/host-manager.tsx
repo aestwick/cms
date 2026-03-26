@@ -8,7 +8,6 @@ interface Host {
   bio: string;
   photo_path: string;
   email: string;
-  is_primary: boolean;
   role: string;
   sort_order: number;
 }
@@ -30,7 +29,6 @@ const emptyHost: Host = {
   bio: "",
   photo_path: "",
   email: "",
-  is_primary: false,
   role: "host",
   sort_order: 0,
 };
@@ -44,7 +42,6 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
           bio: h.bio || "",
           photo_path: h.photo_path || "",
           email: h.email || "",
-          is_primary: h.is_primary,
           role: h.role || "host",
           sort_order: h.sort_order,
         }))
@@ -67,12 +64,6 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
   function updateHost(index: number, field: keyof Host, value: string | boolean | number) {
     setHosts((prev) =>
       prev.map((h, i) => (i === index ? { ...h, [field]: value } : h))
-    );
-  }
-
-  function setPrimary(index: number) {
-    setHosts((prev) =>
-      prev.map((h, i) => ({ ...h, is_primary: i === index }))
     );
   }
 
@@ -140,17 +131,6 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                     </option>
                   ))}
                 </select>
-                <button
-                  type="button"
-                  onClick={() => setPrimary(index)}
-                  className={`rounded px-3 py-1.5 text-xs ${
-                    host.is_primary
-                      ? "bg-charcoal text-off-white"
-                      : "border border-charcoal/20 text-charcoal/40 hover:text-charcoal"
-                  }`}
-                >
-                  {host.is_primary ? "Primary" : "Set primary"}
-                </button>
               </div>
               <button
                 type="button"

@@ -86,7 +86,6 @@ export default async function EditShowPage({
             social_links: show.social_links || {},
             donation_cta_heading: show.donation_cta_heading || "",
             donation_cta_body: show.donation_cta_body || "",
-            donation_cta_url: show.donation_cta_url || "",
             is_active: show.is_active,
             sort_order: show.sort_order,
             broadcast_status: show.broadcast_status || "active",

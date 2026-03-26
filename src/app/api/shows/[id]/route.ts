@@ -60,7 +60,7 @@ export async function PATCH(
     "title", "slug", "tagline", "description", "history", "show_type",
     "program_slug", "logo_path", "banner_path", "contact_preference",
     "contact_email", "website_url", "rss_url", "social_links",
-    "donation_cta_heading", "donation_cta_body", "donation_cta_url",
+    "donation_cta_heading", "donation_cta_body",
     "is_active", "sort_order",
     "broadcast_status", "status_note", "returns_at", "schedule_note",
   ];
@@ -69,7 +69,7 @@ export async function PATCH(
   const nullableFields = new Set([
     "tagline", "description", "history", "program_slug", "logo_path",
     "banner_path", "contact_email", "website_url", "rss_url",
-    "donation_cta_heading", "donation_cta_body", "donation_cta_url",
+    "donation_cta_heading", "donation_cta_body",
     "status_note", "returns_at", "schedule_note",
   ]);
 

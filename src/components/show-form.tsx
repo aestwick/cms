@@ -20,7 +20,6 @@ export interface ShowFormData {
   social_links: Record<string, string>;
   donation_cta_heading: string;
   donation_cta_body: string;
-  donation_cta_url: string;
   is_active: boolean;
   sort_order: number;
   broadcast_status: "active" | "hiatus" | "online_only" | "retired";
@@ -181,7 +180,6 @@ const emptyShow: ShowFormData = {
   social_links: {},
   donation_cta_heading: "",
   donation_cta_body: "",
-  donation_cta_url: "",
   is_active: true,
   sort_order: 0,
   broadcast_status: "active",
@@ -582,18 +580,6 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-charcoal">
-              Donate URL
-            </label>
-            <input
-              type="url"
-              value={form.donation_cta_url}
-              onChange={(e) => updateField("donation_cta_url", e.target.value)}
-              placeholder="https://donate.kpfk.org"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
-            />
-          </div>
-          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-charcoal">
               CTA Body Text
             </label>

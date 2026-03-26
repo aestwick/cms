@@ -19,7 +19,6 @@ interface ShowHost {
   name: string;
   bio: string | null;
   photo_path: string | null;
-  is_primary: boolean;
   role: string;
 }
 
@@ -60,7 +59,6 @@ interface Show {
   social_links: Record<string, string>;
   donation_cta_heading: string | null;
   donation_cta_body: string | null;
-  donation_cta_url: string | null;
   broadcast_status: string;
   status_note: string | null;
   returns_at: string | null;
@@ -314,9 +312,7 @@ export default async function ShowPage({ params }: PageProps) {
   if (!show) notFound();
 
   const typedShow = show as unknown as Show;
-  const hosts = (typedShow.cms_show_hosts ?? []).sort(
-    (a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)
-  );
+  const hosts = typedShow.cms_show_hosts ?? [];
   const showContact = ["form", "both"].includes(typedShow.contact_preference);
   const showEmail = ["email", "both"].includes(typedShow.contact_preference);
   const socialEntries = Object.entries(typedShow.social_links || {}).filter(
@@ -395,7 +391,7 @@ export default async function ShowPage({ params }: PageProps) {
   const hasLinks = typedShow.website_url || typedShow.rss_url || socialEntries.length > 0;
   const donateHeading = typedShow.donation_cta_heading || `Support ${typedShow.title}`;
   const donateBody = typedShow.donation_cta_body || "Keep community radio on the air.";
-  const donateUrl = typedShow.donation_cta_url || "https://donate.kpfk.org";
+  const donateUrl = "https://donate.kpfk.org";
 
   const scheduleBadgeLines = formatScheduleBadge(scheduleSlots ?? []);
 
