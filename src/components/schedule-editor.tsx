@@ -35,6 +35,26 @@ const SLOT_COLORS = [
   "#DDD6FE",
 ];
 
+// ─── Confessor Import Types ─────────────────────────────────
+interface ConfessorPreviewSlot {
+  confessor_altid: string;
+  show_name: string;
+  host_name: string;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  category: string;
+  matched_show_id: string | null;
+  matched_show_title: string | null;
+}
+
+interface ConfessorPreviewResponse {
+  incoming: ConfessorPreviewSlot[];
+  current_count: number;
+  incoming_count: number;
+  unmatched_shows: { altid: string; name: string }[];
+}
+
 // ─── Types ───────────────────────────────────────────────────
 interface Host {
   name: string;
@@ -396,6 +416,13 @@ export function ScheduleEditor() {
   const [error, setError] = useState("");
   const [ghost, setGhost] = useState<GhostPosition | null>(null);
   const [selectedDay, setSelectedDay] = useState(() => new Date().getDay());
+
+  // Confessor import state
+  const [importPreview, setImportPreview] = useState<ConfessorPreviewResponse | null>(null);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importApplying, setImportApplying] = useState(false);
+  const [importError, setImportError] = useState("");
+  const [importSuccess, setImportSuccess] = useState("");
 
   const isMobile = useIsMobile(768); // below md breakpoint
 
@@ -775,6 +802,53 @@ export function ScheduleEditor() {
     }
   }
 
+  // ── Confessor import ──
+  async function handleConfessorPreview() {
+    setImportLoading(true);
+    setImportError("");
+    setImportSuccess("");
+    try {
+      const res = await fetch("/api/schedule/confessor-preview");
+      if (!res.ok) {
+        const data = await res.json();
+        setImportError(data.error || "Failed to fetch Confessor schedule");
+        setImportLoading(false);
+        return;
+      }
+      const data: ConfessorPreviewResponse = await res.json();
+      setImportPreview(data);
+    } catch {
+      setImportError("Network error reaching Confessor preview");
+    }
+    setImportLoading(false);
+  }
+
+  async function handleConfessorApply() {
+    setImportApplying(true);
+    setImportError("");
+    try {
+      const res = await fetch("/api/schedule/confessor-import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setImportError(data.error || "Import failed");
+        setImportApplying(false);
+        return;
+      }
+      setImportPreview(null);
+      setImportSuccess(`Imported ${data.imported} slots (replaced ${data.deleted}).`);
+      // Reload schedule
+      const slotsRes = await fetch("/api/schedule");
+      const slotsData = await slotsRes.json();
+      setSlots(Array.isArray(slotsData) ? slotsData : []);
+    } catch {
+      setImportError("Network error during import");
+    }
+    setImportApplying(false);
+  }
+
   // ── Render ──
   if (loading) {
     return <p className="text-sm text-charcoal/50">Loading schedule...</p>;
@@ -864,6 +938,121 @@ export function ScheduleEditor() {
 
   return (
     <div className="relative select-none">
+      {/* ── Confessor import button ── */}
+      <div className="mb-4 flex items-center gap-3">
+        <button
+          onClick={handleConfessorPreview}
+          disabled={importLoading}
+          className="inline-flex items-center gap-2 border border-charcoal/20 bg-off-white px-4 py-2 text-sm font-medium text-charcoal hover:bg-charcoal/5 disabled:opacity-50"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          {importLoading ? "Fetching..." : "Import from Confessor"}
+        </button>
+        {importSuccess && (
+          <span className="text-sm text-green-700">{importSuccess}</span>
+        )}
+      </div>
+
+      {/* ── Confessor preview modal ── */}
+      {importPreview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50 p-4"
+          onClick={() => { setImportPreview(null); setImportError(""); }}
+        >
+          <div
+            className="max-h-[90vh] w-full max-w-2xl overflow-y-auto border border-charcoal/20 bg-off-white p-5 shadow-xl sm:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-serif text-lg font-bold text-charcoal">
+              Import Schedule from Confessor
+            </h3>
+            <p className="mt-1 text-sm text-charcoal/50">
+              This will <strong>replace all {importPreview.current_count} recurring slots</strong> with{" "}
+              <strong>{importPreview.incoming_count} slots</strong> from Confessor.
+            </p>
+
+            {/* Unmatched shows warning */}
+            {importPreview.unmatched_shows.length > 0 && (
+              <div className="mt-4 border border-amber-300 bg-amber-50 p-3">
+                <p className="text-sm font-medium text-amber-800">
+                  {importPreview.unmatched_shows.length} show{importPreview.unmatched_shows.length > 1 ? "s" : ""} not matched to CMS
+                </p>
+                <p className="mt-1 text-xs text-amber-700">
+                  These will be imported with a label but no linked show page.
+                  Set <code className="rounded bg-amber-100 px-1">program_slug</code> on the CMS show to match.
+                </p>
+                <ul className="mt-2 space-y-0.5 text-xs text-amber-800">
+                  {importPreview.unmatched_shows.map((s) => (
+                    <li key={s.altid}>
+                      <code className="rounded bg-amber-100 px-1">{s.altid}</code>{" "}
+                      &mdash; {s.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Preview grid */}
+            <div className="mt-4 max-h-[50vh] overflow-y-auto border border-charcoal/10">
+              <table className="w-full text-xs">
+                <thead className="sticky top-0 bg-charcoal/5">
+                  <tr>
+                    <th className="px-2 py-1.5 text-left font-medium text-charcoal/60">Day</th>
+                    <th className="px-2 py-1.5 text-left font-medium text-charcoal/60">Time</th>
+                    <th className="px-2 py-1.5 text-left font-medium text-charcoal/60">Show</th>
+                    <th className="px-2 py-1.5 text-left font-medium text-charcoal/60">Host</th>
+                    <th className="px-2 py-1.5 text-left font-medium text-charcoal/60">Match</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {importPreview.incoming
+                    .sort((a, b) => a.day_of_week - b.day_of_week || a.start_time.localeCompare(b.start_time))
+                    .map((slot, i) => (
+                      <tr key={i} className={`border-t border-charcoal/5 ${!slot.matched_show_id ? "bg-amber-50/50" : ""}`}>
+                        <td className="px-2 py-1.5 text-charcoal/70">{DAY_NAMES_SHORT[slot.day_of_week]}</td>
+                        <td className="px-2 py-1.5 font-mono text-charcoal/60">
+                          {formatTime12(slot.start_time)}&ndash;{formatTime12(slot.end_time)}
+                        </td>
+                        <td className="px-2 py-1.5 font-medium text-charcoal">{slot.show_name}</td>
+                        <td className="px-2 py-1.5 text-charcoal/50">{slot.host_name || "\u2014"}</td>
+                        <td className="px-2 py-1.5">
+                          {slot.matched_show_id ? (
+                            <span className="text-green-700">{slot.matched_show_title}</span>
+                          ) : (
+                            <span className="text-amber-600">unmatched</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
+            {importError && (
+              <p className="mt-3 text-sm text-kpfk-red">{importError}</p>
+            )}
+
+            <div className="mt-5 flex items-center gap-3">
+              <button
+                onClick={handleConfessorApply}
+                disabled={importApplying}
+                className="border-2 border-kpfk-red bg-kpfk-red px-5 py-2.5 text-sm font-medium text-off-white hover:bg-kpfk-red/90 disabled:opacity-50"
+              >
+                {importApplying ? "Importing..." : `Replace ${importPreview.current_count} slots with ${importPreview.incoming_count}`}
+              </button>
+              <button
+                onClick={() => { setImportPreview(null); setImportError(""); }}
+                className="px-4 py-2.5 text-sm text-charcoal/60 hover:text-charcoal"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Mobile day switcher ── */}
       {isMobile && (
         <div className="mb-3 flex gap-1">
