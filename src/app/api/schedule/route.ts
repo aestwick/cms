@@ -8,7 +8,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("cms_schedule_slots")
-    .select("id, show_id, day_of_week, start_time, end_time, label, is_recurring, effective_date, expires_date, cms_shows(id, title, slug, cms_show_hosts(name, is_primary))")
+    .select("id, show_id, day_of_week, start_time, end_time, label, image_path, is_recurring, effective_date, expires_date, cms_shows(id, title, slug, cms_show_hosts(name, is_primary))")
     .eq("is_recurring", true)
     .order("day_of_week", { ascending: true })
     .order("start_time", { ascending: true });
@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
       start_time: body.start_time,
       end_time: body.end_time,
       label: body.label || null,
+      image_path: body.image_path || null,
       is_recurring: body.is_recurring ?? true,
       effective_date: body.effective_date || null,
       expires_date: body.expires_date || null,
