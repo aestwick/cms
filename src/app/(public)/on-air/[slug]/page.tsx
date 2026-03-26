@@ -306,114 +306,65 @@ export default async function ShowPage({ params }: PageProps) {
   return (
     <article>
       {/* ============================================================ */}
-      {/* Masthead                                                      */}
+      {/* Masthead — logo-first layout, banner is optional accent       */}
       {/* ============================================================ */}
-      {typedShow.banner_path ? (
-        <header className="relative h-72 w-full overflow-hidden bg-charcoal sm:h-80 lg:h-96">
+      {typedShow.banner_path && (
+        <div className="relative h-40 w-full overflow-hidden bg-charcoal sm:h-48">
           <Image
             src={resolveImageUrl(typedShow.banner_path)}
-            alt={`${typedShow.title} banner`}
+            alt=""
             fill
-            className="object-cover"
+            className="object-cover opacity-60"
             sizes="100vw"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-6 pb-6 sm:px-8">
-            <div className="flex items-end gap-5">
-              {typedShow.logo_path && (
-                <div className="relative hidden h-32 w-32 flex-shrink-0 overflow-hidden border-2 border-off-white/20 bg-charcoal/50 backdrop-blur sm:block lg:h-36 lg:w-36">
-                  <Image
-                    src={resolveImageUrl(typedShow.logo_path)}
-                    alt={`${typedShow.title} logo`}
-                    fill
-                    className="object-contain p-2"
-                    sizes="160px"
-                  />
-                </div>
-              )}
-              <div>
-                <span className="font-mono text-xs uppercase tracking-wider text-off-white/60">
-                  {typedShow.show_type}
-                </span>
-                <h1 className="font-serif text-3xl font-bold leading-tight text-off-white sm:text-4xl lg:text-5xl">
-                  {typedShow.title}
-                </h1>
-                {typedShow.tagline && (
-                  <p className="mt-1 text-lg text-off-white/70">{typedShow.tagline}</p>
-                )}
-                {/* Tags in masthead */}
-                {tags.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                      <Link
-                        key={tag.id}
-                        href={`/on-air?tag=${tag.slug}`}
-                        className={`border px-2.5 py-1 text-xs text-off-white/80 transition-colors hover:text-off-white ${
-                          tag.category === "topic"
-                            ? "border-off-white/20 bg-off-white/10"
-                            : tag.category === "format"
-                              ? "border-off-white/20 bg-off-white/10"
-                              : "border-off-white/20 bg-off-white/10"
-                        }`}
-                      >
-                        {tag.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+        </div>
+      )}
+      <header className="border-b-2 border-charcoal bg-charcoal/[0.03]">
+        <div className="mx-auto flex max-w-7xl items-end gap-5 px-6 py-6 sm:px-8 sm:py-8">
+          {typedShow.logo_path ? (
+            <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-off-white sm:h-36 sm:w-36">
+              <Image
+                src={resolveImageUrl(typedShow.logo_path)}
+                alt={`${typedShow.title} logo`}
+                fill
+                className="object-contain p-2"
+                sizes="(min-width: 640px) 144px, 128px"
+              />
             </div>
-          </div>
-        </header>
-      ) : (
-        <header className="relative w-full overflow-hidden border-b-2 border-charcoal bg-charcoal/[0.03]">
-          <div className="mx-auto flex max-w-7xl items-end gap-5 px-6 py-8 sm:px-8 sm:py-10">
-            {typedShow.logo_path ? (
-              <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-off-white sm:h-36 sm:w-36">
-                <Image
-                  src={resolveImageUrl(typedShow.logo_path)}
-                  alt={`${typedShow.title} logo`}
-                  fill
-                  className="object-contain p-2"
-                  sizes="(min-width: 640px) 176px, 144px"
-                />
-              </div>
-            ) : (
-              <div className="flex h-32 w-32 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5 sm:h-36 sm:w-36">
-                <span className="font-serif text-6xl font-bold text-charcoal/15 sm:text-7xl">
-                  {typedShow.title.charAt(0)}
-                </span>
+          ) : (
+            <div className="flex h-32 w-32 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5 sm:h-36 sm:w-36">
+              <span className="font-serif text-6xl font-bold text-charcoal/15 sm:text-7xl">
+                {typedShow.title.charAt(0)}
+              </span>
+            </div>
+          )}
+          <div className="pb-1">
+            <span className="font-mono text-xs uppercase tracking-wider text-charcoal/40">
+              {typedShow.show_type}
+            </span>
+            <h1 className="font-serif text-3xl font-bold leading-tight text-charcoal sm:text-4xl lg:text-5xl">
+              {typedShow.title}
+            </h1>
+            {typedShow.tagline && (
+              <p className="mt-1 text-lg text-charcoal/60">{typedShow.tagline}</p>
+            )}
+            {tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <Link
+                    key={tag.id}
+                    href={`/on-air?tag=${tag.slug}`}
+                    className={`border px-2.5 py-1 text-xs transition-colors hover:text-charcoal ${TAG_CATEGORY_COLORS[tag.category] || "border-charcoal/15 bg-charcoal/5"} text-charcoal/70`}
+                  >
+                    {tag.name}
+                  </Link>
+                ))}
               </div>
             )}
-            <div className="pb-1">
-              <span className="font-mono text-xs uppercase tracking-wider text-charcoal/40">
-                {typedShow.show_type}
-              </span>
-              <h1 className="font-serif text-3xl font-bold leading-tight text-charcoal sm:text-4xl lg:text-5xl">
-                {typedShow.title}
-              </h1>
-              {typedShow.tagline && (
-                <p className="mt-2 text-lg text-charcoal/60 sm:text-xl">{typedShow.tagline}</p>
-              )}
-              {/* Tags in masthead */}
-              {tags.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <Link
-                      key={tag.id}
-                      href={`/on-air?tag=${tag.slug}`}
-                      className={`border px-2.5 py-1 text-xs transition-colors hover:text-charcoal ${TAG_CATEGORY_COLORS[tag.category] || "border-charcoal/15 bg-charcoal/5"} text-charcoal/70`}
-                    >
-                      {tag.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
-        </header>
-      )}
+        </div>
+      </header>
 
       {/* ============================================================ */}
       {/* Schedule Badge / Broadcast Status Bar                         */}
