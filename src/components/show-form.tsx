@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImagePicker } from "@/components/image-picker";
 
 export interface ShowFormData {
   title: string;
@@ -428,33 +429,21 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
       <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
         <h2 className="text-lg font-bold text-charcoal">Media</h2>
         <p className="mt-1 text-xs text-charcoal/40">
-          Storage paths for logo and banner images. Media library upload coming in a future phase.
+          Upload, browse the media library, or paste a URL.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-charcoal">
-              Logo Path
-            </label>
-            <input
-              type="text"
-              value={form.logo_path}
-              onChange={(e) => updateField("logo_path", e.target.value)}
-              placeholder="shows/bike-talk/logo.webp"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-charcoal">
-              Banner Path
-            </label>
-            <input
-              type="text"
-              value={form.banner_path}
-              onChange={(e) => updateField("banner_path", e.target.value)}
-              placeholder="shows/bike-talk/banner.webp"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
-            />
-          </div>
+          <ImagePicker
+            value={form.logo_path}
+            onChange={(path) => updateField("logo_path", path)}
+            label="Logo"
+            placeholder="shows/bike-talk/logo.webp"
+          />
+          <ImagePicker
+            value={form.banner_path}
+            onChange={(path) => updateField("banner_path", path)}
+            label="Banner"
+            placeholder="shows/bike-talk/banner.webp"
+          />
         </div>
       </div>
 
