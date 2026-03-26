@@ -299,9 +299,11 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      {/* === Core Info === */}
-      <section>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* ═══════════════════════════════════════════
+          CARD 1 — Identity
+          ═══════════════════════════════════════════ */}
+      <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
         <h2 className="text-lg font-bold text-charcoal">Show Info</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
@@ -348,12 +350,10 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             />
           </div>
         </div>
-      </section>
 
-      {/* === Show Type & Program Slug === */}
-      <section>
-        <h2 className="text-lg font-bold text-charcoal">Show Type & Mapping</h2>
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <hr className="my-5 border-charcoal/8" />
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className="block text-sm font-medium text-charcoal">
               Show Type
@@ -384,10 +384,12 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* === Description & History (rich text fields) === */}
-      <section>
+      {/* ═══════════════════════════════════════════
+          CARD 2 — Content
+          ═══════════════════════════════════════════ */}
+      <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
         <h2 className="text-lg font-bold text-charcoal">Content</h2>
         <div className="mt-4 space-y-4">
           <div>
@@ -418,10 +420,12 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             />
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* === Media Paths === */}
-      <section>
+      {/* ═══════════════════════════════════════════
+          CARD 3 — Media
+          ═══════════════════════════════════════════ */}
+      <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
         <h2 className="text-lg font-bold text-charcoal">Media</h2>
         <p className="mt-1 text-xs text-charcoal/40">
           Storage paths for logo and banner images. Media library upload coming in a future phase.
@@ -452,11 +456,13 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             />
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* === Contact === */}
-      <section>
-        <h2 className="text-lg font-bold text-charcoal">Contact</h2>
+      {/* ═══════════════════════════════════════════
+          CARD 4 — Contact, Links & Social
+          ═══════════════════════════════════════════ */}
+      <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
+        <h2 className="text-lg font-bold text-charcoal">Contact & Links</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className="block text-sm font-medium text-charcoal">
@@ -485,13 +491,6 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
             />
           </div>
-        </div>
-      </section>
-
-      {/* === Links === */}
-      <section>
-        <h2 className="text-lg font-bold text-charcoal">Links</h2>
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <label className="block text-sm font-medium text-charcoal">
               Website URL
@@ -517,15 +516,14 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             />
           </div>
         </div>
-      </section>
 
-      {/* === Social Links === */}
-      <section>
-        <h2 className="text-lg font-bold text-charcoal">Social Media</h2>
+        <hr className="my-5 border-charcoal/8" />
+
+        <h3 className="text-sm font-bold text-charcoal">Social Media</h3>
         <p className="mt-1 text-xs text-charcoal/40">
           Paste any social or podcast URL — the platform is detected automatically.
         </p>
-        <div className="mt-4 space-y-3">
+        <div className="mt-3 space-y-3">
           {socialEntries.map((entry) => (
             <div key={entry.id} className="flex items-center gap-2">
               <span className="w-28 flex-shrink-0 text-xs font-medium text-charcoal/50">
@@ -558,10 +556,12 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             + Add another link
           </button>
         </div>
-      </section>
+      </div>
 
-      {/* === Donation CTA Override === */}
-      <section>
+      {/* ═══════════════════════════════════════════
+          CARD 5 — Donation CTA
+          ═══════════════════════════════════════════ */}
+      <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
         <h2 className="text-lg font-bold text-charcoal">Donation CTA</h2>
         <p className="mt-1 text-xs text-charcoal/40">
           Override the default sidebar donation call-to-action. Leave blank to use defaults.
@@ -592,10 +592,12 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             />
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* === Broadcast Status === */}
-      <section>
+      {/* ═══════════════════════════════════════════
+          CARD 6 — Broadcast Status
+          ═══════════════════════════════════════════ */}
+      <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
         <h2 className="text-lg font-bold text-charcoal">Broadcast Status</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
@@ -605,7 +607,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             <select
               value={form.broadcast_status}
               onChange={(e) => updateField("broadcast_status", e.target.value as ShowFormData["broadcast_status"])}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
             >
               <option value="active">Active</option>
               <option value="hiatus">On Hiatus</option>
@@ -622,7 +624,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
                 type="date"
                 value={form.returns_at}
                 onChange={(e) => updateField("returns_at", e.target.value)}
-                className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+                className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
               />
             </div>
           )}
@@ -635,7 +637,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.status_note}
               onChange={(e) => updateField("status_note", e.target.value)}
               placeholder="e.g. New episodes returning June 2026"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               Free text displayed publicly where the schedule badge would go.
@@ -650,61 +652,63 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.schedule_note}
               onChange={(e) => updateField("schedule_note", e.target.value)}
               placeholder="e.g. New episodes daily — airing Mon–Thu on KPFK"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               Displayed below the auto-generated schedule badge.
             </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* === Tags === */}
-      {allTags.length > 0 && (
-        <section>
-          <h2 className="text-lg font-bold text-charcoal">Tags</h2>
-          <p className="mt-1 text-xs text-charcoal/40">Click to toggle tags for this show.</p>
-          {(["topic", "format", "audience"] as const).map((category) => {
-            const categoryTags = allTags.filter((t) => t.category === category);
-            if (categoryTags.length === 0) return null;
-            return (
-              <div key={category} className="mt-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-charcoal/40">
-                  {category === "topic" ? "Topics" : category === "format" ? "Formats" : "Audience"}
-                </span>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {categoryTags.map((tag) => {
-                    const isSelected = selectedTagIds.includes(tag.id);
-                    return (
-                      <button
-                        key={tag.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedTagIds((prev) =>
+      {/* ═══════════════════════════════════════════
+          CARD 7 — Tags & Settings
+          ═══════════════════════════════════════════ */}
+      <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
+        {allTags.length > 0 && (
+          <>
+            <h2 className="text-lg font-bold text-charcoal">Tags</h2>
+            <p className="mt-1 text-xs text-charcoal/40">Click to toggle tags for this show.</p>
+            {(["topic", "format", "audience"] as const).map((category) => {
+              const categoryTags = allTags.filter((t) => t.category === category);
+              if (categoryTags.length === 0) return null;
+              return (
+                <div key={category} className="mt-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-charcoal/40">
+                    {category === "topic" ? "Topics" : category === "format" ? "Formats" : "Audience"}
+                  </span>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {categoryTags.map((tag) => {
+                      const isSelected = selectedTagIds.includes(tag.id);
+                      return (
+                        <button
+                          key={tag.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedTagIds((prev) =>
+                              isSelected
+                                ? prev.filter((id) => id !== tag.id)
+                                : [...prev, tag.id]
+                            );
+                          }}
+                          className={`border px-3 py-1.5 text-sm transition-colors ${
                             isSelected
-                              ? prev.filter((id) => id !== tag.id)
-                              : [...prev, tag.id]
-                          );
-                        }}
-                        className={`border px-3 py-1.5 text-sm transition-colors ${
-                          isSelected
-                            ? `${TAG_CATEGORY_COLORS[tag.category]} border-charcoal/30 font-medium text-charcoal`
-                            : "border-charcoal/15 text-charcoal/40 hover:border-charcoal/30 hover:text-charcoal/60"
-                        }`}
-                      >
-                        {tag.name}
-                      </button>
-                    );
-                  })}
+                              ? `${TAG_CATEGORY_COLORS[tag.category]} border-charcoal/30 font-medium text-charcoal`
+                              : "border-charcoal/15 text-charcoal/40 hover:border-charcoal/30 hover:text-charcoal/60"
+                          }`}
+                        >
+                          {tag.name}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </section>
-      )}
+              );
+            })}
+            <hr className="my-5 border-charcoal/8" />
+          </>
+        )}
 
-      {/* === Settings === */}
-      <section>
         <h2 className="text-lg font-bold text-charcoal">Settings</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
@@ -715,7 +719,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               type="number"
               value={form.sort_order}
               onChange={(e) => updateField("sort_order", parseInt(e.target.value) || 0)}
-              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
             />
           </div>
           <div className="flex items-center gap-3 pt-6">
@@ -731,13 +735,13 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             </label>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* === Submit === */}
       {error && (
         <p className="text-sm text-kpfk-red">{error}</p>
       )}
-      <div className="flex flex-col gap-3 border-t border-charcoal/10 pt-6 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
         <button
           type="submit"
           disabled={saving}
