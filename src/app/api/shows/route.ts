@@ -53,6 +53,9 @@ export async function POST(request: NextRequest) {
       website_url: body.website_url || null,
       rss_url: body.rss_url || null,
       social_links: body.social_links || {},
+      donation_cta_heading: body.donation_cta_heading || null,
+      donation_cta_body: body.donation_cta_body || null,
+      donation_cta_url: body.donation_cta_url || null,
       is_active: body.is_active ?? true,
       sort_order: body.sort_order ?? 0,
     })

@@ -30,7 +30,7 @@ export async function PATCH(
   const updateFields: Record<string, unknown> = {};
   const allowedFields = [
     "show_id", "day_of_week", "start_time", "end_time",
-    "label", "is_recurring", "effective_date", "expires_date",
+    "label", "image_path", "is_recurring", "effective_date", "expires_date",
   ];
 
   for (const field of allowedFields) {

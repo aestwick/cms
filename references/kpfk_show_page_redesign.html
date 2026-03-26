@@ -1,0 +1,220 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+.sp{background:#F9F7F2;font-family:'Inter',sans-serif;color:#1A1A1A;padding:0 0 2rem}
+.header{background:#fff;border-bottom:1px solid #1A1A1A;padding:12px 2rem;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Lora',serif;font-size:22px;font-weight:700}
+.logo span{font-family:'JetBrains Mono',monospace;font-size:12px;color:#888;margin-left:4px}
+.nav{display:flex;gap:24px;font-size:14px;color:#555}
+.nav a{color:#555;text-decoration:none}
+.listen-btn{background:#B22222;color:#fff;padding:8px 20px;font-size:13px;font-weight:500;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.donate-link{color:#B22222;font-size:14px;font-weight:500;text-decoration:none}
+.nav-bar{border-bottom:1px solid #ddd;padding:8px 2rem;display:flex;justify-content:space-between;align-items:center}
+.masthead{padding:2rem 2rem 0;display:flex;gap:24px;align-items:flex-start}
+.show-logo-wrap{width:140px;height:140px;flex-shrink:0;border:1px solid #ddd;overflow:hidden;background:#eee}
+.show-logo-wrap img{width:100%;height:100%;object-fit:cover}
+.show-meta{flex:1}
+.show-type-badge{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#B22222;font-weight:500;margin-bottom:4px}
+.show-title{font-family:'Lora',serif;font-size:36px;font-weight:700;line-height:1.1;margin-bottom:4px}
+.show-tagline{font-size:16px;color:#555;margin-bottom:12px;font-style:italic}
+.schedule-badge{display:inline-flex;align-items:center;gap:6px;background:#1A1A1A;color:#F9F7F2;padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:12px}
+.schedule-badge .dot{width:8px;height:8px;background:#B22222;border-radius:50%;display:inline-block}
+.tags-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{padding:4px 10px;font-size:11px;font-weight:500;border:1px solid;cursor:pointer}
+.tag-politics{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.tag-culture{background:#FAEEDA;color:#633806;border-color:#FAC775}
+.tag-justice{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.tag-community{background:#FAECE7;color:#712B13;border-color:#F0997B}
+.tag-identity{background:#FBEAF0;color:#72243E;border-color:#ED93B1}
+.tag-media{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.divider{border:none;border-top:2px solid #B22222;margin:1.5rem 2rem 0}
+.content{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:0;padding:0 2rem;margin-top:1.5rem}
+.main{padding-right:2rem;border-right:1px solid #ddd}
+.sidebar{padding-left:2rem}
+.section-title{font-family:'Lora',serif;font-size:22px;font-weight:700;margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid #ddd}
+.about-text{font-size:15px;line-height:1.75;color:#333;margin-bottom:1.5rem}
+.quote-block{border-left:3px solid #B22222;padding:12px 16px;margin:1.5rem 0;background:#fff}
+.quote-text{font-family:'Lora',serif;font-style:italic;font-size:15px;line-height:1.6;color:#333}
+.quote-attr{font-size:13px;color:#888;margin-top:6px}
+.sidebar-section{margin-bottom:2rem}
+.sidebar-label{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:#888;margin-bottom:1rem;padding-bottom:6px;border-bottom:1px solid #ddd}
+.host-card-lg{display:flex;gap:12px;margin-bottom:1.25rem}
+.host-photo-lg{width:80px;height:100px;background:#ddd;flex-shrink:0;overflow:hidden}
+.host-photo-lg img{width:100%;height:100%;object-fit:cover}
+.host-name-lg{font-family:'Lora',serif;font-size:15px;font-weight:700;margin-bottom:2px}
+.host-bio-lg{font-size:12.5px;color:#555;line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.social-row{display:flex;gap:8px;margin-top:6px}
+.social-icon{width:20px;height:20px;background:#1A1A1A;display:flex;align-items:center;justify-content:center}
+.social-icon svg{width:12px;height:12px;fill:#F9F7F2}
+.episodes-section{margin-top:2rem}
+.episode-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee}
+.ep-play{width:32px;height:32px;background:#B22222;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.ep-play svg{width:14px;height:14px;fill:#fff}
+.ep-info{flex:1;min-width:0}
+.ep-title{font-size:14px;font-weight:500}
+.ep-date{font-size:12px;color:#888;font-family:'JetBrains Mono',monospace}
+.ep-duration{font-size:12px;color:#888;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.donate-box{border:2px solid #B22222;padding:1.25rem;text-align:center;margin-top:1.5rem}
+.donate-box h3{font-family:'Lora',serif;font-size:18px;font-weight:700;margin-bottom:4px}
+.donate-box p{font-size:13px;color:#555;margin-bottom:12px}
+.donate-btn{background:#B22222;color:#fff;padding:10px 28px;font-size:14px;font-weight:500;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.contact-section{margin-top:2rem;padding-top:1.5rem;border-top:1px solid #ddd}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-field{display:flex;flex-direction:column;gap:4px}
+.form-field.full{grid-column:1/-1}
+.form-label{font-size:12px;font-weight:500;color:#555}
+.form-input{border:1px solid #ccc;padding:8px 10px;font-size:14px;font-family:'Inter',sans-serif;background:#fff}
+.form-input:focus{border-color:#B22222;outline:none}
+.form-textarea{border:1px solid #ccc;padding:8px 10px;font-size:14px;font-family:'Inter',sans-serif;background:#fff;resize:vertical;min-height:80px}
+.form-submit{background:#1A1A1A;color:#F9F7F2;padding:10px 24px;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;margin-top:8px;width:fit-content}
+</style>
+
+<div class="sp">
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:32px">
+      <div class="logo">KPFK<span>90.7 FM</span></div>
+      <div class="nav">
+        <a href="#">On Air</a><a href="#">Schedule</a><a href="#">Blog</a><a href="#">Events</a><a href="#">About</a>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:20px">
+      <a href="#" class="donate-link">Donate</a>
+      <button class="listen-btn">Listen Live</button>
+    </div>
+  </div>
+
+  <div class="masthead">
+    <div class="show-logo-wrap">
+      <img src="https://mmo.aiircdn.com/237/6915782ad4f0f.jpg" alt="The QR Code" onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:Lora,serif;font-size:28px;font-weight:700;color:#999&quot;>QR</div>'"/>
+    </div>
+    <div class="show-meta">
+      <div class="show-type-badge">Talk</div>
+      <h1 class="show-title">The QR Code</h1>
+      <div class="show-tagline">Culture. Opinions. Dialogue. Entertainment.</div>
+      <div class="schedule-badge"><span class="dot"></span>MON – THU &bull; 6:00 – 7:00 AM &bull; KPFK 90.7 FM</div>
+      <div class="tags-row">
+        <span class="tag tag-politics">Politics</span>
+        <span class="tag tag-culture">Culture</span>
+        <span class="tag tag-justice">Social justice</span>
+        <span class="tag tag-community">Community</span>
+        <span class="tag tag-identity">Identity</span>
+        <span class="tag tag-media">Media</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="content">
+    <div class="main">
+      <h2 class="section-title">About the show</h2>
+      <div class="about-text">
+        The QR Code is a fast-paced morning show that brings honest conversation and cultural context to the airwaves. Hosted by Q Ward and Ramses Ja — the duo behind the nationally syndicated Civic Cipher — the show unpacks stories and issues that matter to Black and Brown communities and the broader American public.
+      </div>
+      <div class="about-text">
+        From politics and social justice to education, media, mental health, and identity, The QR Code offers perspective with purpose. CODE stands for Culture, Opinions, Dialogue, Entertainment — the pillars of every episode.
+      </div>
+
+      <div class="quote-block">
+        <div class="quote-text">"We believe that truth and transparency are essential to a healthy democracy, and that real change starts with real conversations."</div>
+        <div class="quote-attr">— Ramses Ja</div>
+      </div>
+
+      <div class="episodes-section">
+        <h2 class="section-title">Recent episodes</h2>
+        <div class="episode-row">
+          <div class="ep-play"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg></div>
+          <div class="ep-info">
+            <div class="ep-title">QR Code — Mar 25, 2026</div>
+            <div class="ep-date">Tuesday, March 25, 2026</div>
+          </div>
+          <div class="ep-duration">60:03</div>
+        </div>
+        <div class="episode-row">
+          <div class="ep-play"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg></div>
+          <div class="ep-info">
+            <div class="ep-title">QR Code — Mar 24, 2026</div>
+            <div class="ep-date">Monday, March 24, 2026</div>
+          </div>
+          <div class="ep-duration">60:04</div>
+        </div>
+        <div class="episode-row">
+          <div class="ep-play"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg></div>
+          <div class="ep-info">
+            <div class="ep-title">QR Code — Mar 23, 2026</div>
+            <div class="ep-date">Sunday, March 23, 2026</div>
+          </div>
+          <div class="ep-duration">60:04</div>
+        </div>
+        <div class="episode-row">
+          <div class="ep-play"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg></div>
+          <div class="ep-info">
+            <div class="ep-title">QR Code — Mar 22, 2026</div>
+            <div class="ep-date">Saturday, March 22, 2026</div>
+          </div>
+          <div class="ep-duration">61:02</div>
+        </div>
+      </div>
+
+      <div class="contact-section">
+        <h2 class="section-title">Contact The QR Code</h2>
+        <div class="form-grid">
+          <div class="form-field"><label class="form-label">Name</label><input class="form-input" placeholder="Your name"/></div>
+          <div class="form-field"><label class="form-label">Email</label><input class="form-input" placeholder="you@email.com"/></div>
+          <div class="form-field full"><label class="form-label">Subject</label><input class="form-input" placeholder="What's this about?"/></div>
+          <div class="form-field full"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Your message..."></textarea></div>
+        </div>
+        <button class="form-submit">Send message</button>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Hosts</div>
+        <div class="host-card-lg">
+          <div class="host-photo-lg" style="background:#ccc;display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:24px;font-weight:700;color:#999">QW</div>
+          <div>
+            <div class="host-name-lg">Q Ward</div>
+            <div class="host-bio-lg">Community organizer, educator, and public speaker known for fostering honest conversations around race, identity, and equity.</div>
+            <div class="social-row">
+              <div class="social-icon"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+            </div>
+          </div>
+        </div>
+        <div class="host-card-lg">
+          <div class="host-photo-lg" style="background:#ccc;display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:24px;font-weight:700;color:#999">RJ</div>
+          <div>
+            <div class="host-name-lg">Ramses Ja</div>
+            <div class="host-bio-lg">DJ, activist, and media strategist who believes in the power of storytelling to shift culture. His work centers on media literacy and racial justice.</div>
+            <div class="social-row">
+              <div class="social-icon"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Links</div>
+        <div style="font-size:13px;color:#B22222">
+          <a href="#" style="color:#B22222;text-decoration:none;display:block;margin-bottom:6px">Instagram</a>
+        </div>
+      </div>
+
+      <div class="donate-box">
+        <h3>Support The QR Code</h3>
+        <p>Keep community radio on the air.</p>
+        <button class="donate-btn">Donate Now</button>
+      </div>
+
+      <div class="sidebar-section" style="margin-top:2rem">
+        <div class="sidebar-label">On air nearby</div>
+        <div style="font-size:13px;line-height:2">
+          <div style="display:flex;justify-content:space-between"><span style="font-weight:500">Democracy Now!</span><span style="color:#888;font-family:'JetBrains Mono',monospace;font-size:11px">7:00 AM</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-weight:500">Law &amp; Disorder</span><span style="color:#888;font-family:'JetBrains Mono',monospace;font-size:11px">8:00 AM</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-weight:500">Think Outside The Cage</span><span style="color:#888;font-family:'JetBrains Mono',monospace;font-size:11px">9:00 AM</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

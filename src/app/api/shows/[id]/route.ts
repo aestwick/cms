@@ -60,6 +60,7 @@ export async function PATCH(
     "title", "slug", "tagline", "description", "history", "show_type",
     "program_slug", "logo_path", "banner_path", "contact_preference",
     "contact_email", "website_url", "rss_url", "social_links",
+    "donation_cta_heading", "donation_cta_body", "donation_cta_url",
     "is_active", "sort_order",
   ];
 
