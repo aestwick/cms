@@ -29,6 +29,17 @@ export interface ShowFormData {
   donation_cta_url: string;
   is_active: boolean;
   sort_order: number;
+  broadcast_status: "active" | "hiatus" | "online_only" | "retired";
+  status_note: string;
+  returns_at: string;
+  schedule_note: string;
+}
+
+interface TagOption {
+  id: string;
+  name: string;
+  slug: string;
+  category: "topic" | "format" | "audience";
 }
 
 const emptyShow: ShowFormData = {
@@ -51,12 +62,18 @@ const emptyShow: ShowFormData = {
   donation_cta_url: "",
   is_active: true,
   sort_order: 0,
+  broadcast_status: "active",
+  status_note: "",
+  returns_at: "",
+  schedule_note: "",
 };
 
 interface ShowFormProps {
   initialData?: Partial<ShowFormData>;
   showId?: string;
   mode: "create" | "edit";
+  allTags?: TagOption[];
+  initialTagIds?: string[];
 }
 
 function slugify(text: string): string {
@@ -66,12 +83,19 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-export function ShowForm({ initialData, showId, mode }: ShowFormProps) {
+const TAG_CATEGORY_COLORS: Record<string, string> = {
+  topic: "bg-tag-topic",
+  format: "bg-tag-format",
+  audience: "bg-tag-audience",
+};
+
+export function ShowForm({ initialData, showId, mode, allTags = [], initialTagIds = [] }: ShowFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<ShowFormData>({ ...emptyShow, ...initialData });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [slugManual, setSlugManual] = useState(mode === "edit");
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialTagIds);
 
   function updateField<K extends keyof ShowFormData>(key: K, value: ShowFormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -106,13 +130,24 @@ export function ShowForm({ initialData, showId, mode }: ShowFormProps) {
     });
 
     const data = await res.json();
-    setSaving(false);
 
     if (!res.ok) {
+      setSaving(false);
       setError(data.error || "Something went wrong");
       return;
     }
 
+    // Save tags
+    const tagShowId = mode === "create" ? data.id : showId;
+    if (tagShowId) {
+      await fetch(`/api/shows/${tagShowId}/tags`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag_ids: selectedTagIds }),
+      });
+    }
+
+    setSaving(false);
     router.push("/admin/shows");
     router.refresh();
   }
@@ -407,6 +442,115 @@ export function ShowForm({ initialData, showId, mode }: ShowFormProps) {
         </div>
       </section>
 
+      {/* === Broadcast Status === */}
+      <section>
+        <h2 className="text-lg font-bold text-charcoal">Broadcast Status</h2>
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-charcoal">
+              Status
+            </label>
+            <select
+              value={form.broadcast_status}
+              onChange={(e) => updateField("broadcast_status", e.target.value as ShowFormData["broadcast_status"])}
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+            >
+              <option value="active">Active</option>
+              <option value="hiatus">On Hiatus</option>
+              <option value="online_only">Online Only</option>
+              <option value="retired">Retired</option>
+            </select>
+          </div>
+          {form.broadcast_status === "hiatus" && (
+            <div>
+              <label className="block text-sm font-medium text-charcoal">
+                Returns At
+              </label>
+              <input
+                type="date"
+                value={form.returns_at}
+                onChange={(e) => updateField("returns_at", e.target.value)}
+                className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+              />
+            </div>
+          )}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-charcoal">
+              Status Note
+            </label>
+            <input
+              type="text"
+              value={form.status_note}
+              onChange={(e) => updateField("status_note", e.target.value)}
+              placeholder="e.g. New episodes returning June 2026"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+            />
+            <p className="mt-1 text-xs text-charcoal/40">
+              Free text displayed publicly where the schedule badge would go.
+            </p>
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-charcoal">
+              Schedule Note
+            </label>
+            <input
+              type="text"
+              value={form.schedule_note}
+              onChange={(e) => updateField("schedule_note", e.target.value)}
+              placeholder="e.g. New episodes daily — airing Mon–Thu on KPFK"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+            />
+            <p className="mt-1 text-xs text-charcoal/40">
+              Displayed below the auto-generated schedule badge.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* === Tags === */}
+      {allTags.length > 0 && (
+        <section>
+          <h2 className="text-lg font-bold text-charcoal">Tags</h2>
+          <p className="mt-1 text-xs text-charcoal/40">Click to toggle tags for this show.</p>
+          {(["topic", "format", "audience"] as const).map((category) => {
+            const categoryTags = allTags.filter((t) => t.category === category);
+            if (categoryTags.length === 0) return null;
+            return (
+              <div key={category} className="mt-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-charcoal/40">
+                  {category === "topic" ? "Topics" : category === "format" ? "Formats" : "Audience"}
+                </span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {categoryTags.map((tag) => {
+                    const isSelected = selectedTagIds.includes(tag.id);
+                    return (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedTagIds((prev) =>
+                            isSelected
+                              ? prev.filter((id) => id !== tag.id)
+                              : [...prev, tag.id]
+                          );
+                        }}
+                        className={`border px-3 py-1.5 text-sm transition-colors ${
+                          isSelected
+                            ? `${TAG_CATEGORY_COLORS[tag.category]} border-charcoal/30 font-medium text-charcoal`
+                            : "border-charcoal/15 text-charcoal/40 hover:border-charcoal/30 hover:text-charcoal/60"
+                        }`}
+                      >
+                        {tag.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      )}
+
       {/* === Settings === */}
       <section>
         <h2 className="text-lg font-bold text-charcoal">Settings</h2>
@@ -419,7 +563,7 @@ export function ShowForm({ initialData, showId, mode }: ShowFormProps) {
               type="number"
               value={form.sort_order}
               onChange={(e) => updateField("sort_order", parseInt(e.target.value) || 0)}
-              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
             />
           </div>
           <div className="flex items-center gap-3 pt-6">

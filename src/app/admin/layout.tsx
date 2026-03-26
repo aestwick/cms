@@ -21,7 +21,7 @@ export default async function AdminLayout({
         <AdminSidebar role={user.role} />
         <div className="flex flex-1 flex-col overflow-hidden">
           <AdminTopBar user={user} />
-          <main className="flex-1 overflow-y-auto bg-off-white p-4 md:p-6">
+          <main className="flex-1 overflow-y-auto bg-off-white p-6 md:p-8">
             {children}
           </main>
         </div>

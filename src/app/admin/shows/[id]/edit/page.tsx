@@ -31,6 +31,22 @@ export default async function EditShowPage({
     .eq("show_id", id)
     .order("sort_order");
 
+  // Fetch all tags and this show's tag assignments
+  const { data: allTags } = await supabase
+    .from("cms_tags")
+    .select("id, name, slug, category")
+    .eq("station_id", user.station_id)
+    .order("category")
+    .order("sort_order")
+    .order("name");
+
+  const { data: showTags } = await supabase
+    .from("cms_show_tags")
+    .select("tag_id")
+    .eq("show_id", id);
+
+  const initialTagIds = (showTags ?? []).map((st: { tag_id: string }) => st.tag_id);
+
   return (
     <div className="max-w-3xl">
       <div className="flex items-center justify-between">
@@ -51,6 +67,8 @@ export default async function EditShowPage({
         <ShowForm
           mode="edit"
           showId={id}
+          allTags={allTags ?? []}
+          initialTagIds={initialTagIds}
           initialData={{
             title: show.title,
             slug: show.slug,
@@ -66,8 +84,15 @@ export default async function EditShowPage({
             website_url: show.website_url || "",
             rss_url: show.rss_url || "",
             social_links: show.social_links || {},
+            donation_cta_heading: show.donation_cta_heading || "",
+            donation_cta_body: show.donation_cta_body || "",
+            donation_cta_url: show.donation_cta_url || "",
             is_active: show.is_active,
             sort_order: show.sort_order,
+            broadcast_status: show.broadcast_status || "active",
+            status_note: show.status_note || "",
+            returns_at: show.returns_at || "",
+            schedule_note: show.schedule_note || "",
           }}
         />
       </div>

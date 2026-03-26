@@ -7,6 +7,11 @@
   --color-off-white: #F9F7F2;
   --color-action-yellow: #FFD700;
 
+  /* Tag category colors */
+  --color-tag-topic: #E8E0D4;
+  --color-tag-format: #D4DEE8;
+  --color-tag-audience: #D4E8DB;
+
   /* Semantic aliases */
   --color-background: #F9F7F2;
   --color-foreground: #1A1A1A;
@@ -15,7 +20,7 @@
   --color-highlight: #FFD700;
 
   /* Layout */
-  --admin-sidebar-width: 14rem;
+  --admin-sidebar-width: 16rem;
 
   /* Typography */
   --font-serif: Georgia, "Times New Roman", serif;
@@ -42,4 +47,21 @@ h4,
 h5,
 h6 {
   font-family: var(--font-serif);
+}
+
+/* Blockquote styling for show descriptions */
+.prose blockquote {
+  border-left: 3px solid #B22222;
+  padding-left: 1.25rem;
+  margin-left: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  color: var(--color-charcoal);
+}
+
+.prose blockquote p:last-child {
+  font-style: normal;
+  font-size: 0.875rem;
+  color: rgba(26, 26, 26, 0.5);
+  margin-top: 0.5rem;
 }

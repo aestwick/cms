@@ -1,8 +1,18 @@
 import { requireRole } from "@/lib/auth";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { ShowForm } from "@/components/show-form";
 
 export default async function NewShowPage() {
-  await requireRole("admin", "editor");
+  const user = await requireRole("admin", "editor");
+  const supabase = getSupabaseAdmin();
+
+  const { data: allTags } = await supabase
+    .from("cms_tags")
+    .select("id, name, slug, category")
+    .eq("station_id", user.station_id)
+    .order("category")
+    .order("sort_order")
+    .order("name");
 
   return (
     <div className="max-w-3xl">
@@ -11,7 +21,7 @@ export default async function NewShowPage() {
         Create a new show page. Hosts can be added after creation.
       </p>
       <div className="mt-6">
-        <ShowForm mode="create" />
+        <ShowForm mode="create" allTags={allTags ?? []} />
       </div>
     </div>
   );
