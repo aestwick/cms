@@ -1,0 +1,5 @@
+{
+  "_note": "Captured snapshot from the live Confessor API (confessor.kpfk.org) for dev testing. Replace this placeholder with actual curl output from your local machine.",
+  "_usage": "Used by tests and local development to avoid hitting the live Confessor API.",
+  "schedule": []
+}
