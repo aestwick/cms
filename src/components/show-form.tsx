@@ -247,6 +247,40 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
     });
   }
 
+  // Drag-to-reorder social links
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  function handleDragStart(index: number) {
+    setDragIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    setDragOverIndex(index);
+  }
+
+  function handleDrop(index: number) {
+    if (dragIndex === null || dragIndex === index) {
+      setDragIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+    setSocialEntries((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(dragIndex, 1);
+      next.splice(index, 0, moved);
+      return next;
+    });
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }
+
+  function handleDragEnd() {
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }
+
   function handleTitleChange(title: string) {
     updateField("title", title);
     if (!slugManual) {
@@ -512,9 +546,34 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
         <p className="mt-1 text-xs text-charcoal/40">
           Paste any social or podcast URL — the platform is detected automatically.
         </p>
-        <div className="mt-3 space-y-3">
-          {socialEntries.map((entry) => (
-            <div key={entry.id} className="flex items-center gap-2">
+        <div className="mt-3 space-y-1">
+          {socialEntries.map((entry, index) => (
+            <div
+              key={entry.id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={() => handleDrop(index)}
+              onDragEnd={handleDragEnd}
+              className={`flex items-center gap-2 rounded px-1 py-1 transition-colors ${
+                dragOverIndex === index && dragIndex !== index
+                  ? "bg-charcoal/5"
+                  : ""
+              } ${dragIndex === index ? "opacity-40" : ""}`}
+            >
+              {/* Drag handle */}
+              <button
+                type="button"
+                className="flex-shrink-0 cursor-grab px-0.5 py-2 text-charcoal/20 hover:text-charcoal/50 active:cursor-grabbing"
+                onMouseDown={(e) => e.stopPropagation()}
+                title="Drag to reorder"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="9" cy="6" r="1.5" /><circle cx="15" cy="6" r="1.5" />
+                  <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
+                  <circle cx="9" cy="18" r="1.5" /><circle cx="15" cy="18" r="1.5" />
+                </svg>
+              </button>
               <span className="w-28 flex-shrink-0 text-xs font-medium text-charcoal/50">
                 {entry.platform ? (PLATFORM_LABELS[entry.platform] || entry.platform) : "Link"}
               </span>
