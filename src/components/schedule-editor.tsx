@@ -181,10 +181,12 @@ function TimePicker({
   value,
   onChange,
   label,
+  align = "left",
 }: {
   value: string;
   onChange: (time: string) => void;
   label: string;
+  align?: "left" | "right";
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -231,7 +233,7 @@ function TimePicker({
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-[320px] border border-charcoal/20 bg-off-white p-3 shadow-lg">
+        <div className={`absolute top-full z-50 mt-1 w-[280px] border border-charcoal/20 bg-off-white p-3 shadow-lg ${align === "right" ? "right-0" : "left-0"}`}>
           <div className="flex gap-4">
             {/* Hour grid */}
             <div className="flex-1">
@@ -288,7 +290,7 @@ function TimePicker({
               <div className="mb-2 text-center text-xs font-medium text-charcoal/50">
                 Minute
               </div>
-              <div className="grid grid-cols-4 gap-0.5">
+              <div className="grid grid-cols-3 gap-0.5">
                 {MINUTES.map((m) => (
                   <button
                     key={m}
@@ -1272,6 +1274,7 @@ export function ScheduleEditor() {
                   </label>
                   <TimePicker
                     label="End"
+                    align="right"
                     value={modal.endTime}
                     onChange={(t) =>
                       setModal((prev) =>
