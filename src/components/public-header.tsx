@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { NowPlayingWidget } from "@/components/now-playing-widget";
 
 const navLinks = [
@@ -14,11 +15,16 @@ export function PublicHeader() {
     <header className="border-b-2 border-charcoal bg-off-white">
       {/* Top bar: branding + Listen Live */}
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-8">
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="font-serif text-3xl font-bold tracking-tight text-charcoal">
-            KPFK
-          </span>
-          <span className="font-mono text-sm text-charcoal/50">90.7 FM</span>
+        <Link href="/" className="block">
+          <Image
+            src="https://admin.kpfk.org/images/Kpfk-horizontal.svg"
+            alt="KPFK 90.7 FM"
+            width={180}
+            height={48}
+            className="h-10 w-auto sm:h-12"
+            priority
+            unoptimized
+          />
         </Link>
 
         <div className="flex items-center gap-5">

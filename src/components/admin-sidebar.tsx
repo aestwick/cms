@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useMobileSidebar, useIsMobile } from "@/hooks/use-mobile-sidebar";
 import type { CmsRole } from "@/lib/auth";
@@ -52,9 +53,16 @@ export function AdminSidebar({ role }: { role: CmsRole }) {
         `}
       >
         <div className="border-b border-off-white/10 px-5 py-5">
-          <Link href="/admin" className="block" onClick={isMobile ? close : undefined}>
-            <span className="text-xl font-bold tracking-tight">KPFK</span>
-            <span className="ml-1.5 font-mono text-sm text-off-white/50">
+          <Link href="/admin" className="flex items-center gap-2" onClick={isMobile ? close : undefined}>
+            <Image
+              src="https://admin.kpfk.org/images/Kpfk-horizontal.svg"
+              alt="KPFK"
+              width={120}
+              height={32}
+              className="h-7 w-auto brightness-0 invert"
+              unoptimized
+            />
+            <span className="font-mono text-sm text-off-white/50">
               CMS
             </span>
           </Link>

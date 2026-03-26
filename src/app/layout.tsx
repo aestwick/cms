@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "KPFK 90.7 FM",
   description:
     "KPFK 90.7 FM — Pacifica Foundation community radio in Los Angeles",
+  icons: {
+    icon: "/favicon.svg",
+  },
   alternates: {
     types: {
       "application/rss+xml": "/feed",

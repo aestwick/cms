@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function PublicFooter() {
   return (
@@ -7,7 +8,14 @@ export function PublicFooter() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Branding */}
           <div>
-            <span className="font-serif text-2xl font-bold">KPFK 90.7 FM</span>
+            <Image
+              src="https://admin.kpfk.org/images/Kpfk-horizontal.svg"
+              alt="KPFK 90.7 FM"
+              width={160}
+              height={42}
+              className="h-9 w-auto brightness-0 invert"
+              unoptimized
+            />
             <p className="mt-3 text-base text-off-white/60">
               Pacifica Foundation community radio in Los Angeles. Listener-supported since 1959.
             </p>
