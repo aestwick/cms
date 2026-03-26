@@ -1,4 +1,4 @@
--- Migration 009: Add per-show donation CTA override fields
+-- Migration 010: Add per-show donation CTA override fields
 -- Allows shows to customize the sidebar donation call-to-action
 
 ALTER TABLE cms_shows
