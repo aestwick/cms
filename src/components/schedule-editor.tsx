@@ -108,6 +108,7 @@ interface GhostPosition {
 interface ModalData {
   slot?: ScheduleSlot;
   dayOfWeek: number;
+  daysOfWeek: number[]; // multi-select for new slots
   startTime: string;
   endTime: string;
   showId: string | null;
@@ -180,10 +181,12 @@ function TimePicker({
   value,
   onChange,
   label,
+  align = "left",
 }: {
   value: string;
   onChange: (time: string) => void;
   label: string;
+  align?: "left" | "right";
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -230,7 +233,7 @@ function TimePicker({
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-[320px] border border-charcoal/20 bg-off-white p-3 shadow-lg">
+        <div className={`absolute top-full z-50 mt-1 w-[280px] border border-charcoal/20 bg-off-white p-3 shadow-lg ${align === "right" ? "right-0" : "left-0"}`}>
           <div className="flex gap-4">
             {/* Hour grid */}
             <div className="flex-1">
@@ -287,7 +290,7 @@ function TimePicker({
               <div className="mb-2 text-center text-xs font-medium text-charcoal/50">
                 Minute
               </div>
-              <div className="grid grid-cols-4 gap-0.5">
+              <div className="grid grid-cols-3 gap-0.5">
                 {MINUTES.map((m) => (
                   <button
                     key={m}
@@ -589,6 +592,7 @@ export function ScheduleEditor() {
         setModal({
           slot,
           dayOfWeek: slot.day_of_week,
+          daysOfWeek: [slot.day_of_week],
           startTime: slot.start_time.substring(0, 5),
           endTime: slot.end_time.substring(0, 5),
           showId: slot.show_id,
@@ -717,6 +721,7 @@ export function ScheduleEditor() {
 
       setModal({
         dayOfWeek: dayIndex,
+        daysOfWeek: [dayIndex],
         startTime: rowToTime(startRow),
         endTime: rowToTime(endRow),
         showId: null,
@@ -749,43 +754,80 @@ export function ScheduleEditor() {
       return;
     }
 
-    if (hasOverlap(modal.dayOfWeek, startRow, endRow, modal.slot?.id)) {
-      setError("This time overlaps with an existing slot");
-      setSaving(false);
-      return;
-    }
-
     const isNew = !modal.slot;
-    const url = isNew ? "/api/schedule" : `/api/schedule/${modal.slot!.id}`;
-    const method = isNew ? "POST" : "PATCH";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        show_id: modal.showId,
-        day_of_week: modal.dayOfWeek,
-        start_time: modal.startTime,
-        end_time: modal.endTime,
-        label: modal.label || null,
-        image_path: modal.imagePath || null,
-        is_recurring: true,
-      }),
-    });
-
-    const data = await res.json();
-    setSaving(false);
-
-    if (!res.ok) {
-      setError(data.error || "Failed to save");
-      return;
-    }
 
     if (isNew) {
-      setSlots((prev) => [...prev, data]);
+      // Multi-day: create a slot for each selected day
+      const days = modal.daysOfWeek.length > 0 ? modal.daysOfWeek : [modal.dayOfWeek];
+
+      // Check overlap for all selected days
+      const overlapDays = days.filter((d) => hasOverlap(d, startRow, endRow));
+      if (overlapDays.length > 0) {
+        const names = overlapDays.map((d) => DAY_NAMES_SHORT[d]).join(", ");
+        setError(`Overlaps with existing slot on: ${names}`);
+        setSaving(false);
+        return;
+      }
+
+      const created: ScheduleSlot[] = [];
+      for (const day of days) {
+        const res = await fetch("/api/schedule", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            show_id: modal.showId,
+            day_of_week: day,
+            start_time: modal.startTime,
+            end_time: modal.endTime,
+            label: modal.label || null,
+            image_path: modal.imagePath || null,
+            is_recurring: true,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error || `Failed to save slot for ${DAY_NAMES_SHORT[day]}`);
+          // Still add any already-created slots
+          if (created.length > 0) {
+            setSlots((prev) => [...prev, ...created]);
+          }
+          setSaving(false);
+          return;
+        }
+        created.push(data);
+      }
+      setSlots((prev) => [...prev, ...created]);
     } else {
+      // Editing existing slot — single day only
+      if (hasOverlap(modal.dayOfWeek, startRow, endRow, modal.slot?.id)) {
+        setError("This time overlaps with an existing slot");
+        setSaving(false);
+        return;
+      }
+
+      const res = await fetch(`/api/schedule/${modal.slot!.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          show_id: modal.showId,
+          day_of_week: modal.dayOfWeek,
+          start_time: modal.startTime,
+          end_time: modal.endTime,
+          label: modal.label || null,
+          image_path: modal.imagePath || null,
+          is_recurring: true,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to save");
+        setSaving(false);
+        return;
+      }
       setSlots((prev) => prev.map((s) => (s.id === data.id ? data : s)));
     }
+
+    setSaving(false);
     setModal(null);
   }
 
@@ -1032,10 +1074,22 @@ export function ScheduleEditor() {
               <p className="mt-3 text-sm text-kpfk-red">{importError}</p>
             )}
 
+            {importPreview.incoming_count === 0 && (
+              <div className="mt-4 border border-amber-300 bg-amber-50 p-3">
+                <p className="text-sm font-medium text-amber-800">
+                  No slots returned from Confessor
+                </p>
+                <p className="mt-1 text-xs text-amber-700">
+                  This could mean Confessor is not configured correctly or returned empty data.
+                  Import is disabled to prevent deleting your existing schedule.
+                </p>
+              </div>
+            )}
+
             <div className="mt-5 flex items-center gap-3">
               <button
                 onClick={handleConfessorApply}
-                disabled={importApplying}
+                disabled={importApplying || importPreview.incoming_count === 0}
                 className="border-2 border-kpfk-red bg-kpfk-red px-5 py-2.5 text-sm font-medium text-off-white hover:bg-kpfk-red/90 disabled:opacity-50"
               >
                 {importApplying ? "Importing..." : `Replace ${importPreview.current_count} slots with ${importPreview.incoming_count}`}
@@ -1220,6 +1274,7 @@ export function ScheduleEditor() {
                   </label>
                   <TimePicker
                     label="End"
+                    align="right"
                     value={modal.endTime}
                     onChange={(t) =>
                       setModal((prev) =>
@@ -1252,28 +1307,65 @@ export function ScheduleEditor() {
               {/* Day of week — button group */}
               <div>
                 <label className="mb-1 block text-xs font-medium text-charcoal/60">
-                  Day
+                  {modal.slot ? "Day" : "Days"}
+                  {!modal.slot && (
+                    <span className="ml-1 text-charcoal/30">
+                      (select multiple)
+                    </span>
+                  )}
                 </label>
                 <div className="flex gap-1">
-                  {DAY_NAMES_SHORT.map((name, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() =>
-                        setModal((prev) =>
-                          prev ? { ...prev, dayOfWeek: i } : null
-                        )
-                      }
-                      className={`flex-1 rounded border py-2 text-center text-xs font-medium transition-colors ${
-                        i === modal.dayOfWeek
-                          ? "border-charcoal bg-charcoal text-off-white"
-                          : "border-charcoal/20 bg-off-white text-charcoal/50 hover:border-charcoal/40 hover:text-charcoal"
-                      }`}
-                    >
-                      {name}
-                    </button>
-                  ))}
+                  {DAY_NAMES_SHORT.map((name, i) => {
+                    const isEditing = !!modal.slot;
+                    const isSelected = isEditing
+                      ? i === modal.dayOfWeek
+                      : modal.daysOfWeek.includes(i);
+
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => {
+                          if (isEditing) {
+                            // Single-select when editing existing slot
+                            setModal((prev) =>
+                              prev
+                                ? { ...prev, dayOfWeek: i, daysOfWeek: [i] }
+                                : null
+                            );
+                          } else {
+                            // Multi-select when creating new slot
+                            setModal((prev) => {
+                              if (!prev) return null;
+                              const days = prev.daysOfWeek.includes(i)
+                                ? prev.daysOfWeek.filter((d) => d !== i)
+                                : [...prev.daysOfWeek, i].sort();
+                              // Keep at least one day selected
+                              if (days.length === 0) return prev;
+                              return {
+                                ...prev,
+                                daysOfWeek: days,
+                                dayOfWeek: days[0],
+                              };
+                            });
+                          }
+                        }}
+                        className={`flex-1 rounded border py-2 text-center text-xs font-medium transition-colors ${
+                          isSelected
+                            ? "border-charcoal bg-charcoal text-off-white"
+                            : "border-charcoal/20 bg-off-white text-charcoal/50 hover:border-charcoal/40 hover:text-charcoal"
+                        }`}
+                      >
+                        {name}
+                      </button>
+                    );
+                  })}
                 </div>
+                {!modal.slot && modal.daysOfWeek.length > 1 && (
+                  <p className="mt-1 text-[11px] text-charcoal/40">
+                    Will create {modal.daysOfWeek.length} slots ({modal.daysOfWeek.map((d) => DAY_NAMES_SHORT[d]).join(", ")})
+                  </p>
+                )}
               </div>
 
               {/* Image path — for special programming art */}
@@ -1310,7 +1402,11 @@ export function ScheduleEditor() {
                   disabled={saving}
                   className="border-2 border-charcoal bg-charcoal px-5 py-2.5 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
                 >
-                  {saving ? "Saving..." : "Save"}
+                  {saving
+                    ? "Saving..."
+                    : !modal.slot && modal.daysOfWeek.length > 1
+                      ? `Save (${modal.daysOfWeek.length} days)`
+                      : "Save"}
                 </button>
                 <button
                   onClick={() => {

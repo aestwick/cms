@@ -8,7 +8,9 @@
 
 const CONFESSOR_API_URL =
   process.env.CONFESSOR_API_URL ||
-  "https://confessor.kpfk.org/_nu_do_api.php";
+  (process.env.CONFESSOR_API_BASE_URL
+    ? `${process.env.CONFESSOR_API_BASE_URL}/_nu_do_api.php`
+    : "https://confessor.kpfk.org/_nu_do_api.php");
 
 // ---------------------------------------------------------------------------
 // Types
@@ -73,9 +75,13 @@ async function confessorFetch<T>(params: string): Promise<T | null> {
   try {
     const url = `${CONFESSOR_API_URL}?${params}&json=1`;
     const res = await fetch(url, { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`[Confessor] HTTP ${res.status} from ${url}`);
+      return null;
+    }
     return (await res.json()) as T;
-  } catch {
+  } catch (err) {
+    console.error(`[Confessor] Fetch failed for ${CONFESSOR_API_URL}?${params}:`, err);
     return null;
   }
 }

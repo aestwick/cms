@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImagePicker } from "@/components/image-picker";
 
 export interface ShowFormData {
   title: string;
@@ -246,6 +247,40 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
     });
   }
 
+  // Drag-to-reorder social links
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  function handleDragStart(index: number) {
+    setDragIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    setDragOverIndex(index);
+  }
+
+  function handleDrop(index: number) {
+    if (dragIndex === null || dragIndex === index) {
+      setDragIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+    setSocialEntries((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(dragIndex, 1);
+      next.splice(index, 0, moved);
+      return next;
+    });
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }
+
+  function handleDragEnd() {
+    setDragIndex(null);
+    setDragOverIndex(null);
+  }
+
   function handleTitleChange(title: string) {
     updateField("title", title);
     if (!slugManual) {
@@ -428,33 +463,21 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
       <div className="border border-charcoal/10 bg-white p-5 sm:p-6">
         <h2 className="text-lg font-bold text-charcoal">Media</h2>
         <p className="mt-1 text-xs text-charcoal/40">
-          Storage paths for logo and banner images. Media library upload coming in a future phase.
+          Upload, browse the media library, or paste a URL.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium text-charcoal">
-              Logo Path
-            </label>
-            <input
-              type="text"
-              value={form.logo_path}
-              onChange={(e) => updateField("logo_path", e.target.value)}
-              placeholder="shows/bike-talk/logo.webp"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-charcoal">
-              Banner Path
-            </label>
-            <input
-              type="text"
-              value={form.banner_path}
-              onChange={(e) => updateField("banner_path", e.target.value)}
-              placeholder="shows/bike-talk/banner.webp"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
-            />
-          </div>
+          <ImagePicker
+            value={form.logo_path}
+            onChange={(path) => updateField("logo_path", path)}
+            label="Logo"
+            placeholder="shows/bike-talk/logo.webp"
+          />
+          <ImagePicker
+            value={form.banner_path}
+            onChange={(path) => updateField("banner_path", path)}
+            label="Banner"
+            placeholder="shows/bike-talk/banner.webp"
+          />
         </div>
       </div>
 
@@ -523,9 +546,34 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
         <p className="mt-1 text-xs text-charcoal/40">
           Paste any social or podcast URL — the platform is detected automatically.
         </p>
-        <div className="mt-3 space-y-3">
-          {socialEntries.map((entry) => (
-            <div key={entry.id} className="flex items-center gap-2">
+        <div className="mt-3 space-y-1">
+          {socialEntries.map((entry, index) => (
+            <div
+              key={entry.id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={() => handleDrop(index)}
+              onDragEnd={handleDragEnd}
+              className={`flex items-center gap-2 rounded px-1 py-1 transition-colors ${
+                dragOverIndex === index && dragIndex !== index
+                  ? "bg-charcoal/5"
+                  : ""
+              } ${dragIndex === index ? "opacity-40" : ""}`}
+            >
+              {/* Drag handle */}
+              <button
+                type="button"
+                className="flex-shrink-0 cursor-grab px-0.5 py-2 text-charcoal/20 hover:text-charcoal/50 active:cursor-grabbing"
+                onMouseDown={(e) => e.stopPropagation()}
+                title="Drag to reorder"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="9" cy="6" r="1.5" /><circle cx="15" cy="6" r="1.5" />
+                  <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
+                  <circle cx="9" cy="18" r="1.5" /><circle cx="15" cy="18" r="1.5" />
+                </svg>
+              </button>
               <span className="w-28 flex-shrink-0 text-xs font-medium text-charcoal/50">
                 {entry.platform ? (PLATFORM_LABELS[entry.platform] || entry.platform) : "Link"}
               </span>
