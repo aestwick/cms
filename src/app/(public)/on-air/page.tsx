@@ -25,6 +25,7 @@ interface Show {
   tagline: string | null;
   show_type: string;
   logo_path: string | null;
+  banner_path: string | null;
   cms_show_hosts: { name: string; is_primary: boolean }[];
 }
 
@@ -33,7 +34,7 @@ export default async function OnAirPage() {
 
   const { data: shows } = await supabase
     .from("cms_shows")
-    .select("id, title, slug, tagline, show_type, logo_path, cms_show_hosts(name, is_primary)")
+    .select("id, title, slug, tagline, show_type, logo_path, banner_path, cms_show_hosts(name, is_primary)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .order("sort_order", { ascending: true })
@@ -60,46 +61,59 @@ export default async function OnAirPage() {
               <Link
                 key={show.id}
                 href={`/on-air/${show.slug}`}
-                className="flex flex-col bg-off-white p-6 transition-colors hover:bg-charcoal/[0.02]"
+                className="group relative flex flex-col bg-off-white transition-colors hover:bg-charcoal/[0.02]"
               >
-                <div className="flex items-start gap-4">
-                  {show.logo_path ? (
-                    <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-charcoal/5">
+                {/* Card banner or logo hero area */}
+                {show.banner_path ? (
+                  <div className="relative h-36 w-full overflow-hidden bg-charcoal/5">
+                    <Image
+                      src={resolveImageUrl(show.banner_path)}
+                      alt=""
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    />
+                  </div>
+                ) : show.logo_path ? (
+                  <div className="flex h-36 w-full items-center justify-center bg-charcoal/[0.03]">
+                    <div className="relative h-24 w-24 overflow-hidden">
                       <Image
                         src={resolveImageUrl(show.logo_path)}
-                        alt={`${show.title} logo`}
+                        alt=""
                         fill
                         className="object-contain"
-                        sizes="56px"
+                        sizes="96px"
                       />
                     </div>
-                  ) : (
-                    <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5">
-                      <span className="font-serif text-xl font-bold text-charcoal/30">
-                        {show.title.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <h2 className="font-serif text-xl font-bold leading-tight text-charcoal">
-                      {show.title}
-                    </h2>
-                    {hostName && (
-                      <p className="mt-1 text-base text-charcoal/50">
-                        with {hostName}
-                      </p>
-                    )}
                   </div>
-                </div>
-                {show.tagline && (
-                  <p className="mt-3 text-base leading-relaxed text-charcoal/60">
-                    {show.tagline}
-                  </p>
+                ) : (
+                  <div className="flex h-36 w-full items-center justify-center bg-charcoal/[0.03]">
+                    <span className="font-serif text-5xl font-bold text-charcoal/10">
+                      {show.title.charAt(0)}
+                    </span>
+                  </div>
                 )}
-                <div className="mt-auto pt-4">
-                  <span className="font-mono text-xs uppercase text-charcoal/30">
-                    {show.show_type}
-                  </span>
+
+                {/* Card body */}
+                <div className="flex flex-1 flex-col p-5">
+                  <h2 className="font-serif text-xl font-bold leading-tight text-charcoal">
+                    {show.title}
+                  </h2>
+                  {hostName && (
+                    <p className="mt-1 text-sm text-charcoal/50">
+                      with {hostName}
+                    </p>
+                  )}
+                  {show.tagline && (
+                    <p className="mt-2 text-sm leading-relaxed text-charcoal/60">
+                      {show.tagline}
+                    </p>
+                  )}
+                  <div className="mt-auto pt-3">
+                    <span className="font-mono text-xs uppercase text-charcoal/30">
+                      {show.show_type}
+                    </span>
+                  </div>
                 </div>
               </Link>
             );

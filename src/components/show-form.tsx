@@ -24,6 +24,9 @@ export interface ShowFormData {
     youtube?: string;
     tiktok?: string;
   };
+  donation_cta_heading: string;
+  donation_cta_body: string;
+  donation_cta_url: string;
   is_active: boolean;
   sort_order: number;
 }
@@ -43,6 +46,9 @@ const emptyShow: ShowFormData = {
   website_url: "",
   rss_url: "",
   social_links: {},
+  donation_cta_heading: "",
+  donation_cta_body: "",
+  donation_cta_url: "",
   is_active: true,
   sort_order: 0,
 };
@@ -352,6 +358,52 @@ export function ShowForm({ initialData, showId, mode }: ShowFormProps) {
               </div>
             )
           )}
+        </div>
+      </section>
+
+      {/* === Donation CTA Override === */}
+      <section>
+        <h2 className="text-lg font-bold text-charcoal">Donation CTA</h2>
+        <p className="mt-1 text-xs text-charcoal/40">
+          Override the default sidebar donation call-to-action. Leave blank to use defaults.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-charcoal">
+              CTA Heading
+            </label>
+            <input
+              type="text"
+              value={form.donation_cta_heading}
+              onChange={(e) => updateField("donation_cta_heading", e.target.value)}
+              placeholder={`Support ${form.title || "this show"}`}
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">
+              Donate URL
+            </label>
+            <input
+              type="url"
+              value={form.donation_cta_url}
+              onChange={(e) => updateField("donation_cta_url", e.target.value)}
+              placeholder="https://donate.kpfk.org"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-charcoal">
+              CTA Body Text
+            </label>
+            <input
+              type="text"
+              value={form.donation_cta_body}
+              onChange={(e) => updateField("donation_cta_body", e.target.value)}
+              placeholder="Keep community radio on the air."
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+            />
+          </div>
         </div>
       </section>
 
