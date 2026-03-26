@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { headers } from "next/headers";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 // POST /api/contact — public contact form submission
 export async function POST(request: NextRequest) {
@@ -36,9 +37,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // TODO: Validate Turnstile token when TURNSTILE_SECRET_KEY is configured
-  // const turnstileToken = body.turnstile_token;
-  // if (process.env.TURNSTILE_SECRET_KEY) { ... verify ... }
+  // Verify Turnstile token (skips if TURNSTILE_SECRET_KEY is not set)
+  const headersList = await headers();
+  const forwarded = headersList.get("x-forwarded-for");
+  const ip = forwarded ? forwarded.split(",")[0].trim() : null;
+
+  const turnstileValid = await verifyTurnstileToken(body.turnstile_token, ip);
+  if (!turnstileValid) {
+    return NextResponse.json(
+      { error: "Bot verification failed. Please try again." },
+      { status: 403 }
+    );
+  }
 
   const supabase = getSupabaseAdmin();
 
@@ -86,11 +96,6 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Get client IP
-  const headersList = await headers();
-  const forwarded = headersList.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0].trim() : null;
-
   // Store submission
   const { error: insertError } = await supabase
     .from("cms_contact_submissions")
@@ -102,6 +107,7 @@ export async function POST(request: NextRequest) {
       subject,
       message,
       ip_address: ip,
+      turnstile_token: body.turnstile_token || null,
       emailed_to: emailTo,
     });
 

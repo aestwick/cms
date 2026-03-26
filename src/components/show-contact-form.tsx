@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { TurnstileWidget } from "@/components/turnstile-widget";
 
 interface ShowContactFormProps {
   showId: string;
@@ -15,9 +16,18 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
     message: "",
   });
   const [honeypot, setHoneypot] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,6 +48,7 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
         show_id: showId,
         ...form,
         website_url_confirm: honeypot,
+        turnstile_token: turnstileToken,
       }),
     });
 
@@ -141,8 +152,11 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
         />
       </div>
 
-      {/* Turnstile widget placeholder — requires NEXT_PUBLIC_TURNSTILE_SITE_KEY */}
-      <div id="turnstile-widget" />
+      {/* Cloudflare Turnstile — renders only when NEXT_PUBLIC_TURNSTILE_SITE_KEY is set */}
+      <TurnstileWidget
+        onVerify={handleTurnstileVerify}
+        onExpire={handleTurnstileExpire}
+      />
 
       {error && <p className="text-base text-kpfk-red">{error}</p>}
 
