@@ -75,18 +75,31 @@ function setCache<T>(key: string, data: T, ttlMs: number) {
 // Fetch helpers
 // ---------------------------------------------------------------------------
 
+const CONFESSOR_TIMEOUT_MS = 30_000; // 30 seconds — legacy PHP can be slow
+
 async function confessorFetch<T>(params: string): Promise<T | null> {
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), CONFESSOR_TIMEOUT_MS);
   try {
     const url = `${CONFESSOR_API_URL}?${params}&json=1`;
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    const res = await fetch(url, {
+      signal: abort.signal,
+      next: { revalidate: 3600 },
+    });
     if (!res.ok) {
       console.error(`[Confessor] HTTP ${res.status} from ${url}`);
       return null;
     }
     return (await res.json()) as T;
   } catch (err) {
-    console.error(`[Confessor] Fetch failed for ${CONFESSOR_API_URL}?${params}:`, err);
+    if (err instanceof DOMException && err.name === "AbortError") {
+      console.error(`[Confessor] Timeout after ${CONFESSOR_TIMEOUT_MS}ms for ${params}`);
+    } else {
+      console.error(`[Confessor] Fetch failed for ${CONFESSOR_API_URL}?${params}:`, err);
+    }
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -163,7 +176,10 @@ export function confessorTimeToSlotTime(time: string): string {
  */
 export function ampmTo24(time: string): string {
   const match = time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-  if (!match) return "00:00";
+  if (!match) {
+    console.warn(`[Confessor] Could not parse time "${time}", defaulting to 00:00`);
+    return "00:00";
+  }
   let hours = parseInt(match[1], 10);
   const minutes = match[2];
   const period = match[3].toUpperCase();
