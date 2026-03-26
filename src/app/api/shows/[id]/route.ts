@@ -65,9 +65,19 @@ export async function PATCH(
     "broadcast_status", "status_note", "returns_at", "schedule_note",
   ];
 
+  // Fields where empty string should become null (nullable text/date columns)
+  const nullableFields = new Set([
+    "tagline", "description", "history", "program_slug", "logo_path",
+    "banner_path", "contact_email", "website_url", "rss_url",
+    "donation_cta_heading", "donation_cta_body", "donation_cta_url",
+    "status_note", "returns_at", "schedule_note",
+  ]);
+
   for (const field of allowedFields) {
     if (field in body) {
-      updateFields[field] = body[field];
+      updateFields[field] = nullableFields.has(field) && body[field] === ""
+        ? null
+        : body[field];
     }
   }
 
