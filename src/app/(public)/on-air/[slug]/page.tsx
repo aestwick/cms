@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { ShowContactForm } from "@/components/show-contact-form";
 import type { Metadata } from "next";
@@ -96,6 +97,16 @@ export default async function ShowPage({ params }: PageProps) {
     .order("day_of_week", { ascending: true })
     .order("start_time", { ascending: true });
 
+  // Fetch show-scoped blog posts
+  const { data: showPosts } = await supabase
+    .from("cms_posts")
+    .select("id, title, slug, excerpt, body, published_at")
+    .eq("show_id", typedShow.id)
+    .eq("status", "published")
+    .is("deleted_at", null)
+    .order("published_at", { ascending: false })
+    .limit(5);
+
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   function formatTime(t: string) {
@@ -178,6 +189,36 @@ export default async function ShowPage({ params }: PageProps) {
                 className="prose mt-5 max-w-none text-base leading-relaxed text-charcoal/80"
                 dangerouslySetInnerHTML={{ __html: typedShow.history }}
               />
+            </section>
+          )}
+
+          {/* Show blog posts */}
+          {showPosts && showPosts.length > 0 && (
+            <section>
+              <h2 className="font-serif text-2xl font-bold text-charcoal">Show Blog</h2>
+              <div className="mt-5 space-y-0 divide-y divide-charcoal/10">
+                {showPosts.map((post) => (
+                  <article key={post.id} className="py-5 first:pt-0">
+                    <time className="font-mono text-xs text-charcoal/40">
+                      {post.published_at
+                        ? new Date(post.published_at).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })
+                        : ""}
+                    </time>
+                    <h3 className="mt-1 font-serif text-xl font-bold text-charcoal">
+                      <Link href={`/blog/${post.slug}`} className="hover:text-kpfk-red">
+                        {post.title}
+                      </Link>
+                    </h3>
+                    <p className="mt-1 text-base text-charcoal/60">
+                      {post.excerpt || (post.body ? post.body.replace(/<[^>]*>/g, "").slice(0, 200) + "…" : "")}
+                    </p>
+                  </article>
+                ))}
+              </div>
             </section>
           )}
 
