@@ -55,6 +55,7 @@ interface ScheduleSlot {
   start_time: string;
   end_time: string;
   label: string | null;
+  image_path: string | null;
   is_recurring: boolean;
   cms_shows: {
     id: string;
@@ -92,6 +93,7 @@ interface ModalData {
   endTime: string;
   showId: string | null;
   label: string;
+  imagePath: string;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -138,6 +140,157 @@ function getPrimaryHost(hosts?: Host[]): string | null {
   if (!hosts || hosts.length === 0) return null;
   const primary = hosts.find((h) => h.is_primary);
   return primary?.name || hosts[0]?.name || null;
+}
+
+// ─── TimePicker ─────────────────────────────────────────────
+
+const HOURS_AM = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+const HOURS_PM = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+
+function parseTime24(time: string): { hour: number; minute: number } {
+  const [h, m] = time.split(":").map(Number);
+  return { hour: h, minute: m };
+}
+
+function to24Hour(h12: number, period: "AM" | "PM"): number {
+  if (period === "AM") return h12 === 12 ? 0 : h12;
+  return h12 === 12 ? 12 : h12 + 12;
+}
+
+function TimePicker({
+  value,
+  onChange,
+  label,
+}: {
+  value: string;
+  onChange: (time: string) => void;
+  label: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { hour, minute } = parseTime24(value);
+  const period: "AM" | "PM" = hour >= 12 ? "PM" : "AM";
+  const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  function selectHour(h: number, p: "AM" | "PM") {
+    const h24 = to24Hour(h, p);
+    onChange(`${String(h24).padStart(2, "0")}:${String(minute).padStart(2, "0")}`);
+  }
+
+  function selectMinute(m: number) {
+    onChange(`${String(hour).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+  }
+
+  const displayTime = `${h12}:${String(minute).padStart(2, "0")} ${period.toLowerCase()}`;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center gap-2 border border-charcoal/20 bg-off-white px-3 py-2.5 text-left text-sm"
+      >
+        <svg className="h-4 w-4 text-charcoal/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+        {displayTime}
+        <svg className="ml-auto h-3 w-3 text-charcoal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute left-0 top-full z-50 mt-1 w-[320px] border border-charcoal/20 bg-off-white p-3 shadow-lg">
+          <div className="flex gap-4">
+            {/* Hour grid */}
+            <div className="flex-1">
+              <div className="mb-2 text-center text-xs font-medium text-charcoal/50">
+                Hour
+              </div>
+              {/* AM rows */}
+              <div className="mb-1 flex items-center gap-1">
+                <span className="w-7 text-[10px] font-medium text-charcoal/40">AM</span>
+                <div className="grid flex-1 grid-cols-6 gap-0.5">
+                  {HOURS_AM.map((h) => (
+                    <button
+                      key={`am-${h}`}
+                      type="button"
+                      onClick={() => selectHour(h, "AM")}
+                      className={`rounded px-1 py-1.5 text-xs ${
+                        h12 === h && period === "AM"
+                          ? "bg-charcoal text-off-white"
+                          : "text-charcoal hover:bg-charcoal/10"
+                      }`}
+                    >
+                      {h}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* PM rows */}
+              <div className="flex items-center gap-1">
+                <span className="w-7 text-[10px] font-medium text-charcoal/40">PM</span>
+                <div className="grid flex-1 grid-cols-6 gap-0.5">
+                  {HOURS_PM.map((h) => (
+                    <button
+                      key={`pm-${h}`}
+                      type="button"
+                      onClick={() => selectHour(h, "PM")}
+                      className={`rounded px-1 py-1.5 text-xs ${
+                        h12 === h && period === "PM"
+                          ? "bg-charcoal text-off-white"
+                          : "text-charcoal hover:bg-charcoal/10"
+                      }`}
+                    >
+                      {h}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="w-px bg-charcoal/10" />
+
+            {/* Minute grid */}
+            <div>
+              <div className="mb-2 text-center text-xs font-medium text-charcoal/50">
+                Minute
+              </div>
+              <div className="grid grid-cols-4 gap-0.5">
+                {MINUTES.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => selectMinute(m)}
+                    className={`rounded px-2 py-1.5 text-xs ${
+                      minute === m
+                        ? "bg-charcoal text-off-white"
+                        : "text-charcoal hover:bg-charcoal/10"
+                    }`}
+                  >
+                    {String(m).padStart(2, "0")}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── ShowCombobox ────────────────────────────────────────────
@@ -195,32 +348,8 @@ function ShowCombobox({
         placeholder="Search shows..."
         className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
       />
-      {value && !open && (
-        <button
-          type="button"
-          onClick={() => {
-            onChange(null);
-            setQuery("");
-            inputRef.current?.focus();
-          }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-lg leading-none text-charcoal/40 hover:text-charcoal"
-        >
-          &times;
-        </button>
-      )}
       {open && (
         <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-y-auto border border-charcoal/20 bg-off-white shadow-lg">
-          <button
-            type="button"
-            onClick={() => {
-              onChange(null);
-              setOpen(false);
-              setQuery("");
-            }}
-            className="w-full px-3 py-2.5 text-left text-sm text-charcoal/50 hover:bg-charcoal/5"
-          >
-            &mdash; No show (label only) &mdash;
-          </button>
           {filtered.map((show) => {
             const host = getPrimaryHost(show.cms_show_hosts);
             return (
@@ -439,6 +568,7 @@ export function ScheduleEditor() {
           endTime: slot.end_time.substring(0, 5),
           showId: slot.show_id,
           label: slot.label || "",
+          imagePath: slot.image_path || "",
         });
         setError("");
         return;
@@ -566,6 +696,7 @@ export function ScheduleEditor() {
         endTime: rowToTime(endRow),
         showId: null,
         label: "",
+        imagePath: "",
       });
       setError("");
     },
@@ -577,6 +708,12 @@ export function ScheduleEditor() {
     if (!modal) return;
     setSaving(true);
     setError("");
+
+    if (!modal.showId) {
+      setError("Please select a show");
+      setSaving(false);
+      return;
+    }
 
     const startRow = timeToRow(modal.startTime);
     const endRow = endTimeToRow(modal.endTime);
@@ -601,11 +738,12 @@ export function ScheduleEditor() {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        show_id: modal.showId || null,
+        show_id: modal.showId,
         day_of_week: modal.dayOfWeek,
         start_time: modal.startTime,
         end_time: modal.endTime,
         label: modal.label || null,
+        image_path: modal.imagePath || null,
         is_recurring: true,
       }),
     });
@@ -652,20 +790,6 @@ export function ScheduleEditor() {
   const visibleDays = isMobile
     ? [selectedDay]
     : [0, 1, 2, 3, 4, 5, 6];
-
-  // Time options for modal
-  const startTimeOptions = Array.from({ length: TOTAL_ROWS }, (_, i) => ({
-    value: rowToTime(i),
-    label: formatTime12(rowToTime(i)),
-  }));
-
-  const endTimeOptions = Array.from({ length: TOTAL_ROWS }, (_, i) => {
-    const row = i + 1;
-    const time = rowToTime(row);
-    const label =
-      row === TOTAL_ROWS ? "12:00a (midnight)" : formatTime12(time);
-    return { value: time, label };
-  });
 
   // ── Slot renderer (shared between mobile and desktop) ──
   function renderSlot(slot: ScheduleSlot) {
@@ -874,7 +998,7 @@ export function ScheduleEditor() {
               {/* Show selector */}
               <div>
                 <label className="mb-1 block text-xs font-medium text-charcoal/60">
-                  Show
+                  Show <span className="text-kpfk-red">*</span>
                 </label>
                 <ShowCombobox
                   shows={shows}
@@ -893,43 +1017,29 @@ export function ScheduleEditor() {
                   <label className="mb-1 block text-xs font-medium text-charcoal/60">
                     Start
                   </label>
-                  <select
+                  <TimePicker
+                    label="Start"
                     value={modal.startTime}
-                    onChange={(e) =>
+                    onChange={(t) =>
                       setModal((prev) =>
-                        prev
-                          ? { ...prev, startTime: e.target.value }
-                          : null
+                        prev ? { ...prev, startTime: t } : null
                       )
                     }
-                    className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
-                  >
-                    {startTimeOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="mb-1 block text-xs font-medium text-charcoal/60">
                     End
                   </label>
-                  <select
+                  <TimePicker
+                    label="End"
                     value={modal.endTime}
-                    onChange={(e) =>
+                    onChange={(t) =>
                       setModal((prev) =>
-                        prev ? { ...prev, endTime: e.target.value } : null
+                        prev ? { ...prev, endTime: t } : null
                       )
                     }
-                    className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
-                  >
-                    {endTimeOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
               </div>
 
@@ -952,31 +1062,53 @@ export function ScheduleEditor() {
                 />
               </div>
 
-              {/* Day */}
+              {/* Day of week — button group */}
               <div>
                 <label className="mb-1 block text-xs font-medium text-charcoal/60">
                   Day
                 </label>
-                <select
-                  value={modal.dayOfWeek}
+                <div className="flex gap-1">
+                  {DAY_NAMES_SHORT.map((name, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() =>
+                        setModal((prev) =>
+                          prev ? { ...prev, dayOfWeek: i } : null
+                        )
+                      }
+                      className={`flex-1 rounded border py-2 text-center text-xs font-medium transition-colors ${
+                        i === modal.dayOfWeek
+                          ? "border-charcoal bg-charcoal text-off-white"
+                          : "border-charcoal/20 bg-off-white text-charcoal/50 hover:border-charcoal/40 hover:text-charcoal"
+                      }`}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Image path — for special programming art */}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-charcoal/60">
+                  Slot artwork{" "}
+                  <span className="text-charcoal/30">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={modal.imagePath}
                   onChange={(e) =>
                     setModal((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            dayOfWeek: parseInt(e.target.value),
-                          }
-                        : null
+                      prev ? { ...prev, imagePath: e.target.value } : null
                     )
                   }
+                  placeholder="e.g. schedule/special-programming.webp"
                   className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
-                >
-                  {DAY_NAMES_FULL.map((name, i) => (
-                    <option key={i} value={i}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
+                />
+                <p className="mt-1 text-[11px] text-charcoal/30">
+                  Supabase Storage path. Media browser coming soon.
+                </p>
               </div>
             </div>
 
