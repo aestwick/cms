@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "mmo.aiircdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "donate.kpfk.org",
+        pathname: "/api/**",
+      },
+      {
+        protocol: "https",
+        hostname: "events.kpfk.org",
+      },
     ],
   },
 };
