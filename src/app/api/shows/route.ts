@@ -12,7 +12,7 @@ export async function GET() {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("cms_shows")
-    .select("id, title, slug, show_type, is_active, is_claimed, sort_order, created_at, updated_at, cms_show_hosts(name, is_primary)")
+    .select("id, title, slug, show_type, is_active, is_claimed, sort_order, created_at, updated_at, cms_show_hosts(name)")
     .eq("station_id", user.station_id)
     .is("deleted_at", null)
     .order("sort_order", { ascending: true })
@@ -55,7 +55,6 @@ export async function POST(request: NextRequest) {
       social_links: body.social_links || {},
       donation_cta_heading: body.donation_cta_heading || null,
       donation_cta_body: body.donation_cta_body || null,
-      donation_cta_url: body.donation_cta_url || null,
       is_active: body.is_active ?? true,
       sort_order: body.sort_order ?? 0,
       broadcast_status: body.broadcast_status || "active",
