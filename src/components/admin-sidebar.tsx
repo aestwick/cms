@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   { label: "Events", href: "/admin/events", roles: ["admin", "editor"] },
   { label: "Schedule", href: "/admin/schedule", roles: ["admin", "editor"] },
   { label: "Tags", href: "/admin/tags", roles: ["admin", "editor"] },
+  { label: "Newsletter", href: "/admin/newsletter", roles: ["admin", "editor"] },
   { label: "Flags", href: "/admin/flags", roles: ["admin"] },
   { label: "Users", href: "/admin/users", roles: ["admin"] },
   { label: "Settings", href: "/admin/settings", roles: ["admin"] },
