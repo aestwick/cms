@@ -77,7 +77,9 @@ interface ShowFormProps {
 }
 
 function slugify(text: string): string {
+  const articles = /\b(the|an|a)\b/gi;
   return text
+    .replace(articles, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
