@@ -62,6 +62,7 @@ export async function PATCH(
     "contact_email", "website_url", "rss_url", "social_links",
     "donation_cta_heading", "donation_cta_body", "donation_cta_url",
     "is_active", "sort_order",
+    "broadcast_status", "status_note", "returns_at", "schedule_note",
   ];
 
   for (const field of allowedFields) {

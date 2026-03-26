@@ -19,6 +19,7 @@ const navItems: NavItem[] = [
   { label: "Pages", href: "/admin/pages", roles: ["admin", "editor"] },
   { label: "Events", href: "/admin/events", roles: ["admin", "editor"] },
   { label: "Schedule", href: "/admin/schedule", roles: ["admin", "editor"] },
+  { label: "Tags", href: "/admin/tags", roles: ["admin", "editor"] },
   { label: "Flags", href: "/admin/flags", roles: ["admin"] },
   { label: "Users", href: "/admin/users", roles: ["admin"] },
   { label: "Settings", href: "/admin/settings", roles: ["admin"] },
@@ -44,22 +45,22 @@ export function AdminSidebar({ role }: { role: CmsRole }) {
 
       <aside
         className={`
-          fixed inset-y-0 left-0 z-40 flex w-56 flex-col border-r border-charcoal/20 bg-charcoal text-off-white
+          fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-charcoal/20 bg-charcoal text-off-white
           transition-transform duration-200 ease-in-out
           ${isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : ""}
           lg:relative lg:translate-x-0
         `}
       >
-        <div className="border-b border-off-white/10 px-4 py-4">
+        <div className="border-b border-off-white/10 px-5 py-5">
           <Link href="/admin" className="block" onClick={isMobile ? close : undefined}>
-            <span className="text-lg font-bold tracking-tight">KPFK</span>
-            <span className="ml-1.5 font-mono text-xs text-off-white/50">
+            <span className="text-xl font-bold tracking-tight">KPFK</span>
+            <span className="ml-1.5 font-mono text-sm text-off-white/50">
               CMS
             </span>
           </Link>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-3">
+        <nav className="flex-1 overflow-y-auto py-4">
           {visibleItems.map((item) => {
             const isActive =
               item.href === "/admin"
@@ -71,7 +72,7 @@ export function AdminSidebar({ role }: { role: CmsRole }) {
                 key={item.href}
                 href={item.href}
                 onClick={isMobile ? close : undefined}
-                className={`block px-4 py-3 text-sm transition-colors lg:py-2 ${
+                className={`block px-5 py-3 text-base transition-colors ${
                   isActive
                     ? "bg-off-white/10 font-medium text-off-white"
                     : "text-off-white/60 hover:bg-off-white/5 hover:text-off-white"
@@ -83,7 +84,7 @@ export function AdminSidebar({ role }: { role: CmsRole }) {
           })}
         </nav>
 
-        <div className="border-t border-off-white/10 px-4 py-3">
+        <div className="border-t border-off-white/10 px-5 py-4">
           <p className="font-mono text-xs text-off-white/30">KPFK 90.7 FM</p>
         </div>
       </aside>

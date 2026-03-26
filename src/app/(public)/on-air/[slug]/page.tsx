@@ -22,6 +22,16 @@ interface ShowHost {
   is_primary: boolean;
 }
 
+interface ShowTag {
+  tag_id: string;
+  cms_tags: {
+    id: string;
+    name: string;
+    slug: string;
+    category: string;
+  };
+}
+
 interface Show {
   id: string;
   station_id: string;
@@ -42,7 +52,21 @@ interface Show {
   donation_cta_heading: string | null;
   donation_cta_body: string | null;
   donation_cta_url: string | null;
+  broadcast_status: string;
+  status_note: string | null;
+  returns_at: string | null;
+  schedule_note: string | null;
   cms_show_hosts: ShowHost[];
+  cms_show_tags: ShowTag[];
+}
+
+interface ScheduleSlot {
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  label: string | null;
+  show_id: string | null;
+  cms_shows: { title: string; slug: string } | null;
 }
 
 interface PageProps {
@@ -70,7 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 /* ------------------------------------------------------------------ */
-/*  SVG Icons for links section                                        */
+/*  SVG Icons                                                          */
 /* ------------------------------------------------------------------ */
 
 function IconGlobe({ className }: { className?: string }) {
@@ -147,13 +171,54 @@ const SOCIAL_LABELS: Record<string, string> = {
   tiktok: "TikTok",
 };
 
+const TAG_CATEGORY_COLORS: Record<string, string> = {
+  topic: "bg-tag-topic border-charcoal/15",
+  format: "bg-tag-format border-charcoal/15",
+  audience: "bg-tag-audience border-charcoal/15",
+};
+
+const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const dayAbbrev = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+function formatTime(t: string) {
+  const [h, m] = t.split(":");
+  const hour = parseInt(h);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  return `${h12}:${m} ${ampm}`;
+}
+
+function formatScheduleBadge(slots: { day_of_week: number; start_time: string; end_time: string }[]) {
+  if (slots.length === 0) return null;
+
+  // Group consecutive days with same time
+  const groups: { days: number[]; start: string; end: string }[] = [];
+  for (const slot of slots) {
+    const last = groups[groups.length - 1];
+    if (last && last.start === slot.start_time && last.end === slot.end_time) {
+      last.days.push(slot.day_of_week);
+    } else {
+      groups.push({ days: [slot.day_of_week], start: slot.start_time, end: slot.end_time });
+    }
+  }
+
+  return groups.map((g) => {
+    const dayStr =
+      g.days.length === 1
+        ? dayAbbrev[g.days[0]]
+        : `${dayAbbrev[g.days[0]]}\u2013${dayAbbrev[g.days[g.days.length - 1]]}`;
+    return `${dayStr} \u2022 ${formatTime(g.start)}\u2013${formatTime(g.end)} \u2022 KPFK 90.7 FM`;
+  });
+}
+
 export default async function ShowPage({ params }: PageProps) {
   const { slug } = await params;
   const supabase = getSupabaseAdmin();
 
+  // For retired shows, allow access by direct URL but still render
   const { data: show } = await supabase
     .from("cms_shows")
-    .select("*, cms_show_hosts(*)")
+    .select("*, cms_show_hosts(*), cms_show_tags(tag_id, cms_tags(id, name, slug, category))")
     .eq("slug", slug)
     .eq("is_active", true)
     .is("deleted_at", null)
@@ -161,7 +226,7 @@ export default async function ShowPage({ params }: PageProps) {
 
   if (!show) notFound();
 
-  const typedShow = show as Show;
+  const typedShow = show as unknown as Show;
   const hosts = (typedShow.cms_show_hosts ?? []).sort(
     (a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)
   );
@@ -170,15 +235,22 @@ export default async function ShowPage({ params }: PageProps) {
   const socialEntries = Object.entries(typedShow.social_links || {}).filter(
     ([, url]) => url
   );
+  const tags = (typedShow.cms_show_tags ?? [])
+    .filter((st) => st.cms_tags)
+    .map((st) => st.cms_tags);
 
+  const broadcastStatus = typedShow.broadcast_status || "active";
+
+  // Fetch schedule slots for this show
   const { data: scheduleSlots } = await supabase
     .from("cms_schedule_slots")
-    .select("day_of_week, start_time, end_time, label")
+    .select("day_of_week, start_time, end_time, label, show_id")
     .eq("show_id", typedShow.id)
     .eq("is_recurring", true)
     .order("day_of_week", { ascending: true })
     .order("start_time", { ascending: true });
 
+  // Fetch show posts
   const { data: showPosts } = await supabase
     .from("cms_posts")
     .select("id, title, slug, excerpt, body, published_at")
@@ -188,14 +260,40 @@ export default async function ShowPage({ params }: PageProps) {
     .order("published_at", { ascending: false })
     .limit(5);
 
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  // Find adjacent shows (on air nearby)
+  let adjacentShows: { title: string; slug: string; relationship: string }[] = [];
+  if (scheduleSlots && scheduleSlots.length > 0) {
+    const firstSlot = scheduleSlots[0];
+    // Find show before
+    const { data: before } = await supabase
+      .from("cms_schedule_slots")
+      .select("cms_shows(title, slug)")
+      .eq("day_of_week", firstSlot.day_of_week)
+      .eq("is_recurring", true)
+      .lt("end_time", firstSlot.start_time)
+      .not("show_id", "eq", typedShow.id)
+      .order("end_time", { ascending: false })
+      .limit(1);
 
-  function formatTime(t: string) {
-    const [h, m] = t.split(":");
-    const hour = parseInt(h);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${h12}:${m} ${ampm}`;
+    // Find show after
+    const { data: after } = await supabase
+      .from("cms_schedule_slots")
+      .select("cms_shows(title, slug)")
+      .eq("day_of_week", firstSlot.day_of_week)
+      .eq("is_recurring", true)
+      .gt("start_time", firstSlot.end_time)
+      .not("show_id", "eq", typedShow.id)
+      .order("start_time", { ascending: true })
+      .limit(1);
+
+    if (before?.[0]?.cms_shows) {
+      const s = before[0].cms_shows as unknown as { title: string; slug: string };
+      adjacentShows.push({ ...s, relationship: `Before on ${dayNames[firstSlot.day_of_week]}s` });
+    }
+    if (after?.[0]?.cms_shows) {
+      const s = after[0].cms_shows as unknown as { title: string; slug: string };
+      adjacentShows.push({ ...s, relationship: `After on ${dayNames[firstSlot.day_of_week]}s` });
+    }
   }
 
   const hasLinks = typedShow.website_url || typedShow.rss_url || socialEntries.length > 0;
@@ -203,13 +301,15 @@ export default async function ShowPage({ params }: PageProps) {
   const donateBody = typedShow.donation_cta_body || "Keep community radio on the air.";
   const donateUrl = typedShow.donation_cta_url || "https://donate.kpfk.org";
 
+  const scheduleBadgeLines = formatScheduleBadge(scheduleSlots ?? []);
+
   return (
     <article>
       {/* ============================================================ */}
-      {/* Banner / Hero                                                 */}
+      {/* Masthead                                                      */}
       {/* ============================================================ */}
       {typedShow.banner_path ? (
-        <header className="relative h-64 w-full overflow-hidden bg-charcoal sm:h-80 lg:h-96">
+        <header className="relative h-72 w-full overflow-hidden bg-charcoal sm:h-80 lg:h-96">
           <Image
             src={resolveImageUrl(typedShow.banner_path)}
             alt={`${typedShow.title} banner`}
@@ -218,19 +318,17 @@ export default async function ShowPage({ params }: PageProps) {
             sizes="100vw"
             priority
           />
-          {/* Gradient overlay for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent" />
-          {/* Title overlay on banner */}
           <div className="absolute inset-x-0 bottom-0 mx-auto max-w-7xl px-6 pb-8 sm:px-8">
             <div className="flex items-end gap-6">
               {typedShow.logo_path && (
-                <div className="relative hidden h-24 w-24 flex-shrink-0 overflow-hidden border-2 border-off-white/20 bg-charcoal/50 backdrop-blur sm:block">
+                <div className="relative hidden h-36 w-36 flex-shrink-0 overflow-hidden border-2 border-off-white/20 bg-charcoal/50 backdrop-blur sm:block lg:h-40 lg:w-40">
                   <Image
                     src={resolveImageUrl(typedShow.logo_path)}
                     alt={`${typedShow.title} logo`}
                     fill
-                    className="object-contain p-1"
-                    sizes="96px"
+                    className="object-contain p-2"
+                    sizes="160px"
                   />
                 </div>
               )}
@@ -244,26 +342,45 @@ export default async function ShowPage({ params }: PageProps) {
                 {typedShow.tagline && (
                   <p className="mt-1 text-lg text-off-white/70">{typedShow.tagline}</p>
                 )}
+                {/* Tags in masthead */}
+                {tags.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <Link
+                        key={tag.id}
+                        href={`/on-air?tag=${tag.slug}`}
+                        className={`border px-2.5 py-1 text-xs text-off-white/80 transition-colors hover:text-off-white ${
+                          tag.category === "topic"
+                            ? "border-off-white/20 bg-off-white/10"
+                            : tag.category === "format"
+                              ? "border-off-white/20 bg-off-white/10"
+                              : "border-off-white/20 bg-off-white/10"
+                        }`}
+                      >
+                        {tag.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </header>
       ) : (
-        /* Fallback: logo-based banner or typographic banner */
         <header className="relative w-full overflow-hidden border-b-2 border-charcoal bg-charcoal/[0.03]">
-          <div className="mx-auto flex max-w-7xl items-end gap-6 px-6 py-10 sm:px-8 sm:py-14">
+          <div className="mx-auto flex max-w-7xl items-end gap-6 px-6 py-12 sm:px-8 sm:py-16">
             {typedShow.logo_path ? (
-              <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-off-white sm:h-44 sm:w-44">
+              <div className="relative h-36 w-36 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-off-white sm:h-44 sm:w-44">
                 <Image
                   src={resolveImageUrl(typedShow.logo_path)}
                   alt={`${typedShow.title} logo`}
                   fill
                   className="object-contain p-2"
-                  sizes="(min-width: 640px) 176px, 128px"
+                  sizes="(min-width: 640px) 176px, 144px"
                 />
               </div>
             ) : (
-              <div className="flex h-32 w-32 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5 sm:h-44 sm:w-44">
+              <div className="flex h-36 w-36 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5 sm:h-44 sm:w-44">
                 <span className="font-serif text-6xl font-bold text-charcoal/15 sm:text-7xl">
                   {typedShow.title.charAt(0)}
                 </span>
@@ -279,34 +396,88 @@ export default async function ShowPage({ params }: PageProps) {
               {typedShow.tagline && (
                 <p className="mt-2 text-lg text-charcoal/60 sm:text-xl">{typedShow.tagline}</p>
               )}
+              {/* Tags in masthead */}
+              {tags.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <Link
+                      key={tag.id}
+                      href={`/on-air?tag=${tag.slug}`}
+                      className={`border px-2.5 py-1 text-xs transition-colors hover:text-charcoal ${TAG_CATEGORY_COLORS[tag.category] || "border-charcoal/15 bg-charcoal/5"} text-charcoal/70`}
+                    >
+                      {tag.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </header>
       )}
 
-      {/* Schedule bar */}
-      {scheduleSlots && scheduleSlots.length > 0 && (
-        <div className="border-b border-charcoal/10 bg-charcoal/[0.02]">
-          <div className="mx-auto flex max-w-7xl flex-wrap gap-3 px-6 py-3 sm:px-8">
-            {scheduleSlots.map((slot, i) => (
-              <span
-                key={i}
-                className="border border-charcoal/15 px-3 py-1.5 font-mono text-sm text-charcoal/60"
-              >
-                {dayNames[slot.day_of_week]}s {formatTime(slot.start_time)}–{formatTime(slot.end_time)}
+      {/* ============================================================ */}
+      {/* Schedule Badge / Broadcast Status Bar                         */}
+      {/* ============================================================ */}
+      <div className="border-b border-charcoal/10">
+        <div className="mx-auto max-w-7xl px-6 py-4 sm:px-8">
+          {broadcastStatus === "active" && scheduleBadgeLines && scheduleBadgeLines.length > 0 ? (
+            <div className="space-y-2">
+              {scheduleBadgeLines.map((line, i) => (
+                <div
+                  key={i}
+                  className="inline-block bg-charcoal px-5 py-2.5 font-mono text-sm tracking-wide text-off-white"
+                >
+                  {line}
+                </div>
+              ))}
+              {typedShow.schedule_note && (
+                <p className="mt-1 text-sm text-charcoal/50">{typedShow.schedule_note}</p>
+              )}
+            </div>
+          ) : broadcastStatus === "active" ? (
+            <div>
+              <p className="text-sm text-charcoal/50">Schedule not yet available.</p>
+              {typedShow.schedule_note && (
+                <p className="mt-1 text-sm text-charcoal/50">{typedShow.schedule_note}</p>
+              )}
+            </div>
+          ) : broadcastStatus === "hiatus" ? (
+            <div className="flex items-center gap-3">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-yellow-500" />
+              <span className="text-base text-charcoal/70">
+                {typedShow.status_note || "Currently on break."}
+                {typedShow.returns_at && (
+                  <span className="ml-2 font-medium">
+                    Returning {new Date(typedShow.returns_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                  </span>
+                )}
               </span>
-            ))}
-          </div>
+            </div>
+          ) : broadcastStatus === "online_only" ? (
+            <div className="flex items-center gap-3">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-500" />
+              <span className="text-base text-charcoal/70">
+                {typedShow.status_note || "Stream past episodes"}
+              </span>
+            </div>
+          ) : broadcastStatus === "retired" ? (
+            <div className="flex items-center gap-3">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-charcoal/30" />
+              <span className="text-base text-charcoal/50">
+                {typedShow.status_note || "This show is no longer in production"}
+              </span>
+            </div>
+          ) : null}
         </div>
-      )}
+      </div>
 
       {/* ============================================================ */}
-      {/* Main content + sidebar                                        */}
+      {/* Two-column: Main content + sidebar                            */}
       {/* ============================================================ */}
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-          {/* Main content */}
-          <div className="space-y-12 lg:col-span-2">
+        <div className="grid grid-cols-1 gap-0 lg:grid-cols-3">
+          {/* Main content (2/3) */}
+          <div className="space-y-12 lg:col-span-2 lg:pr-10">
             {/* About */}
             {typedShow.description && (
               <section>
@@ -388,21 +559,21 @@ export default async function ShowPage({ params }: PageProps) {
           </div>
 
           {/* ======================================================== */}
-          {/* Sidebar                                                    */}
+          {/* Sidebar (1/3) with left border                            */}
           {/* ======================================================== */}
-          <aside className="space-y-8">
-            {/* Hosts */}
+          <aside className="mt-12 space-y-8 border-charcoal/10 lg:mt-0 lg:border-l lg:pl-10">
+            {/* Hosts — rectangular portraits */}
             {hosts.length > 0 && (
-              <section className="border border-charcoal/10 p-6">
+              <section>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
                   {hosts.length === 1 ? "Host" : "Hosts"}
                 </h3>
                 <div className="mt-4 space-y-6">
                   {hosts.map((host) => (
                     <div key={host.id}>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-start gap-4">
                         {host.photo_path ? (
-                          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-charcoal/10 bg-charcoal/5">
+                          <div className="relative h-[100px] w-[80px] flex-shrink-0 overflow-hidden border border-charcoal/10 bg-charcoal/5">
                             <Image
                               src={resolveImageUrl(host.photo_path)}
                               alt={`${host.name} photo`}
@@ -412,7 +583,7 @@ export default async function ShowPage({ params }: PageProps) {
                             />
                           </div>
                         ) : (
-                          <div className="flex h-20 w-20 items-center justify-center rounded-full border border-charcoal/10 bg-charcoal/5">
+                          <div className="flex h-[100px] w-[80px] items-center justify-center border border-charcoal/10 bg-charcoal/5">
                             <span className="text-2xl font-bold text-charcoal/20">
                               {host.name.charAt(0)}
                             </span>
@@ -441,7 +612,7 @@ export default async function ShowPage({ params }: PageProps) {
 
             {/* Contact email */}
             {showEmail && typedShow.contact_email && (
-              <section className="border border-charcoal/10 p-6">
+              <section>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
                   Email
                 </h3>
@@ -456,7 +627,7 @@ export default async function ShowPage({ params }: PageProps) {
 
             {/* Links with icons */}
             {hasLinks && (
-              <section className="border border-charcoal/10 p-6">
+              <section>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
                   Links
                 </h3>
@@ -512,7 +683,7 @@ export default async function ShowPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Donate CTA — uses per-show overrides or defaults */}
+            {/* Donate CTA */}
             <section className="border-2 border-kpfk-red p-6 text-center">
               <p className="font-serif text-xl font-bold text-charcoal">
                 {donateHeading}
@@ -529,6 +700,31 @@ export default async function ShowPage({ params }: PageProps) {
                 Donate Now
               </a>
             </section>
+
+            {/* On Air Nearby */}
+            {adjacentShows.length > 0 && (
+              <section>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
+                  On Air Nearby
+                </h3>
+                <div className="mt-4 space-y-3">
+                  {adjacentShows.map((adj) => (
+                    <Link
+                      key={adj.slug}
+                      href={`/on-air/${adj.slug}`}
+                      className="block border border-charcoal/10 p-4 transition-colors hover:bg-charcoal/[0.02]"
+                    >
+                      <p className="font-serif text-base font-medium text-charcoal hover:text-kpfk-red">
+                        {adj.title}
+                      </p>
+                      <p className="mt-0.5 font-mono text-xs text-charcoal/40">
+                        {adj.relationship}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
           </aside>
         </div>
       </div>

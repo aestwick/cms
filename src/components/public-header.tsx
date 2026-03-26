@@ -13,7 +13,7 @@ export function PublicHeader() {
   return (
     <header className="border-b-2 border-charcoal bg-off-white">
       {/* Top bar: branding + Listen Live */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 sm:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-8">
         <Link href="/" className="flex items-baseline gap-2">
           <span className="font-serif text-3xl font-bold tracking-tight text-charcoal">
             KPFK
@@ -41,7 +41,7 @@ export function PublicHeader() {
             <Link
               key={link.href}
               href={link.href}
-              className="whitespace-nowrap px-4 py-3.5 text-base font-medium text-charcoal/70 transition-colors hover:text-charcoal"
+              className="whitespace-nowrap px-5 py-4 text-base font-medium text-charcoal/70 transition-colors hover:text-charcoal"
             >
               {link.label}
             </Link>
@@ -51,7 +51,7 @@ export function PublicHeader() {
               href="https://donate.kpfk.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-4 py-3.5 text-base font-bold text-kpfk-red transition-colors hover:text-kpfk-red/80"
+              className="inline-block px-5 py-4 text-base font-bold text-kpfk-red transition-colors hover:text-kpfk-red/80"
             >
               Donate
             </a>

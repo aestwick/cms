@@ -58,6 +58,10 @@ export async function POST(request: NextRequest) {
       donation_cta_url: body.donation_cta_url || null,
       is_active: body.is_active ?? true,
       sort_order: body.sort_order ?? 0,
+      broadcast_status: body.broadcast_status || "active",
+      status_note: body.status_note || null,
+      returns_at: body.returns_at || null,
+      schedule_note: body.schedule_note || null,
     })
     .select()
     .single();
