@@ -230,6 +230,23 @@ const SOCIAL_LABELS: Record<string, string> = {
   discord: "Discord",
   telegram: "Telegram",
   rss: "RSS Feed",
+  iheartradio: "iHeartRadio",
+  tunein: "TuneIn",
+  mixcloud: "Mixcloud",
+  pocketcasts: "Pocket Casts",
+  amazon_music: "Amazon Music",
+  stitcher: "Stitcher",
+  deezer: "Deezer",
+  whatsapp: "WhatsApp",
+  signal: "Signal",
+  pinterest: "Pinterest",
+  vimeo: "Vimeo",
+  kofi: "Ko-fi",
+  linktree: "Linktree",
+  paypal: "PayPal",
+  venmo: "Venmo",
+  cashapp: "Cash App",
+  gofundme: "GoFundMe",
 };
 
 const TAG_CATEGORY_COLORS: Record<string, string> = {
