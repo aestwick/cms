@@ -122,7 +122,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                 <button
                   type="button"
                   onClick={() => setPrimary(index)}
-                  className={`rounded px-2 py-0.5 text-xs ${
+                  className={`rounded px-3 py-1.5 text-xs ${
                     host.is_primary
                       ? "bg-charcoal text-off-white"
                       : "border border-charcoal/20 text-charcoal/40 hover:text-charcoal"
@@ -134,7 +134,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
               <button
                 type="button"
                 onClick={() => removeHost(index)}
-                className="text-xs text-kpfk-red hover:underline"
+                className="px-2 py-1.5 text-xs text-kpfk-red hover:underline"
               >
                 Remove
               </button>

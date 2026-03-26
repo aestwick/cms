@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useIsMobile } from "@/hooks/use-mobile-sidebar";
 
 // ─── Constants ───────────────────────────────────────────────
 const ROW_HEIGHT = 28;
 const TOTAL_ROWS = 48; // 24h x 2 (30-min slots)
 const TOTAL_HEIGHT = ROW_HEIGHT * TOTAL_ROWS;
-const DRAG_THRESHOLD = 5;
+const MOUSE_DRAG_THRESHOLD = 5;
+const TOUCH_DRAG_THRESHOLD = 10;
 const DAY_NAMES_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const DAY_NAMES_FULL = [
   "Sunday",
@@ -73,6 +75,7 @@ interface DragState {
   slotStartRow: number;
   slotEndRow: number;
   isDragging: boolean;
+  isTouch: boolean;
 }
 
 interface GhostPosition {
@@ -190,7 +193,7 @@ function ShowCombobox({
           setQuery("");
         }}
         placeholder="Search shows..."
-        className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm"
+        className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
       />
       {value && !open && (
         <button
@@ -200,7 +203,7 @@ function ShowCombobox({
             setQuery("");
             inputRef.current?.focus();
           }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-charcoal/40 hover:text-charcoal text-lg leading-none"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-lg leading-none text-charcoal/40 hover:text-charcoal"
         >
           &times;
         </button>
@@ -214,7 +217,7 @@ function ShowCombobox({
               setOpen(false);
               setQuery("");
             }}
-            className="w-full px-3 py-2 text-left text-sm text-charcoal/50 hover:bg-charcoal/5"
+            className="w-full px-3 py-2.5 text-left text-sm text-charcoal/50 hover:bg-charcoal/5"
           >
             &mdash; No show (label only) &mdash;
           </button>
@@ -229,13 +232,15 @@ function ShowCombobox({
                   setOpen(false);
                   setQuery("");
                 }}
-                className={`w-full px-3 py-2 text-left text-sm hover:bg-charcoal/5 ${
+                className={`w-full px-3 py-2.5 text-left text-sm hover:bg-charcoal/5 ${
                   show.id === value ? "bg-charcoal/10 font-medium" : ""
                 }`}
               >
                 {show.title}
                 {host && (
-                  <span className="ml-2 text-charcoal/40">&mdash; {host}</span>
+                  <span className="ml-2 text-charcoal/40">
+                    &mdash; {host}
+                  </span>
                 )}
               </button>
             );
@@ -261,9 +266,13 @@ export function ScheduleEditor() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [ghost, setGhost] = useState<GhostPosition | null>(null);
+  const [selectedDay, setSelectedDay] = useState(() => new Date().getDay());
+
+  const isMobile = useIsMobile(768); // below md breakpoint
 
   const gridRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // ── Fetch data ──
   useEffect(() => {
@@ -278,7 +287,6 @@ export function ScheduleEditor() {
   }, []);
 
   // ── Scroll to 6 AM on load ──
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!loading && scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 6 * 2 * ROW_HEIGHT;
@@ -304,25 +312,93 @@ export function ScheduleEditor() {
     [slots]
   );
 
-  // ── Grid position from mouse event ──
+  // ── Grid position from coordinates ──
   const getGridPosition = useCallback(
     (clientX: number, clientY: number) => {
       if (!gridRef.current) return null;
       const rect = gridRef.current.getBoundingClientRect();
       const x = clientX - rect.left;
       const y = clientY - rect.top;
-      const columnWidth = rect.width / 7;
-      const day = Math.max(0, Math.min(6, Math.floor(x / columnWidth)));
+      const numColumns = isMobile ? 1 : 7;
+      const columnWidth = rect.width / numColumns;
+      const colIndex = Math.max(
+        0,
+        Math.min(numColumns - 1, Math.floor(x / columnWidth))
+      );
+      // On mobile, the column index is always 0, but the actual day is selectedDay
+      const day = isMobile ? selectedDay : colIndex;
       const row = Math.max(
         0,
         Math.min(TOTAL_ROWS - 1, Math.floor(y / ROW_HEIGHT))
       );
       return { day, row };
     },
+    [isMobile, selectedDay]
+  );
+
+  // ── Shared drag computation ──
+  function computeNewPosition(
+    drag: DragState,
+    pos: { day: number; row: number }
+  ) {
+    const duration = drag.slotEndRow - drag.slotStartRow;
+    let newStartRow: number, newEndRow: number, newDay: number;
+
+    if (drag.type === "move") {
+      const rowDelta = pos.row - drag.startRow;
+      newStartRow = drag.slotStartRow + rowDelta;
+      newEndRow = newStartRow + duration;
+      newDay = pos.day;
+      if (newStartRow < 0) {
+        newStartRow = 0;
+        newEndRow = duration;
+      }
+      if (newEndRow > TOTAL_ROWS) {
+        newEndRow = TOTAL_ROWS;
+        newStartRow = TOTAL_ROWS - duration;
+      }
+    } else if (drag.type === "resize-top") {
+      newStartRow = Math.max(0, Math.min(pos.row, drag.slotEndRow - 1));
+      newEndRow = drag.slotEndRow;
+      newDay = drag.startDay;
+    } else {
+      newStartRow = drag.slotStartRow;
+      newEndRow = Math.max(
+        drag.slotStartRow + 1,
+        Math.min(TOTAL_ROWS, pos.row + 1)
+      );
+      newDay = drag.startDay;
+    }
+
+    return { newStartRow, newEndRow, newDay };
+  }
+
+  // ── Start drag (shared for mouse and touch) ──
+  const startDrag = useCallback(
+    (
+      clientX: number,
+      clientY: number,
+      slot: ScheduleSlot,
+      type: "move" | "resize-top" | "resize-bottom",
+      isTouch: boolean
+    ) => {
+      dragRef.current = {
+        type,
+        slotId: slot.id,
+        originalSlot: slot,
+        startMouseY: clientY,
+        startMouseX: clientX,
+        startRow: timeToRow(slot.start_time),
+        startDay: slot.day_of_week,
+        slotStartRow: timeToRow(slot.start_time),
+        slotEndRow: endTimeToRow(slot.end_time),
+        isDragging: false,
+        isTouch,
+      };
+    },
     []
   );
 
-  // ── Drag/resize mouse handlers ──
   const handleSlotMouseDown = useCallback(
     (
       e: React.MouseEvent,
@@ -331,89 +407,30 @@ export function ScheduleEditor() {
     ) => {
       e.preventDefault();
       e.stopPropagation();
-      dragRef.current = {
-        type,
-        slotId: slot.id,
-        originalSlot: slot,
-        startMouseY: e.clientY,
-        startMouseX: e.clientX,
-        startRow: timeToRow(slot.start_time),
-        startDay: slot.day_of_week,
-        slotStartRow: timeToRow(slot.start_time),
-        slotEndRow: endTimeToRow(slot.end_time),
-        isDragging: false,
-      };
+      startDrag(e.clientX, e.clientY, slot, type, false);
     },
-    []
+    [startDrag]
   );
 
-  useEffect(() => {
-    function computeNewPosition(
-      drag: DragState,
-      pos: { day: number; row: number }
-    ) {
-      const duration = drag.slotEndRow - drag.slotStartRow;
-      let newStartRow: number, newEndRow: number, newDay: number;
+  const handleSlotTouchStart = useCallback(
+    (e: React.TouchEvent, slot: ScheduleSlot) => {
+      e.stopPropagation();
+      const touch = e.touches[0];
+      startDrag(touch.clientX, touch.clientY, slot, "move", true);
+    },
+    [startDrag]
+  );
 
-      if (drag.type === "move") {
-        const rowDelta = pos.row - drag.startRow;
-        newStartRow = drag.slotStartRow + rowDelta;
-        newEndRow = newStartRow + duration;
-        newDay = pos.day;
-        if (newStartRow < 0) {
-          newStartRow = 0;
-          newEndRow = duration;
-        }
-        if (newEndRow > TOTAL_ROWS) {
-          newEndRow = TOTAL_ROWS;
-          newStartRow = TOTAL_ROWS - duration;
-        }
-      } else if (drag.type === "resize-top") {
-        newStartRow = Math.max(
-          0,
-          Math.min(pos.row, drag.slotEndRow - 1)
-        );
-        newEndRow = drag.slotEndRow;
-        newDay = drag.startDay;
-      } else {
-        newStartRow = drag.slotStartRow;
-        newEndRow = Math.max(
-          drag.slotStartRow + 1,
-          Math.min(TOTAL_ROWS, pos.row + 1)
-        );
-        newDay = drag.startDay;
-      }
-
-      return { newStartRow, newEndRow, newDay };
-    }
-
-    function handleMouseMove(e: MouseEvent) {
-      const drag = dragRef.current;
-      if (!drag) return;
-
-      const dx = e.clientX - drag.startMouseX;
-      const dy = e.clientY - drag.startMouseY;
-      if (!drag.isDragging && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) {
-        return;
-      }
-      drag.isDragging = true;
-
-      const pos = getGridPosition(e.clientX, e.clientY);
-      if (!pos) return;
-
-      const { newStartRow, newEndRow, newDay } = computeNewPosition(drag, pos);
-      const valid = !hasOverlap(newDay, newStartRow, newEndRow, drag.slotId);
-      setGhost({ dayOfWeek: newDay, startRow: newStartRow, endRow: newEndRow, valid });
-    }
-
-    async function handleMouseUp(e: MouseEvent) {
+  // ── Finalize drag ──
+  const finalizeDrag = useCallback(
+    async (clientX: number, clientY: number) => {
       const drag = dragRef.current;
       if (!drag) return;
       dragRef.current = null;
       setGhost(null);
 
       if (!drag.isDragging) {
-        // Click, not drag — open edit modal
+        // Click/tap — open edit modal
         const slot = drag.originalSlot;
         setModal({
           slot,
@@ -427,7 +444,7 @@ export function ScheduleEditor() {
         return;
       }
 
-      const pos = getGridPosition(e.clientX, e.clientY);
+      const pos = getGridPosition(clientX, clientY);
       if (!pos) return;
 
       const { newStartRow, newEndRow, newDay } = computeNewPosition(drag, pos);
@@ -454,17 +471,80 @@ export function ScheduleEditor() {
         const data = await res.json();
         setSlots((prev) => prev.map((s) => (s.id === data.id ? data : s)));
       }
+    },
+    [getGridPosition, hasOverlap]
+  );
+
+  // ── Mouse + touch event listeners ──
+  useEffect(() => {
+    function handlePointerMove(clientX: number, clientY: number) {
+      const drag = dragRef.current;
+      if (!drag) return;
+
+      const threshold = drag.isTouch
+        ? TOUCH_DRAG_THRESHOLD
+        : MOUSE_DRAG_THRESHOLD;
+      const dx = clientX - drag.startMouseX;
+      const dy = clientY - drag.startMouseY;
+      if (!drag.isDragging && Math.abs(dx) + Math.abs(dy) < threshold) {
+        return false; // not dragging yet
+      }
+      drag.isDragging = true;
+
+      const pos = getGridPosition(clientX, clientY);
+      if (!pos) return true;
+
+      const { newStartRow, newEndRow, newDay } = computeNewPosition(drag, pos);
+      const valid = !hasOverlap(newDay, newStartRow, newEndRow, drag.slotId);
+      setGhost({
+        dayOfWeek: newDay,
+        startRow: newStartRow,
+        endRow: newEndRow,
+        valid,
+      });
+      return true;
+    }
+
+    function handleMouseMove(e: MouseEvent) {
+      handlePointerMove(e.clientX, e.clientY);
+    }
+
+    function handleMouseUp(e: MouseEvent) {
+      if (!dragRef.current) return;
+      finalizeDrag(e.clientX, e.clientY);
+    }
+
+    function handleTouchMove(e: TouchEvent) {
+      const drag = dragRef.current;
+      if (!drag || !drag.isTouch) return;
+      const touch = e.touches[0];
+      const isDragging = handlePointerMove(touch.clientX, touch.clientY);
+      // Only prevent scroll once we've started dragging
+      if (isDragging && drag.isDragging) {
+        e.preventDefault();
+      }
+    }
+
+    function handleTouchEnd(e: TouchEvent) {
+      const drag = dragRef.current;
+      if (!drag || !drag.isTouch) return;
+      const touch = e.changedTouches[0];
+      finalizeDrag(touch.clientX, touch.clientY);
     }
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd);
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [getGridPosition, hasOverlap]);
+  }, [getGridPosition, hasOverlap, finalizeDrag]);
 
-  // ── Click empty cell to create ──
+  // ── Click/tap empty cell to create ──
   const handleGridClick = useCallback(
     (e: React.MouseEvent, dayIndex: number) => {
       if ((e.target as HTMLElement).closest("[data-slot]")) return;
@@ -478,7 +558,7 @@ export function ScheduleEditor() {
       );
 
       const startRow = row;
-      const endRow = Math.min(TOTAL_ROWS, startRow + 2); // default 1 hour
+      const endRow = Math.min(TOTAL_ROWS, startRow + 2);
 
       setModal({
         dayOfWeek: dayIndex,
@@ -568,13 +648,17 @@ export function ScheduleEditor() {
     (slotsByDay[slot.day_of_week] ??= []).push(slot);
   }
 
-  // Generate start time options (row 0–47)
+  // Which days to render in the grid
+  const visibleDays = isMobile
+    ? [selectedDay]
+    : [0, 1, 2, 3, 4, 5, 6];
+
+  // Time options for modal
   const startTimeOptions = Array.from({ length: TOTAL_ROWS }, (_, i) => ({
     value: rowToTime(i),
     label: formatTime12(rowToTime(i)),
   }));
 
-  // Generate end time options (row 1–48, where 48 = "00:00" midnight)
   const endTimeOptions = Array.from({ length: TOTAL_ROWS }, (_, i) => {
     const row = i + 1;
     const time = rowToTime(row);
@@ -583,27 +667,119 @@ export function ScheduleEditor() {
     return { value: time, label };
   });
 
+  // ── Slot renderer (shared between mobile and desktop) ──
+  function renderSlot(slot: ScheduleSlot) {
+    const startRow = timeToRow(slot.start_time);
+    const endRow = endTimeToRow(slot.end_time);
+    const height = (endRow - startRow) * ROW_HEIGHT;
+    const displayName = slot.label || slot.cms_shows?.title || "Untitled";
+    const hostName = slot.cms_shows
+      ? getPrimaryHost(slot.cms_shows.cms_show_hosts)
+      : null;
+    const bgColor = slotColor(slot.show_id);
+    const isCompact = height <= ROW_HEIGHT;
+    const isMedium = height <= ROW_HEIGHT * 2;
+
+    return (
+      <div
+        key={slot.id}
+        data-slot="true"
+        className="group absolute left-0.5 right-0.5 cursor-grab overflow-hidden rounded-sm border border-charcoal/15 active:cursor-grabbing"
+        style={{
+          top: startRow * ROW_HEIGHT + 1,
+          height: height - 2,
+          backgroundColor: bgColor,
+          zIndex: 1,
+          touchAction: "none",
+        }}
+        onMouseDown={(e) => handleSlotMouseDown(e, slot, "move")}
+        onTouchStart={(e) => handleSlotTouchStart(e, slot)}
+      >
+        {/* Resize handle: top — desktop only */}
+        <div
+          className="absolute left-0 right-0 top-0 z-10 hidden h-2 cursor-n-resize opacity-0 transition-opacity hover:bg-charcoal/20 group-hover:opacity-100 md:block"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            handleSlotMouseDown(e, slot, "resize-top");
+          }}
+        />
+
+        {/* Content */}
+        <div className="h-full px-1.5 py-0.5">
+          <div
+            className={`truncate font-medium leading-tight text-charcoal ${
+              isCompact ? "text-[10px]" : "text-xs"
+            }`}
+          >
+            {displayName}
+          </div>
+          {!isCompact && hostName && (
+            <div className="mt-0.5 truncate text-[10px] leading-tight text-charcoal/50">
+              {hostName}
+            </div>
+          )}
+          {!isMedium && (
+            <div className="mt-0.5 font-mono text-[9px] text-charcoal/40">
+              {formatTime12(slot.start_time)}&ndash;
+              {formatTime12(slot.end_time)}
+            </div>
+          )}
+        </div>
+
+        {/* Resize handle: bottom — desktop only */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-10 hidden h-2 cursor-s-resize opacity-0 transition-opacity hover:bg-charcoal/20 group-hover:opacity-100 md:block"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            handleSlotMouseDown(e, slot, "resize-bottom");
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="relative select-none">
-      <div
-        ref={scrollContainerRef}
-        className="overflow-y-auto border border-charcoal/20"
-        style={{ maxHeight: "calc(100vh - 180px)" }}
-      >
-        {/* Day headers — sticky */}
-        <div className="sticky top-0 z-30 flex border-b border-charcoal/20 bg-off-white">
-          <div className="w-14 flex-shrink-0" />
+      {/* ── Mobile day switcher ── */}
+      {isMobile && (
+        <div className="mb-3 flex gap-1">
           {DAY_NAMES_SHORT.map((name, i) => (
-            <div
+            <button
               key={i}
-              className={`flex-1 min-w-[100px] py-2 text-center text-xs font-bold uppercase tracking-wider text-charcoal/60 ${
-                i < 6 ? "border-r border-charcoal/10" : ""
+              onClick={() => setSelectedDay(i)}
+              className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider ${
+                i === selectedDay
+                  ? "bg-charcoal text-off-white"
+                  : "bg-charcoal/5 text-charcoal/50 active:bg-charcoal/10"
               }`}
             >
               {name}
-            </div>
+            </button>
           ))}
         </div>
+      )}
+
+      <div
+        ref={scrollContainerRef}
+        className="overflow-y-auto border border-charcoal/20"
+        style={{ maxHeight: "calc(100vh - 220px)" }}
+      >
+        {/* Day headers — sticky, desktop only */}
+        {!isMobile && (
+          <div className="sticky top-0 z-30 flex border-b border-charcoal/20 bg-off-white">
+            <div className="w-14 flex-shrink-0" />
+            {DAY_NAMES_SHORT.map((name, i) => (
+              <div
+                key={i}
+                className={`min-w-[100px] flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider text-charcoal/60 ${
+                  i < 6 ? "border-r border-charcoal/10" : ""
+                }`}
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Grid body */}
         <div className="flex">
@@ -624,11 +800,15 @@ export function ScheduleEditor() {
 
           {/* Day columns */}
           <div ref={gridRef} className="flex flex-1">
-            {DAY_NAMES_SHORT.map((_, dayIndex) => (
+            {visibleDays.map((dayIndex, colIdx) => (
               <div
                 key={dayIndex}
-                className={`relative flex-1 min-w-[100px] cursor-pointer ${
-                  dayIndex < 6 ? "border-r border-charcoal/10" : ""
+                className={`relative flex-1 cursor-pointer ${
+                  !isMobile ? "min-w-[100px]" : ""
+                } ${
+                  !isMobile && colIdx < visibleDays.length - 1
+                    ? "border-r border-charcoal/10"
+                    : ""
                 }`}
                 style={{ height: TOTAL_HEIGHT }}
                 onClick={(e) => handleGridClick(e, dayIndex)}
@@ -649,76 +829,7 @@ export function ScheduleEditor() {
                 {/* Slots */}
                 {slotsByDay[dayIndex]
                   .sort((a, b) => a.start_time.localeCompare(b.start_time))
-                  .map((slot) => {
-                    const startRow = timeToRow(slot.start_time);
-                    const endRow = endTimeToRow(slot.end_time);
-                    const height = (endRow - startRow) * ROW_HEIGHT;
-                    const displayName =
-                      slot.label || slot.cms_shows?.title || "Untitled";
-                    const hostName = slot.cms_shows
-                      ? getPrimaryHost(slot.cms_shows.cms_show_hosts)
-                      : null;
-                    const bgColor = slotColor(slot.show_id);
-                    const isCompact = height <= ROW_HEIGHT;
-                    const isMedium = height <= ROW_HEIGHT * 2;
-
-                    return (
-                      <div
-                        key={slot.id}
-                        data-slot="true"
-                        className="group absolute left-0.5 right-0.5 cursor-grab overflow-hidden rounded-sm border border-charcoal/15 active:cursor-grabbing"
-                        style={{
-                          top: startRow * ROW_HEIGHT + 1,
-                          height: height - 2,
-                          backgroundColor: bgColor,
-                          zIndex: 1,
-                        }}
-                        onMouseDown={(e) =>
-                          handleSlotMouseDown(e, slot, "move")
-                        }
-                      >
-                        {/* Resize handle: top */}
-                        <div
-                          className="absolute left-0 right-0 top-0 z-10 h-2 cursor-n-resize opacity-0 transition-opacity hover:bg-charcoal/20 group-hover:opacity-100"
-                          onMouseDown={(e) => {
-                            e.stopPropagation();
-                            handleSlotMouseDown(e, slot, "resize-top");
-                          }}
-                        />
-
-                        {/* Content */}
-                        <div className="h-full px-1.5 py-0.5">
-                          <div
-                            className={`truncate font-medium leading-tight text-charcoal ${
-                              isCompact ? "text-[10px]" : "text-xs"
-                            }`}
-                          >
-                            {displayName}
-                          </div>
-                          {!isCompact && hostName && (
-                            <div className="mt-0.5 truncate text-[10px] leading-tight text-charcoal/50">
-                              {hostName}
-                            </div>
-                          )}
-                          {!isMedium && (
-                            <div className="mt-0.5 font-mono text-[9px] text-charcoal/40">
-                              {formatTime12(slot.start_time)}&ndash;
-                              {formatTime12(slot.end_time)}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Resize handle: bottom */}
-                        <div
-                          className="absolute bottom-0 left-0 right-0 z-10 h-2 cursor-s-resize opacity-0 transition-opacity hover:bg-charcoal/20 group-hover:opacity-100"
-                          onMouseDown={(e) => {
-                            e.stopPropagation();
-                            handleSlotMouseDown(e, slot, "resize-bottom");
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
+                  .map(renderSlot)}
 
                 {/* Ghost preview during drag */}
                 {ghost && ghost.dayOfWeek === dayIndex && (
@@ -744,14 +855,14 @@ export function ScheduleEditor() {
       {/* ── Modal ── */}
       {modal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/50 p-4"
           onClick={() => {
             setModal(null);
             setError("");
           }}
         >
           <div
-            className="w-full max-w-md border border-charcoal/20 bg-off-white p-6 shadow-xl"
+            className="max-h-[90vh] w-full max-w-md overflow-y-auto border border-charcoal/20 bg-off-white p-5 shadow-xl sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="font-serif text-lg font-bold text-charcoal">
@@ -769,7 +880,9 @@ export function ScheduleEditor() {
                   shows={shows}
                   value={modal.showId}
                   onChange={(id) =>
-                    setModal((prev) => (prev ? { ...prev, showId: id } : null))
+                    setModal((prev) =>
+                      prev ? { ...prev, showId: id } : null
+                    )
                   }
                 />
               </div>
@@ -784,10 +897,12 @@ export function ScheduleEditor() {
                     value={modal.startTime}
                     onChange={(e) =>
                       setModal((prev) =>
-                        prev ? { ...prev, startTime: e.target.value } : null
+                        prev
+                          ? { ...prev, startTime: e.target.value }
+                          : null
                       )
                     }
-                    className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm"
+                    className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
                   >
                     {startTimeOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -807,7 +922,7 @@ export function ScheduleEditor() {
                         prev ? { ...prev, endTime: e.target.value } : null
                       )
                     }
-                    className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm"
+                    className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
                   >
                     {endTimeOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -833,7 +948,7 @@ export function ScheduleEditor() {
                     )
                   }
                   placeholder="e.g. Pacifica National Programming"
-                  className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm"
+                  className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
                 />
               </div>
 
@@ -847,11 +962,14 @@ export function ScheduleEditor() {
                   onChange={(e) =>
                     setModal((prev) =>
                       prev
-                        ? { ...prev, dayOfWeek: parseInt(e.target.value) }
+                        ? {
+                            ...prev,
+                            dayOfWeek: parseInt(e.target.value),
+                          }
                         : null
                     )
                   }
-                  className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm"
+                  className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
                 >
                   {DAY_NAMES_FULL.map((name, i) => (
                     <option key={i} value={i}>
@@ -862,14 +980,16 @@ export function ScheduleEditor() {
               </div>
             </div>
 
-            {error && <p className="mt-3 text-sm text-kpfk-red">{error}</p>}
+            {error && (
+              <p className="mt-3 text-sm text-kpfk-red">{error}</p>
+            )}
 
             <div className="mt-6 flex items-center justify-between">
               <div className="flex gap-3">
                 <button
                   onClick={handleModalSave}
                   disabled={saving}
-                  className="border-2 border-charcoal bg-charcoal px-5 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+                  className="border-2 border-charcoal bg-charcoal px-5 py-2.5 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Save"}
                 </button>
@@ -878,7 +998,7 @@ export function ScheduleEditor() {
                     setModal(null);
                     setError("");
                   }}
-                  className="px-4 py-2 text-sm text-charcoal/60 hover:text-charcoal"
+                  className="px-4 py-2.5 text-sm text-charcoal/60 hover:text-charcoal"
                 >
                   Cancel
                 </button>

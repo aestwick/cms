@@ -389,11 +389,11 @@ export function ShowForm({ initialData, showId, mode }: ShowFormProps) {
       {error && (
         <p className="text-sm text-kpfk-red">{error}</p>
       )}
-      <div className="flex items-center gap-3 border-t border-charcoal/10 pt-6">
+      <div className="flex flex-col gap-3 border-t border-charcoal/10 pt-6 sm:flex-row sm:items-center">
         <button
           type="submit"
           disabled={saving}
-          className="border-2 border-charcoal bg-charcoal px-6 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+          className="border-2 border-charcoal bg-charcoal px-6 py-2.5 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
         >
           {saving
             ? "Saving…"
@@ -404,7 +404,7 @@ export function ShowForm({ initialData, showId, mode }: ShowFormProps) {
         <button
           type="button"
           onClick={() => router.push("/admin/shows")}
-          className="px-4 py-2 text-sm text-charcoal/60 hover:text-charcoal"
+          className="px-4 py-2.5 text-sm text-charcoal/60 hover:text-charcoal"
         >
           Cancel
         </button>
