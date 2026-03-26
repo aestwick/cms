@@ -39,5 +39,14 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // Redirect logged-in users away from /login to /admin
+  if (request.nextUrl.pathname === "/login" && user) {
+    const redirect = request.nextUrl.searchParams.get("redirect") || "/admin";
+    const url = request.nextUrl.clone();
+    url.pathname = redirect;
+    url.searchParams.delete("redirect");
+    return NextResponse.redirect(url);
+  }
+
   return supabaseResponse;
 }
