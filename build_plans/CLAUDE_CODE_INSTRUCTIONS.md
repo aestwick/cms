@@ -193,7 +193,7 @@ Enhancements that make the system feel alive.
 - [ ] Show attribution on donation CTAs during fund drive
 - [ ] Migration: `cms_episode_metadata`
 - [ ] Episode metadata editor: host adds show notes, description, transcript references, segment markers to episodes
-- [ ] Confessor episode list integration: fetch episode audio data, display alongside CMS metadata on show pages
+- [x] Confessor episode list integration: fetch episode audio data, display alongside CMS metadata on show pages (API route + EpisodeArchive component, 2026-03-26)
 - [ ] Archive/podcast browser: `/archive` — browse by show, date, search episode descriptions
 
 ### Phase 9: Migration + Launch Prep
@@ -275,7 +275,7 @@ NODE_ENV=production
 
 ## Questions Claude Code Should Ask Ace (Not Assume)
 
-- What's the exact Confessor API endpoint format for schedule and episode data? (Don't guess — ask for a sample response.)
+- ~~What's the exact Confessor API endpoint format for schedule and episode data?~~ **RESOLVED:** Discovered from Aiir snippet reference implementations. Confessor API base is `/_nu_do_api.php` with these endpoints: `req=fil&id={altid}&num=N&json=1` (episode list), `req=key&key={altid}&json=1` (show info), `req=mostrecent&altid={altid}&json=1` (current playlist), `req=shotimes&key={altid}&json=1` (archive dates), `req=playlist&phid={id}&json=1` (specific playlist). Proxy route built at `/api/confessor/episodes`.
 - What's the Beacon public API base URL and auth mechanism (rate-limited open, or API key)?
 - Which Resend domain/sender should CMS emails come from? (Probably `cms@kpfk.org` or `noreply@kpfk.org`)
 - Should the staging auth gate be basic auth (htpasswd) or IP whitelist? (Beacon uses IP whitelist for pledge.kpfk.org)
