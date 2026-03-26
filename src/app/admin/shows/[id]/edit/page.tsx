@@ -48,7 +48,7 @@ export default async function EditShowPage({
   const initialTagIds = (showTags ?? []).map((st: { tag_id: string }) => st.tag_id);
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-charcoal">Edit: {show.title}</h1>
@@ -63,41 +63,77 @@ export default async function EditShowPage({
         )}
       </div>
 
-      <div className="mt-6">
-        <ShowForm
-          mode="edit"
-          showId={id}
-          allTags={allTags ?? []}
-          initialTagIds={initialTagIds}
-          initialData={{
-            title: show.title,
-            slug: show.slug,
-            tagline: show.tagline || "",
-            description: show.description || "",
-            history: show.history || "",
-            show_type: show.show_type,
-            program_slug: show.program_slug || "",
-            logo_path: show.logo_path || "",
-            banner_path: show.banner_path || "",
-            contact_preference: show.contact_preference,
-            contact_email: show.contact_email || "",
-            website_url: show.website_url || "",
-            rss_url: show.rss_url || "",
-            social_links: show.social_links || {},
-            donation_cta_heading: show.donation_cta_heading || "",
-            donation_cta_body: show.donation_cta_body || "",
-            is_active: show.is_active,
-            sort_order: show.sort_order,
-            broadcast_status: show.broadcast_status || "active",
-            status_note: show.status_note || "",
-            returns_at: show.returns_at || "",
-            schedule_note: show.schedule_note || "",
-          }}
-        />
-      </div>
+      <div className="mt-6 grid grid-cols-1 gap-8 xl:grid-cols-[1fr_20rem]">
+        {/* Main form column */}
+        <div className="min-w-0">
+          <ShowForm
+            mode="edit"
+            showId={id}
+            allTags={allTags ?? []}
+            initialTagIds={initialTagIds}
+            initialData={{
+              title: show.title,
+              slug: show.slug,
+              tagline: show.tagline || "",
+              description: show.description || "",
+              history: show.history || "",
+              show_type: show.show_type,
+              program_slug: show.program_slug || "",
+              logo_path: show.logo_path || "",
+              banner_path: show.banner_path || "",
+              contact_preference: show.contact_preference,
+              contact_email: show.contact_email || "",
+              website_url: show.website_url || "",
+              rss_url: show.rss_url || "",
+              social_links: show.social_links || {},
+              donation_cta_heading: show.donation_cta_heading || "",
+              donation_cta_body: show.donation_cta_body || "",
+              is_active: show.is_active,
+              sort_order: show.sort_order,
+              broadcast_status: show.broadcast_status || "active",
+              status_note: show.status_note || "",
+              returns_at: show.returns_at || "",
+              schedule_note: show.schedule_note || "",
+            }}
+          />
+        </div>
 
-      <div className="mt-10 border-t border-charcoal/10 pt-8">
-        <HostManager showId={id} initialHosts={hosts || []} />
+        {/* Sidebar column */}
+        <aside className="space-y-6 xl:sticky xl:top-6 xl:self-start">
+          {/* Quick info card */}
+          <div className="border border-charcoal/10 bg-white p-5">
+            <h3 className="text-sm font-bold text-charcoal">Quick Info</h3>
+            <dl className="mt-3 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-charcoal/50">Status</dt>
+                <dd className="font-medium text-charcoal">
+                  {show.broadcast_status === "active" ? "Active" :
+                   show.broadcast_status === "hiatus" ? "On Hiatus" :
+                   show.broadcast_status === "online_only" ? "Online Only" : "Retired"}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-charcoal/50">Type</dt>
+                <dd className="font-medium capitalize text-charcoal">{show.show_type}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-charcoal/50">Active</dt>
+                <dd className="font-medium text-charcoal">{show.is_active ? "Yes" : "No"}</dd>
+              </div>
+              {show.program_slug && (
+                <div className="flex justify-between">
+                  <dt className="text-charcoal/50">Program</dt>
+                  <dd className="font-mono text-xs text-charcoal">{show.program_slug}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          {/* Host manager card */}
+          <div className="border border-charcoal/10 bg-white p-5">
+            <HostManager showId={id} initialHosts={hosts || []} />
+          </div>
+        </aside>
       </div>
     </div>
   );
