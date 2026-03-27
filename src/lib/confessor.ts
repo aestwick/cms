@@ -61,6 +61,30 @@ export function decodeHtmlEntities(str: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Slug aliases — multiple Confessor altids that map to a single CMS show.
+// Confessor splits some shows into multiple hour-keys; the CMS has one page.
+// ---------------------------------------------------------------------------
+
+const SLUG_ALIASES: Record<string, string> = {
+  // Something's Happening: 6 Confessor keys → 1 CMS show (program_slug = "somethingshappening")
+  somethihappenihour: "somethingshappening",
+  somethihappenihoura: "somethingshappening",
+  somethingshappeningb: "somethingshappening",
+  somethihappenibhour: "somethingshappening",
+  somethihappenibhoura: "somethingshappening",
+  // Special Music Programming → same CMS show as Special Programming
+  specialmusicprogramm: "special",
+};
+
+/**
+ * Resolve a Confessor sh_altid to its canonical program_slug.
+ * Returns the alias target if one exists, otherwise returns the altid as-is.
+ */
+export function resolveAltid(altid: string): string {
+  return SLUG_ALIASES[altid] ?? altid;
+}
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 

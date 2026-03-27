@@ -9,6 +9,7 @@ import {
   normalizeDayShows,
   deduplicateDayShows,
   decodeHtmlEntities,
+  resolveAltid,
   type ConfessorShow,
 } from "@/lib/confessor";
 
@@ -106,12 +107,13 @@ export async function GET() {
   const unmatchedSet = new Set<string>();
 
   for (const slot of incoming) {
-    const match = slugToShow.get(slot.confessor_altid);
+    const resolved = resolveAltid(slot.confessor_altid);
+    const match = slugToShow.get(resolved);
     if (match) {
       slot.matched_show_id = match.id;
       slot.matched_show_title = match.title;
-    } else if (!unmatchedSet.has(slot.confessor_altid)) {
-      unmatchedSet.add(slot.confessor_altid);
+    } else if (!unmatchedSet.has(resolved)) {
+      unmatchedSet.add(resolved);
       unmatched.push({ altid: slot.confessor_altid, name: decodeHtmlEntities(slot.show_name) });
     }
   }
