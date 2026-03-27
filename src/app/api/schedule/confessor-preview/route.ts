@@ -4,8 +4,10 @@ import { getCmsUser } from "@/lib/auth";
 import {
   getWeeklySchedule,
   isVisibleShow,
-  confessorTimeToSlotTime,
-  parseDayString,
+  showStartTime,
+  showEndTime,
+  normalizeDayShows,
+  deduplicateDayShows,
   type ConfessorShow,
 } from "@/lib/confessor";
 
@@ -48,13 +50,15 @@ export async function GET() {
   // The getshows endpoint returns an object keyed by day number
   const allShows: { show: ConfessorShow; dayOfWeek: number }[] = [];
 
-  for (const [dayKey, shows] of Object.entries(schedule)) {
+  for (const [dayKey, rawShows] of Object.entries(schedule)) {
     const dayNum = parseInt(dayKey, 10);
     if (isNaN(dayNum) || dayNum < 0 || dayNum > 6) continue;
-    if (!Array.isArray(shows)) continue;
+
+    const shows = deduplicateDayShows(
+      normalizeDayShows(rawShows).filter(isVisibleShow)
+    );
 
     for (const show of shows) {
-      if (!isVisibleShow(show)) continue;
       allShows.push({ show, dayOfWeek: dayNum });
     }
   }
@@ -71,9 +75,9 @@ export async function GET() {
       show_name: show.sh_name,
       host_name: show.sh_djname || "",
       day_of_week: dayOfWeek,
-      start_time: confessorTimeToSlotTime(show.sh_stime),
-      end_time: confessorTimeToSlotTime(show.sh_ends),
-      category: show.ca_name || "",
+      start_time: showStartTime(show),
+      end_time: showEndTime(show),
+      category: show.ca_name || show.type || "",
       matched_show_id: null,
       matched_show_title: null,
     });

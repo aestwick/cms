@@ -4,7 +4,10 @@ import { getCmsUser } from "@/lib/auth";
 import {
   getWeeklySchedule,
   isVisibleShow,
-  confessorTimeToSlotTime,
+  showStartTime,
+  showEndTime,
+  normalizeDayShows,
+  deduplicateDayShows,
 } from "@/lib/confessor";
 
 // POST /api/schedule/confessor-import
@@ -53,22 +56,23 @@ export async function POST(request: NextRequest) {
     confessor_synced: boolean;
   }[] = [];
 
-  for (const [dayKey, shows] of Object.entries(schedule)) {
+  for (const [dayKey, rawShows] of Object.entries(schedule)) {
     const dayNum = parseInt(dayKey, 10);
     if (isNaN(dayNum) || dayNum < 0 || dayNum > 6) continue;
-    if (!Array.isArray(shows)) continue;
+
+    const shows = deduplicateDayShows(
+      normalizeDayShows(rawShows).filter(isVisibleShow)
+    );
 
     for (const show of shows) {
-      if (!isVisibleShow(show)) continue;
-
       const showId = slugToId.get(show.sh_altid) || null;
 
       rows.push({
         station_id: user.station_id,
         show_id: showId,
         day_of_week: dayNum,
-        start_time: confessorTimeToSlotTime(show.sh_stime),
-        end_time: confessorTimeToSlotTime(show.sh_ends),
+        start_time: showStartTime(show),
+        end_time: showEndTime(show),
         label: showId ? null : show.sh_name, // label as fallback for unmatched
         is_recurring: true,
         confessor_synced: true,

@@ -21,21 +21,25 @@ export interface ConfessorShow {
   sh_altid: string; // slug — maps to cms_shows.program_slug
   sh_name: string;
   sh_djname: string;
-  sh_stime: string; // "HH:MM:SS"
-  sh_ends: string; // "HH:MM:SS"
-  sh_ampm: string;
-  sh_ampm_ends: string;
-  sh_shour: number; // seconds since midnight
+  sh_stime?: string; // "HH:MM:SS" — may not be present in getshows response
+  sh_ends?: string; // "HH:MM:SS" — may not be present in getshows response
+  starts: string; // "1:00 AM" — human-readable start time
+  ends: string; // "2:00 AM" — human-readable end time
+  sh_ampm?: string;
+  sh_ampm_ends?: string;
+  sh_shour?: number; // seconds since midnight
+  sh_start_time: number; // unix timestamp of this airing
   sh_len: number; // duration in seconds
-  sh_days: string; // "Mon Tue Wed ..."
+  sh_days?: string; // "Mon Tue Wed ..."
   sh_info: number; // bitmask
   sh_desc: string;
   sh_email: string;
   sh_url: string;
   sh_photo: string;
-  ca_name: string;
-  ca_color: string;
-  ca_bgcolor: string;
+  type?: string; // "Talk" | "Music" — category type
+  ca_name?: string;
+  ca_color?: string;
+  ca_bgcolor?: string;
 }
 
 // Bit flags from sh_info that we care about
@@ -71,18 +75,31 @@ function setCache<T>(key: string, data: T, ttlMs: number) {
 // Fetch helpers
 // ---------------------------------------------------------------------------
 
+const CONFESSOR_TIMEOUT_MS = 30_000; // 30 seconds — legacy PHP can be slow
+
 async function confessorFetch<T>(params: string): Promise<T | null> {
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), CONFESSOR_TIMEOUT_MS);
   try {
     const url = `${CONFESSOR_API_URL}?${params}&json=1`;
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    const res = await fetch(url, {
+      signal: abort.signal,
+      next: { revalidate: 3600 },
+    });
     if (!res.ok) {
       console.error(`[Confessor] HTTP ${res.status} from ${url}`);
       return null;
     }
     return (await res.json()) as T;
   } catch (err) {
-    console.error(`[Confessor] Fetch failed for ${CONFESSOR_API_URL}?${params}:`, err);
+    if (err instanceof DOMException && err.name === "AbortError") {
+      console.error(`[Confessor] Timeout after ${CONFESSOR_TIMEOUT_MS}ms for ${params}`);
+    } else {
+      console.error(`[Confessor] Fetch failed for ${CONFESSOR_API_URL}?${params}:`, err);
+    }
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -97,14 +114,20 @@ const SCHEDULE_TTL_MS = 60 * 60 * 1000; // 1 hour
  * Get the full weekly schedule from Confessor.
  * Returns an object keyed by day number (0-6), each containing an array of shows.
  */
-export async function getWeeklySchedule(): Promise<Record<
+/**
+ * Raw schedule data from Confessor — each day can be an array or an object
+ * keyed by index (the getshows endpoint returns objects, not arrays).
+ */
+export type ConfessorScheduleData = Record<
   string,
-  ConfessorShow[]
-> | null> {
-  const cached = getCached<Record<string, ConfessorShow[]>>(SCHEDULE_CACHE_KEY);
+  ConfessorShow[] | Record<string, ConfessorShow>
+>;
+
+export async function getWeeklySchedule(): Promise<ConfessorScheduleData | null> {
+  const cached = getCached<ConfessorScheduleData>(SCHEDULE_CACHE_KEY);
   if (cached) return cached;
 
-  const data = await confessorFetch<Record<string, ConfessorShow[]>>(
+  const data = await confessorFetch<ConfessorScheduleData>(
     "req=getshows&before=1&after=1"
   );
   if (!data) return null;
@@ -132,10 +155,84 @@ export function isVisibleShow(show: ConfessorShow): boolean {
 }
 
 /**
- * Convert Confessor time "HH:MM:SS" to schedule slot "HH:MM" format.
+ * Convert Confessor time to schedule slot "HH:MM" format.
+ * Handles both "HH:MM:SS" (from getday) and "1:00 AM" (from getshows).
  */
 export function confessorTimeToSlotTime(time: string): string {
-  return time.substring(0, 5);
+  // If already in HH:MM:SS format
+  if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
+    return time.substring(0, 5);
+  }
+  // If in HH:MM format already
+  if (/^\d{2}:\d{2}$/.test(time)) {
+    return time;
+  }
+  // Parse "1:00 AM" / "12:00 PM" format
+  return ampmTo24(time);
+}
+
+/**
+ * Convert "1:00 AM" or "12:00 PM" to "01:00" or "12:00" (24-hour HH:MM).
+ */
+export function ampmTo24(time: string): string {
+  const match = time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) {
+    console.warn(`[Confessor] Could not parse time "${time}", defaulting to 00:00`);
+    return "00:00";
+  }
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2];
+  const period = match[3].toUpperCase();
+  if (period === "AM" && hours === 12) hours = 0;
+  if (period === "PM" && hours !== 12) hours += 12;
+  return `${hours.toString().padStart(2, "0")}:${minutes}`;
+}
+
+/**
+ * Get start time from a ConfessorShow in HH:MM format.
+ * Prefers sh_stime if available, falls back to starts (AM/PM format).
+ */
+export function showStartTime(show: ConfessorShow): string {
+  if (show.sh_stime) return confessorTimeToSlotTime(show.sh_stime);
+  return confessorTimeToSlotTime(show.starts);
+}
+
+/**
+ * Get end time from a ConfessorShow in HH:MM format.
+ * Prefers sh_ends if available, falls back to ends (AM/PM format).
+ */
+export function showEndTime(show: ConfessorShow): string {
+  if (show.sh_ends) return confessorTimeToSlotTime(show.sh_ends);
+  return confessorTimeToSlotTime(show.ends);
+}
+
+/**
+ * Normalize Confessor day data to an array.
+ * The getshows API returns shows as an object keyed by index, not an array.
+ */
+export function normalizeDayShows(
+  shows: ConfessorShow[] | Record<string, ConfessorShow>
+): ConfessorShow[] {
+  if (Array.isArray(shows)) return shows;
+  return Object.values(shows);
+}
+
+/**
+ * Deduplicate shows across weeks for a single day.
+ * The getshows?before=1&after=1 endpoint returns 3 weeks of data.
+ * We keep only the first occurrence per (altid + start_time_of_day).
+ */
+export function deduplicateDayShows(shows: ConfessorShow[]): ConfessorShow[] {
+  const seen = new Set<string>();
+  const result: ConfessorShow[] = [];
+  for (const show of shows) {
+    const startTime = showStartTime(show);
+    const key = `${show.sh_altid}:${startTime}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(show);
+  }
+  return result;
 }
 
 /**
