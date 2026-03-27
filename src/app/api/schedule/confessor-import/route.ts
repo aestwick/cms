@@ -9,6 +9,7 @@ import {
   normalizeDayShows,
   deduplicateDayShows,
   decodeHtmlEntities,
+  resolveAltid,
 } from "@/lib/confessor";
 
 // POST /api/schedule/confessor-import
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     );
 
     for (const show of shows) {
-      const showId = slugToId.get(show.sh_altid) || null;
+      const showId = slugToId.get(resolveAltid(show.sh_altid)) || null;
 
       rows.push({
         station_id: user.station_id,
