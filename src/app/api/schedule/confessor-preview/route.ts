@@ -8,6 +8,7 @@ import {
   showEndTime,
   normalizeDayShows,
   deduplicateDayShows,
+  decodeHtmlEntities,
   type ConfessorShow,
 } from "@/lib/confessor";
 
@@ -72,8 +73,8 @@ export async function GET() {
   for (const { show, dayOfWeek } of allShows) {
     incoming.push({
       confessor_altid: show.sh_altid,
-      show_name: show.sh_name,
-      host_name: show.sh_djname || "",
+      show_name: decodeHtmlEntities(show.sh_name),
+      host_name: decodeHtmlEntities(show.sh_djname || ""),
       day_of_week: dayOfWeek,
       start_time: showStartTime(show),
       end_time: showEndTime(show),
@@ -111,7 +112,7 @@ export async function GET() {
       slot.matched_show_title = match.title;
     } else if (!unmatchedSet.has(slot.confessor_altid)) {
       unmatchedSet.add(slot.confessor_altid);
-      unmatched.push({ altid: slot.confessor_altid, name: slot.show_name });
+      unmatched.push({ altid: slot.confessor_altid, name: decodeHtmlEntities(slot.show_name) });
     }
   }
 
