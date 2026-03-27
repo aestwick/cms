@@ -20,20 +20,18 @@ const DAY_NAMES_FULL = [
   "Saturday",
 ];
 
-const SLOT_COLORS = [
-  "#DBEAFE",
-  "#FEF3C7",
-  "#D1FAE5",
-  "#FCE7F3",
-  "#E0E7FF",
-  "#FED7AA",
-  "#CCFBF1",
-  "#FDE68A",
-  "#C7D2FE",
-  "#FBCFE8",
-  "#A7F3D0",
-  "#DDD6FE",
-];
+const CATEGORY_COLORS: Record<string, string> = {
+  "Arts & Entertainment": "#96A8FF",
+  "Español": "#FFE2BD",
+  "Health & Spirituality": "#FFEB87",
+  "Music": "#FFD9E4",
+  "News": "#E8FFEA",
+  "Public Affairs - Local": "#E5D9FF",
+  "Public Affairs - National+Syndicated": "#CABFE0",
+  "Special Program": "#FF757A",
+};
+
+const UNMATCHED_COLOR = "#E5E7EB"; // gray for slots with no linked show
 
 // ─── Confessor Import Types ─────────────────────────────────
 interface ConfessorPreviewSlot {
@@ -80,6 +78,7 @@ interface ScheduleSlot {
     id: string;
     title: string;
     slug: string;
+    category: string | null;
     cms_show_hosts?: Host[];
   } | null;
 }
@@ -147,13 +146,9 @@ function formatTime12(time: string): string {
   return m === "00" ? `${h12}${ampm}` : `${h12}:${m}${ampm}`;
 }
 
-function slotColor(showId: string | null): string {
-  if (!showId) return "#E5E7EB";
-  let hash = 0;
-  for (let i = 0; i < showId.length; i++) {
-    hash = showId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return SLOT_COLORS[Math.abs(hash) % SLOT_COLORS.length];
+function slotColor(category: string | null | undefined): string {
+  if (!category) return UNMATCHED_COLOR;
+  return CATEGORY_COLORS[category] ?? UNMATCHED_COLOR;
 }
 
 function getPrimaryHost(hosts?: Host[]): string | null {
@@ -914,7 +909,7 @@ export function ScheduleEditor() {
     const hostName = slot.cms_shows
       ? getPrimaryHost(slot.cms_shows.cms_show_hosts)
       : null;
-    const bgColor = slotColor(slot.show_id);
+    const bgColor = slotColor(slot.cms_shows?.category);
     const isCompact = height <= ROW_HEIGHT;
     const isMedium = height <= ROW_HEIGHT * 2;
 

@@ -8,7 +8,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("cms_schedule_slots")
-    .select("id, show_id, day_of_week, start_time, end_time, label, image_path, is_recurring, effective_date, expires_date, cms_shows(id, title, slug, cms_show_hosts(name))")
+    .select("id, show_id, day_of_week, start_time, end_time, label, image_path, is_recurring, effective_date, expires_date, cms_shows(id, title, slug, category, cms_show_hosts(name))")
     .eq("is_recurring", true)
     .order("day_of_week", { ascending: true })
     .order("start_time", { ascending: true });
