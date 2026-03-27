@@ -93,8 +93,8 @@ export default async function EventsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
-      <h1 className="font-serif text-4xl font-bold text-charcoal">Events</h1>
-      <p className="mt-3 text-lg text-charcoal/60">
+      <h1 className="section-header section-header--large">Events</h1>
+      <p className="mt-1 font-serif text-lg text-charcoal/60">
         Upcoming events from KPFK and the community
       </p>
 
@@ -109,7 +109,7 @@ export default async function EventsPage() {
 
       {/* All upcoming events */}
       {regular.length > 0 ? (
-        <div className="mt-10 grid grid-cols-1 gap-px border border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-px border-2 border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-3">
           {regular.map((event) => (
             <EventCard key={`${event.source}-${event.id}`} event={event} />
           ))}
@@ -154,11 +154,11 @@ function EventCard({
       )}
       <div className="flex flex-1 flex-col">
         <div className="flex items-start gap-2">
-          <span className="rounded border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
+          <span className="badge badge--muted">
             {categoryLabels[event.category] || event.category}
           </span>
           {isExternal && (
-            <span className="rounded border border-kpfk-red/20 bg-kpfk-red/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-kpfk-red">
+            <span className="badge badge--accent">
               Tickets
             </span>
           )}

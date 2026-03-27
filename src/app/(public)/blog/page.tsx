@@ -63,9 +63,9 @@ export default async function BlogIndexPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12 sm:px-8">
-      <header className="border-b-2 border-charcoal pb-6">
-        <h1 className="font-serif text-4xl font-bold text-charcoal">Blog</h1>
-        <p className="mt-2 text-lg text-charcoal/60">
+      <header className="masthead" style={{ marginBottom: "2rem" }}>
+        <h1 className="section-header section-header--large">Blog</h1>
+        <p className="mt-1 font-serif text-lg text-charcoal/60">
           News, updates, and stories from KPFK 90.7 FM
         </p>
       </header>
@@ -108,7 +108,7 @@ export default async function BlogIndexPage() {
                       </>
                     )}
                     {post.is_featured && (
-                      <span className="rounded border border-action-yellow/40 bg-action-yellow/10 px-1.5 py-0.5 font-mono text-[10px] uppercase">
+                      <span className="badge badge--highlight">
                         Featured
                       </span>
                     )}

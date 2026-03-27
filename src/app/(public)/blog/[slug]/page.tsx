@@ -89,7 +89,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       </nav>
 
       {/* Header */}
-      <header className="border-b border-charcoal/10 pb-8">
+      <header className="masthead" style={{ marginBottom: "2rem" }}>
         {showData && (
           <Link
             href={`/on-air/${showData.slug}`}

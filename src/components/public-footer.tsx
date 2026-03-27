@@ -23,7 +23,7 @@ export function PublicFooter() {
 
           {/* Navigation */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-off-white/40">
+            <h3 className="sidebar-label--dark">
               Explore
             </h3>
             <ul className="mt-4 space-y-3 text-base">
@@ -52,7 +52,7 @@ export function PublicFooter() {
 
           {/* About */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-off-white/40">
+            <h3 className="sidebar-label--dark">
               Station
             </h3>
             <ul className="mt-4 space-y-3 text-base">
@@ -86,7 +86,7 @@ export function PublicFooter() {
 
           {/* Listen */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-off-white/40">
+            <h3 className="sidebar-label--dark">
               Listen
             </h3>
             <p className="mt-4 text-base text-off-white/60">
@@ -96,7 +96,7 @@ export function PublicFooter() {
               href="https://kpfk.org/stream"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-block border border-off-white/30 px-5 py-2.5 text-base font-medium text-off-white transition-colors hover:border-off-white hover:bg-off-white/10"
+              className="btn-editorial btn-editorial--light mt-4 inline-block"
             >
               Stream Online
             </a>

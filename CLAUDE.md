@@ -162,6 +162,66 @@ kpfk-cms/
 
 ---
 
+## Styling System — Editorial CSS
+
+The public-facing site uses an **editorial/newspaper aesthetic** defined in `src/app/globals.css`. The design language is adapted from the KPFK show page snippet v2.2 (see `snippets/890_show-page-css`).
+
+### Design Principles
+
+- **No border-radius anywhere** — sharp rectangles reinforce the print identity
+- **3px solid borders** instead of shadows or soft edges
+- **Monospace for metadata** (Courier/JetBrains Mono) — schedule times, labels, tags
+- **Serif for body text** (Georgia) — newspaper column feel
+- **Sans-serif for headings** (Franklin Gothic) — bold, condensed, uppercase
+- **Red (#B22222) used sparingly** — section accents, CTAs, stamps. Never backgrounds.
+- **No gradients, no rounded corners, no soft shadows**
+
+### How to Style New Components
+
+**Use global CSS classes from `globals.css` first.** Only fall back to Tailwind utilities for layout (flexbox, grid, spacing, responsive breakpoints). Never recreate a pattern that already has a class.
+
+### Available Classes
+
+| Class | Use For |
+|-------|---------|
+| `.section-header` / `.section-header--large` | Section headings with red underline |
+| `.masthead` | Page headers with double-rule (4px red + 1px gray) |
+| `.sidebar-label` / `.sidebar-label--dark` | Uppercase monospace section labels |
+| `.show-card` / `.show-card__*` | Show grid cards (thick border, square image) |
+| `.host-card` / `.host-card__*` | Host cards with grayscale photos |
+| `.tag-stamp` / `.tag-stamp--topic/format/audience` | Archive stamp-style tags |
+| `.tag-filter` / `.tag-filter--active-*` | Filter pills on listing pages |
+| `.badge` / `.badge--default/accent/muted/highlight` | Monospace metadata badges |
+| `.btn-editorial` / `--primary/--secondary/--light/--small` | Flat editorial buttons |
+| `.form-input` / `.form-label` | Form controls with thick borders |
+| `.card-light` / `.card-editorial` | Light (2px gray) or heavy (3px black) card borders |
+| `.donate-cta` | Donation call-to-action section (3px red border) |
+| `.schedule-badge` | Monospace dateline-style schedule labels |
+| `.social-link` | Icon + label link rows |
+| `.adjacent-link` | Bordered show link cards |
+| `.mono-link` | Small uppercase action links (red, underline on hover) |
+| `.drop-cap` | Red first-letter on prose descriptions |
+| `.divider` / `.divider--heavy` | Horizontal rules (1px gray or 4px black) |
+| `.status-badge` | Overlay badge (dark background, monospace) |
+| `.show-logo` | Square logo with 3px border |
+| `.show-card__type` | Monospace type label (e.g., "MUSIC", "TALK") |
+
+### When to Use Tailwind vs Global Classes
+
+- **Global class**: Any visual pattern that appears in 2+ places (buttons, badges, cards, labels, inputs)
+- **Tailwind utility**: Layout primitives (`flex`, `grid`, `mx-auto`, `max-w-7xl`, `px-6`, `py-12`, responsive breakpoints)
+- **Never**: Inline `style={}` for colors or typography. Use design tokens from `@theme`.
+
+### Adding New Patterns
+
+If you need a new component style:
+1. Check if an existing class covers it (or can be extended with a modifier)
+2. If not, add it to `globals.css` in the editorial component system section
+3. Follow the naming convention: `.component-name` for blocks, `.component-name__element` for children, `.component-name--modifier` for variants
+4. Use CSS custom properties from `@theme` for colors and fonts — never hardcode hex values that aren't in the design system
+
+---
+
 ## Patterns from Beacon to Follow
 
 Reference the Beacon repo for established patterns. Don't reinvent:

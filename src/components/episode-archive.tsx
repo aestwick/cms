@@ -188,25 +188,21 @@ export function EpisodeArchive({ programSlug, showTitle }: EpisodeArchiveProps) 
 
   if (loading) {
     return (
-      <section className="border border-charcoal/10 p-8">
-        <h2 className="font-serif text-2xl font-bold text-charcoal">
-          Recent Episodes
-        </h2>
-        <p className="mt-4 text-base text-charcoal/40">Loading episodes...</p>
+      <section className="card-light p-8">
+        <h2 className="section-header">Recent Episodes</h2>
+        <p className="mt-4 font-serif text-base text-charcoal/40">Loading episodes...</p>
       </section>
     );
   }
 
   if (error) {
     return (
-      <section className="border border-charcoal/10 p-8">
-        <h2 className="font-serif text-2xl font-bold text-charcoal">
-          Recent Episodes
-        </h2>
-        <p className="mt-4 text-base text-charcoal/60">{error}</p>
+      <section className="card-light p-8">
+        <h2 className="section-header">Recent Episodes</h2>
+        <p className="mt-4 font-serif text-base text-charcoal/60">{error}</p>
         <button
           onClick={fetchEpisodes}
-          className="mt-3 text-sm font-bold text-kpfk-red hover:text-kpfk-red/80"
+          className="mono-link mt-3"
         >
           Try again
         </button>
@@ -216,11 +212,9 @@ export function EpisodeArchive({ programSlug, showTitle }: EpisodeArchiveProps) 
 
   if (episodes.length === 0) {
     return (
-      <section className="border border-charcoal/10 p-8">
-        <h2 className="font-serif text-2xl font-bold text-charcoal">
-          Recent Episodes
-        </h2>
-        <p className="mt-4 text-base text-charcoal/40">
+      <section className="card-light p-8">
+        <h2 className="section-header">Recent Episodes</h2>
+        <p className="mt-4 font-serif text-base text-charcoal/40">
           No archived episodes available yet.
         </p>
       </section>
@@ -228,10 +222,10 @@ export function EpisodeArchive({ programSlug, showTitle }: EpisodeArchiveProps) 
   }
 
   return (
-    <section className="border border-charcoal/10">
+    <section className="card-light">
       {/* Header */}
-      <div className="border-b border-charcoal/10 bg-charcoal px-6 py-4">
-        <p className="font-mono text-xs uppercase tracking-wider text-off-white/50">
+      <div className="border-b-4 border-b-kpfk-red bg-charcoal px-6 py-4">
+        <p className="sidebar-label--dark" style={{ marginBottom: 0 }}>
           Episode Archive
         </p>
         <h2 className="font-serif text-xl font-bold text-off-white">
@@ -314,7 +308,7 @@ export function EpisodeArchive({ programSlug, showTitle }: EpisodeArchiveProps) 
                 {/* Download */}
                 <button
                   onClick={() => handleDownload(ep)}
-                  className="mt-2 inline-flex items-center gap-1.5 border border-charcoal/15 px-3 py-1 text-xs font-bold text-charcoal/60 transition-colors hover:border-charcoal/30 hover:text-charcoal"
+                  className="btn-editorial btn-editorial--secondary btn-editorial--small mt-2 inline-flex items-center gap-1.5"
                 >
                   <DownloadIcon className="h-3 w-3" />
                   Download
@@ -335,14 +329,14 @@ export function EpisodeArchive({ programSlug, showTitle }: EpisodeArchiveProps) 
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="border border-charcoal/15 px-3 py-1 text-xs font-bold text-charcoal/60 transition-colors hover:border-charcoal/30 disabled:opacity-30"
+              className="btn-editorial btn-editorial--secondary btn-editorial--small disabled:opacity-30"
             >
               Prev
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="border border-charcoal/15 px-3 py-1 text-xs font-bold text-charcoal/60 transition-colors hover:border-charcoal/30 disabled:opacity-30"
+              className="btn-editorial btn-editorial--secondary btn-editorial--small disabled:opacity-30"
             >
               Next
             </button>

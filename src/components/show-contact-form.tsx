@@ -66,7 +66,7 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
 
   if (success) {
     return (
-      <div className="border border-charcoal/10 p-8 text-center">
+      <div className="card-light p-8 text-center">
         <p className="font-serif text-xl font-bold text-charcoal">
           Message sent!
         </p>
@@ -83,7 +83,7 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="border-2 border-charcoal bg-charcoal px-7 py-3 text-base font-medium text-off-white hover:bg-charcoal/90"
+        className="btn-editorial btn-editorial--secondary"
       >
         Contact {showTitle}
       </button>
@@ -94,7 +94,7 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className="block text-base font-medium text-charcoal">
+          <label className="form-label">
             Name <span className="text-kpfk-red">*</span>
           </label>
           <input
@@ -104,11 +104,11 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
             onChange={(e) =>
               setForm((prev) => ({ ...prev, sender_name: e.target.value }))
             }
-            className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
+            className="form-input mt-1.5"
           />
         </div>
         <div>
-          <label className="block text-base font-medium text-charcoal">
+          <label className="form-label">
             Email <span className="text-kpfk-red">*</span>
           </label>
           <input
@@ -118,7 +118,7 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
             onChange={(e) =>
               setForm((prev) => ({ ...prev, sender_email: e.target.value }))
             }
-            className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
+            className="form-input mt-1.5"
           />
         </div>
       </div>
@@ -176,7 +176,7 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
       <button
         type="submit"
         disabled={submitting}
-        className="border-2 border-charcoal bg-charcoal px-7 py-3 text-base font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+        className="btn-editorial btn-editorial--secondary disabled:opacity-50"
       >
         {submitting ? "Sending..." : "Send Message"}
       </button>

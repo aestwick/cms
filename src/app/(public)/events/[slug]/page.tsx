@@ -74,18 +74,18 @@ export default async function EventDetailPage({ params }: PageProps) {
       </Link>
 
       {/* Header */}
-      <header className="mt-6 border-b-2 border-charcoal pb-8">
+      <header className="masthead mt-6" style={{ marginBottom: "2.5rem" }}>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
+          <span className="badge badge--muted">
             {categoryLabels[event.category] || event.category}
           </span>
           {isPast && (
-            <span className="rounded border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/40">
+            <span className="badge badge--muted">
               Past Event
             </span>
           )}
           {event.is_highlighted && (
-            <span className="rounded border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-amber-600">
+            <span className="badge badge--highlight">
               Featured
             </span>
           )}
@@ -129,8 +129,8 @@ export default async function EventDetailPage({ params }: PageProps) {
         {/* Sidebar */}
         <aside className="space-y-6">
           {/* Date & Time */}
-          <section className="border border-charcoal/10 p-6">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
+          <section className="card-light p-6">
+            <h3 className="sidebar-label">
               When
             </h3>
             <p className="mt-3 text-base font-medium text-charcoal">
@@ -184,7 +184,7 @@ export default async function EventDetailPage({ params }: PageProps) {
               href={event.event_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block border-2 border-kpfk-red p-6 text-center text-base font-bold text-kpfk-red transition-colors hover:bg-kpfk-red hover:text-off-white"
+              className="btn-editorial btn-editorial--primary block text-center"
             >
               More Info &rarr;
             </a>

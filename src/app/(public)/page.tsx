@@ -117,21 +117,21 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------------ */}
       {/* Hero / Now Playing                                                  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="border-2 border-charcoal p-8 sm:p-12 text-center">
-        <p className="font-mono text-xs uppercase tracking-widest text-charcoal/50">
+      <section className="card-editorial p-8 text-center sm:p-12">
+        <p className="show-card__type">
           Pacifica Foundation Community Radio — Los Angeles
         </p>
         <h1 className="mt-4 font-serif text-5xl font-bold text-charcoal sm:text-6xl">
           KPFK 90.7 FM
         </h1>
-        <p className="mt-3 text-lg text-charcoal/60">
+        <p className="mt-3 font-serif text-lg text-charcoal/60">
           Listener-supported since 1959
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <a
             href="#"
-            className="inline-flex items-center gap-2 border-2 border-kpfk-red bg-kpfk-red px-8 py-3 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-kpfk-red"
+            className="btn-editorial btn-editorial--primary inline-flex items-center gap-2"
           >
             <span aria-hidden="true" className="text-lg">&#9654;</span>
             Listen Live
@@ -140,7 +140,7 @@ export default async function HomePage() {
             href="https://donate.kpfk.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="border-2 border-charcoal bg-charcoal px-8 py-3 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-charcoal"
+            className="btn-editorial btn-editorial--secondary"
           >
             Support KPFK
           </a>
@@ -150,14 +150,14 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------------ */}
       {/* Two-column: Schedule + Blog                                         */}
       {/* ------------------------------------------------------------------ */}
-      <div className="mt-12 grid grid-cols-1 gap-px border border-charcoal bg-charcoal/10 lg:grid-cols-3">
+      <div className="mt-12 grid grid-cols-1 gap-px border-2 border-charcoal bg-charcoal/10 lg:grid-cols-3">
         {/* Today's Schedule */}
         <div className="bg-off-white p-6 lg:col-span-1">
           <div className="flex items-baseline justify-between">
             <h2 className="font-serif text-2xl font-bold text-charcoal">
               Today
             </h2>
-            <span className="font-mono text-xs uppercase tracking-wide text-charcoal/40">
+            <span className="show-card__type">
               {todayName}
             </span>
           </div>
@@ -211,7 +211,7 @@ export default async function HomePage() {
             </h2>
             <Link
               href="/blog"
-              className="font-mono text-xs font-bold uppercase tracking-wide text-kpfk-red hover:underline"
+              className="mono-link"
             >
               All Posts &rarr;
             </Link>
@@ -233,7 +233,7 @@ export default async function HomePage() {
                     </div>
                   )}
                   {post.cms_shows && (
-                    <p className="font-mono text-[10px] uppercase tracking-wide text-charcoal/40">
+                    <p className="show-card__type">
                       {(post.cms_shows as any).title}
                     </p>
                   )}
@@ -273,14 +273,14 @@ export default async function HomePage() {
           </h2>
           <Link
             href="/events"
-            className="font-mono text-xs font-bold uppercase tracking-wide text-kpfk-red hover:underline"
+            className="mono-link"
           >
             All Events &rarr;
           </Link>
         </div>
 
         {upcomingEvents.length > 0 ? (
-          <div className="mt-5 grid grid-cols-1 gap-px border border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-5 grid grid-cols-1 gap-px border-2 border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-4">
             {upcomingEvents.map((event) => {
               const isExternal = event.source === "beacon";
               const href = isExternal
@@ -322,8 +322,8 @@ export default async function HomePage() {
                       </p>
                     )}
                     {isExternal && (
-                      <span className="mt-auto pt-3 font-mono text-[10px] uppercase tracking-wide text-kpfk-red">
-                        Tickets
+                      <span className="mt-auto pt-3">
+                        <span className="badge badge--accent">Tickets</span>
                       </span>
                     )}
                   </div>
@@ -365,7 +365,7 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------------ */}
       {/* Newsletter Signup                                                   */}
       {/* ------------------------------------------------------------------ */}
-      <section className="mt-12 border-2 border-charcoal p-8 sm:p-10">
+      <section className="card-editorial mt-12 p-8 sm:p-10">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:gap-10">
           <div className="flex-1">
             <h2 className="font-serif text-2xl font-bold text-charcoal">

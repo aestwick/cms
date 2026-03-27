@@ -33,7 +33,7 @@ export function PublicHeader() {
             href="https://kpfk.org/stream"
             target="_blank"
             rel="noopener noreferrer"
-            className="border-2 border-kpfk-red bg-kpfk-red px-5 py-2.5 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-kpfk-red"
+            className="btn-editorial btn-editorial--primary"
           >
             Listen Live
           </a>

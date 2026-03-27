@@ -464,6 +464,136 @@ h6 {
   border-color: var(--color-charcoal);
 }
 
+/* --- Badges — monospace metadata pills --- */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid;
+  line-height: 1.4;
+}
+
+.badge--default {
+  border-color: var(--color-charcoal);
+  color: var(--color-charcoal);
+}
+
+.badge--accent {
+  border-color: var(--color-kpfk-red);
+  color: var(--color-kpfk-red);
+}
+
+.badge--muted {
+  border-color: #999;
+  color: #777;
+}
+
+.badge--highlight {
+  border-color: var(--color-action-yellow);
+  color: #8B6914;
+  background: rgba(255, 215, 0, 0.08);
+}
+
+/* --- Form Controls — editorial inputs --- */
+.form-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-charcoal);
+  background: var(--color-off-white);
+  border: 2px solid var(--color-charcoal);
+  transition: border-color 0.15s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-kpfk-red);
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* --- Light Card — subtle bordered sections --- */
+.card-light {
+  border: 2px solid #e0e0e0;
+  background: #fff;
+}
+
+/* --- Editorial Card — thick bordered sections --- */
+.card-editorial {
+  border: 3px solid var(--color-charcoal);
+  background: #fff;
+}
+
+/* --- Sidebar Label (dark background variant) --- */
+.sidebar-label--dark {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 1rem;
+}
+
+/* --- Mono Link — small uppercase action link --- */
+.mono-link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-kpfk-red);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.mono-link:hover {
+  border-bottom-color: var(--color-kpfk-red);
+}
+
+/* --- Button size variant --- */
+.btn-editorial--small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* --- Button light variant (for dark backgrounds) --- */
+.btn-editorial--light {
+  background: transparent;
+  color: var(--color-off-white);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-editorial--light:hover {
+  background: var(--color-off-white);
+  color: var(--color-charcoal);
+  border-color: var(--color-off-white);
+}
+
 /* --- Responsive --- */
 @media (max-width: 640px) {
   .show-card__title {

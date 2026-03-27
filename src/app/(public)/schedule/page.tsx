@@ -59,8 +59,8 @@ export default async function SchedulePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
-      <h1 className="font-serif text-4xl font-bold text-charcoal">Schedule</h1>
-      <p className="mt-3 text-lg text-charcoal/60">
+      <h1 className="section-header section-header--large">Schedule</h1>
+      <p className="mt-1 font-serif text-lg text-charcoal/60">
         KPFK 90.7 FM weekly broadcast schedule
       </p>
 
@@ -70,12 +70,10 @@ export default async function SchedulePage() {
         <div className="mt-10 space-y-10">
           {orderedDays.map((dayIndex) => (
             <section key={dayIndex}>
-              <h2 className="flex items-center gap-3 border-b-2 border-charcoal pb-3 font-serif text-2xl font-bold text-charcoal">
+              <h2 className="section-header section-header--large flex items-center gap-3">
                 {DAY_NAMES[dayIndex]}
                 {dayIndex === today && (
-                  <span className="font-mono text-sm font-normal text-kpfk-red">
-                    TODAY
-                  </span>
+                  <span className="badge badge--accent">Today</span>
                 )}
               </h2>
 
@@ -84,7 +82,7 @@ export default async function SchedulePage() {
                   No scheduled programming
                 </p>
               ) : (
-                <div className="mt-4 divide-y divide-charcoal/10 border border-charcoal/10">
+                <div className="card-light mt-4 divide-y divide-charcoal/10">
                   {slotsByDay[dayIndex].map((slot) => (
                     <div
                       key={slot.id}
