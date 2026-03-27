@@ -205,16 +205,14 @@ export default async function OnAirPage({
                     />
                   </div>
                 ) : show.logo_path ? (
-                  <div className="flex h-36 w-full items-center justify-center bg-charcoal/[0.03]">
-                    <div className="relative h-24 w-24 overflow-hidden rounded-full">
-                      <Image
-                        src={resolveImageUrl(show.logo_path)}
-                        alt=""
-                        fill
-                        className="object-cover"
-                        sizes="96px"
-                      />
-                    </div>
+                  <div className="relative h-36 w-full overflow-hidden bg-charcoal/[0.03]">
+                    <Image
+                      src={resolveImageUrl(show.logo_path)}
+                      alt=""
+                      fill
+                      className="object-contain"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    />
                   </div>
                 ) : (
                   <div className="flex h-36 w-full items-center justify-center bg-charcoal/[0.03]">
