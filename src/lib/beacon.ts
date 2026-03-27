@@ -5,7 +5,7 @@
  */
 
 const BEACON_API_URL =
-  process.env.BEACON_API_URL || "https://donate.kpfk.org/api";
+  process.env.BEACON_API_BASE_URL || "https://events.kpfk.org/api";
 
 // ---------------------------------------------------------------------------
 // In-memory cache
