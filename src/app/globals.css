@@ -65,3 +65,412 @@ h6 {
   color: rgba(26, 26, 26, 0.5);
   margin-top: 0.5rem;
 }
+
+/* ============================================================
+   EDITORIAL COMPONENT SYSTEM
+   Adapted from KPFK show page snippet v2.2
+   ============================================================ */
+
+/* --- Section Headers — red underline accent --- */
+.section-header {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--color-kpfk-red);
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  color: var(--color-charcoal);
+}
+
+.section-header--large {
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+
+/* --- Masthead — double-rule divider --- */
+.masthead {
+  border-bottom: 4px solid var(--color-kpfk-red);
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.masthead::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+/* --- Show Logo — thick border, square --- */
+.show-logo {
+  border: 3px solid var(--color-charcoal);
+  object-fit: cover;
+  object-position: center;
+}
+
+/* --- Schedule Badge — dateline style --- */
+.schedule-badge {
+  display: inline-block;
+  background: var(--color-charcoal);
+  color: var(--color-off-white);
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* --- Tags — archive stamp style --- */
+.tag-stamp {
+  display: inline-block;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 2px solid;
+  background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tag-stamp--topic {
+  color: var(--color-kpfk-red);
+  border-color: var(--color-kpfk-red);
+}
+
+.tag-stamp--topic:hover {
+  background: var(--color-kpfk-red);
+  color: #fff;
+}
+
+.tag-stamp--format {
+  color: var(--color-charcoal);
+  border-color: var(--color-charcoal);
+}
+
+.tag-stamp--format:hover {
+  background: var(--color-charcoal);
+  color: #fff;
+}
+
+.tag-stamp--audience {
+  color: #444;
+  border-color: #444;
+}
+
+.tag-stamp--audience:hover {
+  background: #444;
+  color: #fff;
+}
+
+/* --- Tag filter pills (on-air listing) --- */
+.tag-filter {
+  display: inline-block;
+  padding: 5px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 2px solid #ddd;
+  background: transparent;
+  color: #555;
+  transition: all 0.15s;
+}
+
+.tag-filter:hover {
+  border-color: var(--color-kpfk-red);
+  color: var(--color-kpfk-red);
+}
+
+.tag-filter--active-topic {
+  background: var(--color-kpfk-red);
+  border-color: var(--color-kpfk-red);
+  color: #fff;
+}
+
+.tag-filter--active-format {
+  background: var(--color-charcoal);
+  border-color: var(--color-charcoal);
+  color: #fff;
+}
+
+.tag-filter--active-audience {
+  background: #444;
+  border-color: #444;
+  color: #fff;
+}
+
+/* --- Show Cards — grid items on /on-air --- */
+.show-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 3px solid var(--color-charcoal);
+  transition: background 0.15s;
+}
+
+.show-card:hover {
+  background: #fafafa;
+}
+
+.show-card__image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  display: block;
+  border-bottom: 3px solid var(--color-charcoal);
+  background: #f5f5f5;
+}
+
+.show-card__image--cover {
+  object-fit: cover;
+}
+
+.show-card__placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 3px solid var(--color-charcoal);
+  background: #f5f5f5;
+}
+
+.show-card__body {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.show-card__title {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--color-charcoal);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.show-card__host {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.show-card__tagline {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-style: italic;
+  color: #555;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.show-card__footer {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.show-card__type {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+}
+
+/* --- Host Cards — thick border, grayscale photo --- */
+.host-card {
+  border: 3px solid var(--color-charcoal);
+  background: #fff;
+}
+
+.host-card__photo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border-bottom: 3px solid var(--color-charcoal);
+  filter: grayscale(30%);
+}
+
+.host-card__info {
+  padding: 16px;
+}
+
+.host-card__name {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--color-charcoal);
+  margin: 0;
+}
+
+.host-card__role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.host-card__bio {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  margin-top: 8px;
+}
+
+/* --- Drop Cap — first letter of show description --- */
+.drop-cap > p:first-of-type::first-letter {
+  font-size: 3.2em;
+  float: left;
+  line-height: 0.8;
+  margin: 4px 4px 0 0;
+  font-weight: 700;
+  color: var(--color-kpfk-red);
+}
+
+/* --- Buttons — flat, urgent, no gradients --- */
+.btn-editorial {
+  display: inline-block;
+  padding: 12px 20px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  border: 3px solid;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+
+.btn-editorial--primary {
+  background: var(--color-kpfk-red);
+  color: #fff;
+  border-color: var(--color-kpfk-red);
+}
+
+.btn-editorial--primary:hover {
+  background: var(--color-charcoal);
+  border-color: var(--color-charcoal);
+  color: #fff;
+}
+
+.btn-editorial--secondary {
+  background: transparent;
+  color: var(--color-charcoal);
+  border-color: var(--color-charcoal);
+}
+
+.btn-editorial--secondary:hover {
+  background: var(--color-charcoal);
+  color: #fff;
+}
+
+/* --- Donate CTA — red border accent --- */
+.donate-cta {
+  border: 3px solid var(--color-kpfk-red);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+/* --- Section Dividers --- */
+.divider {
+  height: 1px;
+  background: #e0e0e0;
+  border: none;
+  margin: 2rem 0;
+}
+
+.divider--heavy {
+  height: 4px;
+  background: var(--color-charcoal);
+}
+
+/* --- Sidebar Section Labels --- */
+.sidebar-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+/* --- Social Links --- */
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+
+.social-link:hover {
+  color: var(--color-kpfk-red);
+}
+
+/* --- Status Badge Overlay --- */
+.status-badge {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: var(--color-charcoal);
+  color: var(--color-off-white);
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- Adjacent Show Links --- */
+.adjacent-link {
+  display: block;
+  border: 2px solid #e0e0e0;
+  padding: 1rem;
+  transition: border-color 0.15s;
+}
+
+.adjacent-link:hover {
+  border-color: var(--color-charcoal);
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+  .show-card__title {
+    font-size: 14px;
+  }
+
+  .drop-cap > p:first-of-type::first-letter {
+    font-size: 2.4em;
+  }
+}

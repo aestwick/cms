@@ -256,10 +256,10 @@ const SOCIAL_LABELS: Record<string, string> = {
   gofundme: "GoFundMe",
 };
 
-const TAG_CATEGORY_COLORS: Record<string, string> = {
-  topic: "bg-tag-topic border-charcoal/15",
-  format: "bg-tag-format border-charcoal/15",
-  audience: "bg-tag-audience border-charcoal/15",
+const TAG_STAMP_CLASSES: Record<string, string> = {
+  topic: "tag-stamp tag-stamp--topic",
+  format: "tag-stamp tag-stamp--format",
+  audience: "tag-stamp tag-stamp--audience",
 };
 
 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -412,42 +412,45 @@ export default async function ShowPage({ params }: PageProps) {
           />
         </div>
       )}
-      <header className="border-b-2 border-charcoal bg-charcoal/[0.03]">
-        <div className="mx-auto flex max-w-7xl items-end gap-5 px-6 py-6 sm:px-8 sm:py-8">
-          {typedShow.logo_path ? (
-            <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden border border-charcoal/10 bg-off-white sm:h-36 sm:w-36">
-              <Image
-                src={resolveImageUrl(typedShow.logo_path)}
-                alt={`${typedShow.title} logo`}
-                fill
-                className="object-contain p-2"
-                sizes="(min-width: 640px) 144px, 128px"
-              />
-            </div>
-          ) : (
-            <div className="flex h-32 w-32 flex-shrink-0 items-center justify-center border border-charcoal/10 bg-charcoal/5 sm:h-36 sm:w-36">
-              <span className="font-serif text-6xl font-bold text-charcoal/15 sm:text-7xl">
-                {typedShow.title.charAt(0)}
-              </span>
-            </div>
-          )}
-          <div className="pb-1">
-            <span className="font-mono text-xs uppercase tracking-wider text-charcoal/40">
-              {typedShow.show_type}
-            </span>
-            <h1 className="font-serif text-3xl font-bold leading-tight text-charcoal sm:text-4xl lg:text-5xl">
+      <header className="masthead mx-auto max-w-7xl px-6 pt-8 sm:px-8" style={{ marginBottom: "2.5rem" }}>
+        <div className="flex flex-wrap gap-6">
+          {/* Left column: Logo */}
+          <div className="flex-shrink-0">
+            {typedShow.logo_path ? (
+              <div className="relative h-[200px] w-[200px] overflow-hidden sm:h-[240px] sm:w-[240px]">
+                <Image
+                  src={resolveImageUrl(typedShow.logo_path)}
+                  alt={`${typedShow.title} logo`}
+                  fill
+                  className="show-logo object-cover"
+                  sizes="240px"
+                />
+              </div>
+            ) : (
+              <div className="show-logo flex h-[200px] w-[200px] items-center justify-center bg-charcoal/5 sm:h-[240px] sm:w-[240px]">
+                <span className="font-serif text-7xl font-bold text-charcoal/15">
+                  {typedShow.title.charAt(0)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Right column: Show info */}
+          <div className="flex flex-1 flex-col" style={{ minWidth: "280px" }}>
+            <span className="show-card__type">{typedShow.show_type}</span>
+            <h1 className="mt-1 font-sans text-3xl font-black uppercase leading-tight tracking-tight text-charcoal sm:text-4xl lg:text-[40px]">
               {typedShow.title}
             </h1>
             {typedShow.tagline && (
-              <p className="mt-1 text-lg text-charcoal/60">{typedShow.tagline}</p>
+              <p className="mt-2 font-serif text-lg italic text-charcoal/70">{typedShow.tagline}</p>
             )}
             {tags.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 {tags.map((tag) => (
                   <Link
                     key={tag.id}
                     href={`/on-air?tag=${tag.slug}`}
-                    className={`border px-2.5 py-1 text-xs transition-colors hover:text-charcoal ${TAG_CATEGORY_COLORS[tag.category] || "border-charcoal/15 bg-charcoal/5"} text-charcoal/70`}
+                    className={TAG_STAMP_CLASSES[tag.category] || "tag-stamp"}
                   >
                     {tag.name}
                   </Link>
@@ -466,10 +469,7 @@ export default async function ShowPage({ params }: PageProps) {
           {broadcastStatus === "active" && scheduleBadgeLines && scheduleBadgeLines.length > 0 ? (
             <div className="space-y-2">
               {scheduleBadgeLines.map((line, i) => (
-                <div
-                  key={i}
-                  className="inline-block bg-charcoal px-5 py-2.5 font-mono text-sm tracking-wide text-off-white"
-                >
+                <div key={i} className="schedule-badge">
                   {line}
                 </div>
               ))}
@@ -524,9 +524,10 @@ export default async function ShowPage({ params }: PageProps) {
             {/* About */}
             {typedShow.description && (
               <section>
-                <h2 className="font-serif text-2xl font-bold text-charcoal">About the Show</h2>
+                <h2 className="section-header">About the Show</h2>
                 <div
-                  className="prose mt-5 max-w-none text-base leading-relaxed text-charcoal/80"
+                  className="drop-cap prose max-w-none font-serif text-[17px] leading-relaxed text-charcoal/80"
+                  style={{ maxWidth: "680px" }}
                   dangerouslySetInnerHTML={{ __html: typedShow.description }}
                 />
               </section>
@@ -535,9 +536,10 @@ export default async function ShowPage({ params }: PageProps) {
             {/* History */}
             {typedShow.history && (
               <section>
-                <h2 className="font-serif text-2xl font-bold text-charcoal">History &amp; Legacy</h2>
+                <h2 className="section-header">History &amp; Legacy</h2>
                 <div
-                  className="prose mt-5 max-w-none text-base leading-relaxed text-charcoal/80"
+                  className="prose max-w-none font-serif text-base leading-relaxed text-charcoal/80"
+                  style={{ maxWidth: "680px" }}
                   dangerouslySetInnerHTML={{ __html: typedShow.history }}
                 />
               </section>
@@ -546,7 +548,7 @@ export default async function ShowPage({ params }: PageProps) {
             {/* Photo Gallery */}
             {gallery.length > 0 && (
               <section>
-                <h2 className="font-serif text-2xl font-bold text-charcoal">Photos</h2>
+                <h2 className="section-header">Photos</h2>
                 <div className="mt-5 space-y-6">
                   {gallery.map((photo) => (
                     <figure key={photo.id} className="border border-charcoal/10">
@@ -573,7 +575,7 @@ export default async function ShowPage({ params }: PageProps) {
             {/* Show blog posts */}
             {showPosts && showPosts.length > 0 && (
               <section>
-                <h2 className="font-serif text-2xl font-bold text-charcoal">Show Blog</h2>
+                <h2 className="section-header">Show Blog</h2>
                 <div className="mt-5 space-y-0 divide-y divide-charcoal/10">
                   {showPosts.map((post) => (
                     <article key={post.id} className="py-5 first:pt-0">
@@ -607,9 +609,9 @@ export default async function ShowPage({ params }: PageProps) {
                 showTitle={typedShow.title}
               />
             ) : (
-              <section className="border border-charcoal/10 p-8">
-                <h2 className="font-serif text-xl font-bold text-charcoal">Recent Episodes</h2>
-                <p className="mt-3 text-base text-charcoal/40">
+              <section className="border-2 border-charcoal/10 p-8">
+                <h2 className="section-header">Recent Episodes</h2>
+                <p className="mt-3 font-serif text-base text-charcoal/40">
                   Episode archive not yet available for this show.
                 </p>
               </section>
@@ -618,7 +620,7 @@ export default async function ShowPage({ params }: PageProps) {
             {/* Contact form */}
             {showContact && (
               <section>
-                <h2 className="font-serif text-2xl font-bold text-charcoal">
+                <h2 className="section-header">
                   Contact {typedShow.title}
                 </h2>
                 <div className="mt-5">
@@ -632,46 +634,44 @@ export default async function ShowPage({ params }: PageProps) {
           {/* Sidebar (1/3) with left border                            */}
           {/* ======================================================== */}
           <aside className="mt-12 space-y-8 border-charcoal/10 lg:mt-0 lg:border-l lg:pl-10">
-            {/* Hosts — rectangular portraits (excludes producers) */}
+            {/* Hosts — card style with grayscale photos */}
             {hosts.filter((h) => h.role !== "producer").length > 0 && (
               <section>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
+                <h3 className="sidebar-label">
                   {hosts.filter((h) => h.role !== "producer").length === 1 ? "Host" : "Hosts"}
                 </h3>
-                <div className="mt-4 space-y-6">
+                <div className="space-y-5">
                   {hosts.filter((h) => h.role !== "producer").map((host) => (
-                    <div key={host.id}>
-                      <div className="flex items-start gap-4">
-                        {host.photo_path ? (
-                          <div className="relative h-[100px] w-[80px] flex-shrink-0 overflow-hidden border border-charcoal/10 bg-charcoal/5">
-                            <Image
-                              src={resolveImageUrl(host.photo_path)}
-                              alt={`${host.name} photo`}
-                              fill
-                              className="object-cover"
-                              sizes="80px"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex h-[100px] w-[80px] items-center justify-center border border-charcoal/10 bg-charcoal/5">
-                            <span className="text-2xl font-bold text-charcoal/20">
-                              {host.name.charAt(0)}
-                            </span>
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-lg font-medium text-charcoal">{host.name}</p>
-                          <span className="font-mono text-xs capitalize text-charcoal/30">
-                            {host.role === "co-host" ? "Co-host" : host.role}
+                    <div key={host.id} className="host-card">
+                      {host.photo_path ? (
+                        <div className="relative aspect-square w-full overflow-hidden">
+                          <Image
+                            src={resolveImageUrl(host.photo_path)}
+                            alt={`${host.name} photo`}
+                            fill
+                            className="host-card__photo"
+                            sizes="(min-width: 1024px) 300px, 50vw"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex aspect-square w-full items-center justify-center border-b-[3px] border-charcoal bg-charcoal/5">
+                          <span className="font-serif text-5xl font-bold text-charcoal/15">
+                            {host.name.charAt(0)}
                           </span>
                         </div>
-                      </div>
-                      {host.bio && (
-                        <div
-                          className="mt-3 text-base leading-relaxed text-charcoal/60"
-                          dangerouslySetInnerHTML={{ __html: host.bio }}
-                        />
                       )}
+                      <div className="host-card__info">
+                        <p className="host-card__name">{host.name}</p>
+                        <p className="host-card__role">
+                          {host.role === "co-host" ? "Co-host" : host.role}
+                        </p>
+                        {host.bio && (
+                          <div
+                            className="host-card__bio"
+                            dangerouslySetInnerHTML={{ __html: host.bio }}
+                          />
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -681,43 +681,39 @@ export default async function ShowPage({ params }: PageProps) {
             {/* Producers */}
             {hosts.filter((h) => h.role === "producer").length > 0 && (
               <section>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
+                <h3 className="sidebar-label">
                   {hosts.filter((h) => h.role === "producer").length === 1 ? "Producer" : "Producers"}
                 </h3>
-                <div className="mt-4 space-y-6">
+                <div className="space-y-5">
                   {hosts.filter((h) => h.role === "producer").map((host) => (
-                    <div key={host.id}>
-                      <div className="flex items-start gap-4">
-                        {host.photo_path ? (
-                          <div className="relative h-[100px] w-[80px] flex-shrink-0 overflow-hidden border border-charcoal/10 bg-charcoal/5">
-                            <Image
-                              src={resolveImageUrl(host.photo_path)}
-                              alt={`${host.name} photo`}
-                              fill
-                              className="object-cover"
-                              sizes="80px"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex h-[100px] w-[80px] items-center justify-center border border-charcoal/10 bg-charcoal/5">
-                            <span className="text-2xl font-bold text-charcoal/20">
-                              {host.name.charAt(0)}
-                            </span>
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-lg font-medium text-charcoal">{host.name}</p>
-                          <span className="font-mono text-xs text-charcoal/30">
-                            Producer
+                    <div key={host.id} className="host-card">
+                      {host.photo_path ? (
+                        <div className="relative aspect-square w-full overflow-hidden">
+                          <Image
+                            src={resolveImageUrl(host.photo_path)}
+                            alt={`${host.name} photo`}
+                            fill
+                            className="host-card__photo"
+                            sizes="(min-width: 1024px) 300px, 50vw"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex aspect-square w-full items-center justify-center border-b-[3px] border-charcoal bg-charcoal/5">
+                          <span className="font-serif text-5xl font-bold text-charcoal/15">
+                            {host.name.charAt(0)}
                           </span>
                         </div>
-                      </div>
-                      {host.bio && (
-                        <div
-                          className="mt-3 text-base leading-relaxed text-charcoal/60"
-                          dangerouslySetInnerHTML={{ __html: host.bio }}
-                        />
                       )}
+                      <div className="host-card__info">
+                        <p className="host-card__name">{host.name}</p>
+                        <p className="host-card__role">Producer</p>
+                        {host.bio && (
+                          <div
+                            className="host-card__bio"
+                            dangerouslySetInnerHTML={{ __html: host.bio }}
+                          />
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -727,12 +723,10 @@ export default async function ShowPage({ params }: PageProps) {
             {/* Contact email */}
             {showEmail && typedShow.contact_email && (
               <section>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
-                  Email
-                </h3>
+                <h3 className="sidebar-label">Email</h3>
                 <a
                   href={`mailto:${typedShow.contact_email}`}
-                  className="mt-3 block text-base text-kpfk-red hover:text-kpfk-red/80"
+                  className="social-link font-medium"
                 >
                   {typedShow.contact_email}
                 </a>
@@ -742,17 +736,15 @@ export default async function ShowPage({ params }: PageProps) {
             {/* Links with icons */}
             {hasLinks && (
               <section>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
-                  Links
-                </h3>
-                <ul className="mt-4 space-y-3">
+                <h3 className="sidebar-label">Links</h3>
+                <ul className="space-y-3">
                   {typedShow.website_url && (
                     <li>
                       <a
                         href={typedShow.website_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-3 text-base text-charcoal/70 transition-colors hover:text-kpfk-red"
+                        className="social-link"
                       >
                         <IconChrome className="h-5 w-5 flex-shrink-0" />
                         <span>Website</span>
@@ -765,7 +757,7 @@ export default async function ShowPage({ params }: PageProps) {
                         href={typedShow.rss_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-3 text-base text-charcoal/70 transition-colors hover:text-kpfk-red"
+                        className="social-link"
                       >
                         <IconRss className="h-5 w-5 flex-shrink-0" />
                         <span>RSS Feed</span>
@@ -773,7 +765,6 @@ export default async function ShowPage({ params }: PageProps) {
                     </li>
                   )}
                   {socialEntries.map(([platform, url]) => {
-                    // Strip duplicate suffixes (e.g. "facebook_2" → "facebook")
                     const basePlatform = platform.replace(/_\d+$/, "");
                     const Icon = SOCIAL_ICONS[basePlatform];
                     let label = SOCIAL_LABELS[basePlatform];
@@ -786,7 +777,7 @@ export default async function ShowPage({ params }: PageProps) {
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 text-base text-charcoal/70 transition-colors hover:text-kpfk-red"
+                          className="social-link"
                         >
                           {Icon ? (
                             <Icon className="h-5 w-5 flex-shrink-0" />
@@ -803,18 +794,18 @@ export default async function ShowPage({ params }: PageProps) {
             )}
 
             {/* Donate CTA */}
-            <section className="border-2 border-kpfk-red p-6 text-center">
-              <p className="font-serif text-xl font-bold text-charcoal">
+            <section className="donate-cta">
+              <p className="font-sans text-lg font-black uppercase tracking-tight text-charcoal">
                 {donateHeading}
               </p>
-              <p className="mt-2 text-base text-charcoal/60">
+              <p className="mt-2 font-serif text-base text-charcoal/60">
                 {donateBody}
               </p>
               <a
                 href={donateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-block border-2 border-kpfk-red bg-kpfk-red px-7 py-3 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-kpfk-red"
+                className="btn-editorial btn-editorial--primary mt-5 inline-block"
               >
                 Donate Now
               </a>
@@ -823,20 +814,18 @@ export default async function ShowPage({ params }: PageProps) {
             {/* On Air Nearby */}
             {adjacentShows.length > 0 && (
               <section>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
-                  On Air Nearby
-                </h3>
-                <div className="mt-4 space-y-3">
+                <h3 className="sidebar-label">On Air Nearby</h3>
+                <div className="space-y-3">
                   {adjacentShows.map((adj) => (
                     <Link
                       key={adj.slug}
                       href={`/on-air/${adj.slug}`}
-                      className="block border border-charcoal/10 p-4 transition-colors hover:bg-charcoal/[0.02]"
+                      className="adjacent-link"
                     >
-                      <p className="font-serif text-base font-medium text-charcoal hover:text-kpfk-red">
+                      <p className="font-sans text-sm font-bold uppercase tracking-tight text-charcoal">
                         {adj.title}
                       </p>
-                      <p className="mt-0.5 font-mono text-xs text-charcoal/40">
+                      <p className="mt-0.5 font-mono text-[11px] text-charcoal/40">
                         {adj.relationship}
                       </p>
                     </Link>
