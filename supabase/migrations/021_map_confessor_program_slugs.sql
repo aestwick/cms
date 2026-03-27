@@ -2,7 +2,7 @@
 -- Sets program_slug on cms_shows to match Confessor sh_altid values.
 -- This enables the schedule import to link Confessor slots to CMS show pages.
 --
--- 88 shows mapped. Shows only in Confessor (Background Briefing, Law and
+-- 96 shows mapped. Shows only in Confessor (Background Briefing, Law and
 -- Disorder, Pacifica Evening News, Planting Medicine, Visionary Activist,
 -- Radio Maiz) are intentionally skipped — create them in the CMS when ready.
 --
@@ -34,15 +34,18 @@ BEGIN
   UPDATE cms_shows SET program_slug = 'nativenationsreport' WHERE slug = 'be-a-better-relative' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'bts_friday' WHERE slug = 'beneath-the-surface' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'bibliocracy' WHERE slug = 'bibliocracy' AND station_id = kpfk_station_id;
+  UPDATE cms_shows SET program_slug = 'biketalka' WHERE slug = 'bike-talk' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'friedman' WHERE slug = 'bradcast-with-brad-friedman' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'breakbeats' WHERE slug = 'breakbeats-and-rhymes' AND station_id = kpfk_station_id;
 
   -- C
   UPDATE cms_shows SET program_slug = 'solartopia' WHERE slug = 'california-solartopia' AND station_id = kpfk_station_id;
+  UPDATE cms_shows SET program_slug = 'calstalacommunnewshour' WHERE slug = 'cal-state-la-community-news-hour' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'cantossin' WHERE slug = 'canto-sin-fronteras' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'cantotropical' WHERE slug = 'canto-tropical' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'covidraceanddemocr' WHERE slug = 'capitalism-race-and-democracy' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'carshow' WHERE slug = 'car-show-the' AND station_id = kpfk_station_id;
+  UPDATE cms_shows SET program_slug = 'casc' WHERE slug LIKE 'centroamerica-sin-censura-con-francisco-marti%nez' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'caryharrisfiles' WHERE slug = 'the-cary-harrison-files' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'cinemascore' WHERE slug = 'cinemascore' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'codepinradio' WHERE slug = 'codepink-radio' AND station_id = kpfk_station_id;
@@ -58,7 +61,9 @@ BEGIN
 
   -- E
   UPDATE cms_shows SET program_slug = 'ecojustiradio' WHERE slug = 'eco-justice-radio' AND station_id = kpfk_station_id;
+  UPDATE cms_shows SET program_slug = 'econ' WHERE slug = 'economic-update' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'gospelclassics' WHERE slug = 'edna-tatums-gospel-classics' AND station_id = kpfk_station_id;
+  UPDATE cms_shows SET program_slug = 'elnotici' WHERE slug = 'el-noticiero' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'luke' WHERE slug = 'encuentros' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'enfoque' WHERE slug = 'enfoque-latino-con-ruben-tapia' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'ivmon' WHERE slug = 'expansion-zone' AND station_id = kpfk_station_id;
@@ -84,6 +89,7 @@ BEGIN
   UPDATE cms_shows SET program_slug = 'infopac' WHERE slug = 'informativo-pacifica' AND station_id = kpfk_station_id;
 
   -- J
+  UPDATE cms_shows SET program_slug = 'rise' WHERE slug = 'jazz-sessions' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'johnwiener' WHERE slug = 'jon-wiener' AND station_id = kpfk_station_id;
 
   -- L
@@ -95,6 +101,7 @@ BEGIN
   -- M
   UPDATE cms_shows SET program_slug = 'meif' WHERE slug = 'middle-east-in-focus' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'deepend' WHERE slug = 'midnight-snack' AND station_id = kpfk_station_id;
+  UPDATE cms_shows SET program_slug = 'musiqueyjuventu' WHERE slug = 'musiqueros-y-juventud' AND station_id = kpfk_station_id;
 
   -- N
   UPDATE cms_shows SET program_slug = 'lstation' WHERE slug = 'nightscapes' AND station_id = kpfk_station_id;
@@ -105,6 +112,7 @@ BEGIN
 
   -- P
   UPDATE cms_shows SET program_slug = 'pperf' WHERE slug = 'pacifica-performance-showcase' AND station_id = kpfk_station_id;
+  UPDATE cms_shows SET program_slug = 'rockprofile' WHERE slug = 'profiles' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'perspectiva' WHERE slug = 'perspectiva-de-las-americas' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'philandtedrsqsexyboomershow' WHERE slug = 'phil-and-teds-sexy-boomer-show' AND station_id = kpfk_station_id;
   UPDATE cms_shows SET program_slug = 'pocho' WHERE slug = 'pocho-hour-of-power' AND station_id = kpfk_station_id;

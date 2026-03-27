@@ -72,8 +72,6 @@ const SLUG_ALIASES: Record<string, string> = {
   somethingshappeningb: "somethingshappening",
   somethihappenibhour: "somethingshappening",
   somethihappenibhoura: "somethingshappening",
-  // Special Music Programming → same CMS show as Special Programming
-  specialmusicprogramm: "special",
 };
 
 /**
