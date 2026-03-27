@@ -16,7 +16,7 @@ interface ScheduleSlot {
   start_time: string;
   end_time: string;
   label: string | null;
-  cms_shows: { id: string; title: string; slug: string }[] | null;
+  cms_shows: { id: string; title: string; slug: string } | null;
 }
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -94,12 +94,12 @@ export default async function SchedulePage() {
                         {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
                       </span>
                       <div>
-                        {slot.cms_shows?.[0] ? (
+                        {slot.cms_shows ? (
                           <Link
-                            href={`/on-air/${slot.cms_shows[0].slug}`}
+                            href={`/on-air/${slot.cms_shows.slug}`}
                             className="font-serif text-xl font-medium text-charcoal hover:text-kpfk-red"
                           >
-                            {slot.label || slot.cms_shows[0].title}
+                            {slot.cms_shows.title}
                           </Link>
                         ) : (
                           <span className="font-serif text-xl font-medium text-charcoal">
