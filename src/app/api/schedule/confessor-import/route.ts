@@ -8,6 +8,7 @@ import {
   showEndTime,
   normalizeDayShows,
   deduplicateDayShows,
+  decodeHtmlEntities,
 } from "@/lib/confessor";
 
 // POST /api/schedule/confessor-import
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
         day_of_week: dayNum,
         start_time: showStartTime(show),
         end_time: showEndTime(show),
-        label: showId ? null : show.sh_name, // label as fallback for unmatched
+        label: showId ? null : decodeHtmlEntities(show.sh_name),
         is_recurring: true,
         confessor_synced: true,
       });

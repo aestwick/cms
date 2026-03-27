@@ -13,6 +13,54 @@ const CONFESSOR_API_URL =
     : "https://confessor.kpfk.org/_nu_do_api.php");
 
 // ---------------------------------------------------------------------------
+// HTML entity decoding — Confessor returns HTML-encoded strings
+// ---------------------------------------------------------------------------
+
+const HTML_ENTITIES: Record<string, string> = {
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&#039;": "'",
+  "&apos;": "'",
+  "&ndash;": "\u2013",
+  "&mdash;": "\u2014",
+  "&ldquo;": "\u201C",
+  "&rdquo;": "\u201D",
+  "&lsquo;": "\u2018",
+  "&rsquo;": "\u2019",
+  "&iquest;": "\u00BF",
+  "&iexcl;": "\u00A1",
+  "&ntilde;": "\u00F1",
+  "&Ntilde;": "\u00D1",
+  "&Aacute;": "\u00C1",
+  "&aacute;": "\u00E1",
+  "&Eacute;": "\u00C9",
+  "&eacute;": "\u00E9",
+  "&Iacute;": "\u00CD",
+  "&iacute;": "\u00ED",
+  "&Oacute;": "\u00D3",
+  "&oacute;": "\u00F3",
+  "&Uacute;": "\u00DA",
+  "&uacute;": "\u00FA",
+  "&uuml;": "\u00FC",
+  "&Uuml;": "\u00DC",
+  "&nbsp;": " ",
+};
+
+/** Decode HTML entities commonly found in Confessor strings. */
+export function decodeHtmlEntities(str: string): string {
+  // Named entities
+  let result = str.replace(/&[a-zA-Z]+;/g, (match) => HTML_ENTITIES[match] ?? match);
+  // Numeric entities: &#123; or &#x1F;
+  result = result.replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)));
+  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_, code) => String.fromCharCode(parseInt(code, 16)));
+  // Strip any remaining HTML tags (e.g. <br>)
+  result = result.replace(/<[^>]*>/g, "");
+  return result;
+}
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
