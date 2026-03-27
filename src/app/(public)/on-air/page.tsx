@@ -18,19 +18,10 @@ export const metadata: Metadata = {
   description: "Browse all active shows on KPFK 90.7 FM community radio.",
 };
 
-const TAG_CATEGORY_COLORS: Record<string, { active: string; inactive: string }> = {
-  topic: {
-    active: "bg-tag-topic border-charcoal/30 text-charcoal font-medium",
-    inactive: "border-charcoal/15 text-charcoal/50 hover:border-charcoal/30",
-  },
-  format: {
-    active: "bg-tag-format border-charcoal/30 text-charcoal font-medium",
-    inactive: "border-charcoal/15 text-charcoal/50 hover:border-charcoal/30",
-  },
-  audience: {
-    active: "bg-tag-audience border-charcoal/30 text-charcoal font-medium",
-    inactive: "border-charcoal/15 text-charcoal/50 hover:border-charcoal/30",
-  },
+const TAG_FILTER_ACTIVE: Record<string, string> = {
+  topic: "tag-filter--active-topic",
+  format: "tag-filter--active-format",
+  audience: "tag-filter--active-audience",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -120,12 +111,12 @@ export default async function OnAirPage({
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
-      <h1 className="font-serif text-4xl font-bold text-charcoal">On Air</h1>
-      <p className="mt-3 text-lg text-charcoal/60">
+      <h1 className="section-header section-header--large">On Air</h1>
+      <p className="mt-1 font-serif text-lg text-charcoal/60">
         All active shows on KPFK 90.7 FM
       </p>
 
-      {/* Tag filter pills */}
+      {/* Tag filter pills — stamp style */}
       {allTags && allTags.length > 0 && (
         <div className="mt-8 space-y-4">
           {(["topic", "format", "audience"] as const).map((category) => {
@@ -133,20 +124,17 @@ export default async function OnAirPage({
             if (categoryTags.length === 0) return null;
             return (
               <div key={category}>
-                <span className="text-xs font-bold uppercase tracking-wider text-charcoal/30">
+                <span className="sidebar-label">
                   {category === "topic" ? "Topics" : category === "format" ? "Formats" : "Audience"}
                 </span>
                 <div className="mt-1.5 flex flex-wrap gap-2">
                   {categoryTags.map((tag: Tag) => {
                     const isActive = activeTags.includes(tag.slug);
-                    const colors = TAG_CATEGORY_COLORS[tag.category] || TAG_CATEGORY_COLORS.topic;
                     return (
                       <Link
                         key={tag.id}
                         href={buildTagUrl(tag.slug)}
-                        className={`border px-3 py-1.5 text-sm transition-colors ${
-                          isActive ? colors.active : colors.inactive
-                        }`}
+                        className={`tag-filter ${isActive ? TAG_FILTER_ACTIVE[tag.category] || "" : ""}`}
                       >
                         {tag.name}
                       </Link>
@@ -160,7 +148,7 @@ export default async function OnAirPage({
           {activeTags.length > 0 && (
             <Link
               href="/on-air"
-              className="inline-block text-sm text-kpfk-red hover:underline"
+              className="inline-block font-mono text-xs font-bold uppercase tracking-wide text-kpfk-red hover:underline"
             >
               Clear filters
             </Link>
@@ -169,13 +157,13 @@ export default async function OnAirPage({
       )}
 
       {filteredShows.length === 0 ? (
-        <p className="mt-10 text-base text-charcoal/50">
+        <p className="mt-10 font-serif text-base text-charcoal/50">
           {activeTags.length > 0
             ? "No shows match the selected filters."
             : "No shows available yet."}
         </p>
       ) : (
-        <div className="mt-10 grid grid-cols-1 gap-px border border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredShows.map((show) => {
             const hostsOnly = (show.cms_show_hosts ?? []).filter((h) => h.role !== "producer");
             const hostName = hostsOnly[0]?.name;
@@ -189,36 +177,30 @@ export default async function OnAirPage({
               <Link
                 key={show.id}
                 href={`/on-air/${show.slug}`}
-                className={`group relative flex flex-col bg-off-white transition-colors hover:bg-charcoal/[0.02] ${
-                  isNonActive ? "opacity-70" : ""
-                }`}
+                className={`show-card group relative ${isNonActive ? "opacity-70" : ""}`}
               >
-                {/* Card banner or logo hero area */}
+                {/* Card image — square aspect ratio */}
                 {show.banner_path ? (
-                  <div className="relative h-36 w-full overflow-hidden bg-charcoal/5">
-                    <Image
-                      src={resolveImageUrl(show.banner_path)}
-                      alt=""
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    />
-                  </div>
+                  <Image
+                    src={resolveImageUrl(show.banner_path)}
+                    alt=""
+                    width={400}
+                    height={400}
+                    className="show-card__image show-card__image--cover"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  />
                 ) : show.logo_path ? (
-                  <div className="flex h-36 w-full items-center justify-center bg-charcoal/[0.03]">
-                    <div className="relative h-24 w-24 overflow-hidden rounded-full">
-                      <Image
-                        src={resolveImageUrl(show.logo_path)}
-                        alt=""
-                        fill
-                        className="object-cover"
-                        sizes="96px"
-                      />
-                    </div>
-                  </div>
+                  <Image
+                    src={resolveImageUrl(show.logo_path)}
+                    alt=""
+                    width={400}
+                    height={400}
+                    className="show-card__image"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  />
                 ) : (
-                  <div className="flex h-36 w-full items-center justify-center bg-charcoal/[0.03]">
-                    <span className="font-serif text-5xl font-bold text-charcoal/10">
+                  <div className="show-card__placeholder">
+                    <span className="font-serif text-6xl font-bold text-charcoal/10">
                       {show.title.charAt(0)}
                     </span>
                   </div>
@@ -226,50 +208,40 @@ export default async function OnAirPage({
 
                 {/* Status badge overlay */}
                 {isNonActive && (
-                  <span className="absolute right-2 top-2 border border-charcoal/20 bg-off-white px-2 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
+                  <span className="status-badge">
                     {STATUS_LABELS[status] || status}
                   </span>
                 )}
 
                 {/* Card body */}
-                <div className="flex flex-1 flex-col p-5">
-                  <h2 className="font-serif text-xl font-bold leading-tight text-charcoal">
-                    {show.title}
-                  </h2>
+                <div className="show-card__body">
+                  <h2 className="show-card__title">{show.title}</h2>
                   {hostName && (
-                    <p className="mt-1 text-sm text-charcoal/50">
-                      with {hostName}
-                    </p>
+                    <p className="show-card__host">with {hostName}</p>
                   )}
                   {show.tagline && (
-                    <p className="mt-2 text-sm leading-relaxed text-charcoal/60">
-                      {show.tagline}
-                    </p>
+                    <p className="show-card__tagline">{show.tagline}</p>
                   )}
-                  {/* Show tags on card */}
-                  {showTags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {showTags.slice(0, 4).map((tag) => (
-                        <span
-                          key={tag.id}
-                          className={`border px-2 py-0.5 text-[11px] text-charcoal/50 ${
-                            TAG_CATEGORY_COLORS[tag.category]?.inactive || "border-charcoal/15"
-                          }`}
-                        >
-                          {tag.name}
-                        </span>
-                      ))}
-                      {showTags.length > 4 && (
-                        <span className="px-1 text-[11px] text-charcoal/30">
-                          +{showTags.length - 4}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  <div className="mt-auto pt-3">
-                    <span className="font-mono text-xs uppercase text-charcoal/30">
-                      {show.show_type}
-                    </span>
+                  <div className="show-card__footer">
+                    {showTags.length > 0 ? (
+                      <>
+                        {showTags.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag.id}
+                            className={`tag-stamp tag-stamp--${tag.category}`}
+                          >
+                            {tag.name}
+                          </span>
+                        ))}
+                        {showTags.length > 3 && (
+                          <span className="tag-stamp" style={{ borderColor: "#ccc", color: "#999" }}>
+                            +{showTags.length - 3}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="show-card__type">{show.show_type}</span>
+                    )}
                   </div>
                 </div>
               </Link>
