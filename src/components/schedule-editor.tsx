@@ -77,6 +77,8 @@ interface ScheduleSlot {
   label: string | null;
   image_path: string | null;
   is_recurring: boolean;
+  effective_date: string | null;
+  expires_date: string | null;
   cms_shows: {
     id: string;
     title: string;
@@ -116,6 +118,9 @@ interface ModalData {
   showId: string | null;
   label: string;
   imagePath: string;
+  isRecurring: boolean;
+  effectiveDate: string; // YYYY-MM-DD or ""
+  expiresDate: string; // YYYY-MM-DD or ""
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -437,7 +442,7 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
   // ── Fetch data ──
   useEffect(() => {
     Promise.all([
-      fetch("/api/schedule").then((r) => r.json()),
+      fetch("/api/schedule?all=1").then((r) => r.json()),
       fetch("/api/shows").then((r) => r.json()),
     ]).then(([slotsData, showsData]) => {
       setSlots(Array.isArray(slotsData) ? slotsData : []);
@@ -461,8 +466,11 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
       endRow: number,
       excludeId?: string
     ) => {
+      // Only recurring slots can overlap — overrides live on specific dates
+      // and don't fight with the steady-state grid.
       return slots.some((slot) => {
         if (slot.id === excludeId) return false;
+        if (!slot.is_recurring) return false;
         if (slot.day_of_week !== dayOfWeek) return false;
         const slotStart = timeToRow(slot.start_time);
         const slotEnd = endTimeToRow(slot.end_time);
@@ -601,6 +609,9 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
           showId: slot.show_id,
           label: slot.label || "",
           imagePath: slot.image_path || "",
+          isRecurring: slot.is_recurring,
+          effectiveDate: slot.effective_date || "",
+          expiresDate: slot.expires_date || "",
         });
         setError("");
         return;
@@ -730,6 +741,9 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
         showId: null,
         label: "",
         imagePath: "",
+        isRecurring: true,
+        effectiveDate: "",
+        expiresDate: "",
       });
       setError("");
     },
@@ -759,6 +773,34 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
 
     const isNew = !modal.slot;
 
+    // Validate one-off slots: must have an effective_date.
+    if (!modal.isRecurring && !modal.effectiveDate) {
+      setError("One-time slots need a date.");
+      setSaving(false);
+      return;
+    }
+    // Validate date order if both are set.
+    if (
+      modal.effectiveDate &&
+      modal.expiresDate &&
+      modal.expiresDate < modal.effectiveDate
+    ) {
+      setError("Expires date must be on or after the effective date.");
+      setSaving(false);
+      return;
+    }
+
+    const sharedFields = {
+      show_id: modal.showId,
+      start_time: modal.startTime,
+      end_time: modal.endTime,
+      label: modal.label || null,
+      image_path: modal.imagePath || null,
+      is_recurring: modal.isRecurring,
+      effective_date: modal.effectiveDate || null,
+      expires_date: modal.expiresDate || null,
+    };
+
     if (isNew) {
       // Multi-day: create a slot for each selected day
       const days = modal.daysOfWeek.length > 0 ? modal.daysOfWeek : [modal.dayOfWeek];
@@ -777,15 +819,7 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
         const res = await fetch("/api/schedule", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            show_id: modal.showId,
-            day_of_week: day,
-            start_time: modal.startTime,
-            end_time: modal.endTime,
-            label: modal.label || null,
-            image_path: modal.imagePath || null,
-            is_recurring: true,
-          }),
+          body: JSON.stringify({ ...sharedFields, day_of_week: day }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -812,13 +846,8 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          show_id: modal.showId,
+          ...sharedFields,
           day_of_week: modal.dayOfWeek,
-          start_time: modal.startTime,
-          end_time: modal.endTime,
-          label: modal.label || null,
-          image_path: modal.imagePath || null,
-          is_recurring: true,
         }),
       });
       const data = await res.json();
@@ -890,7 +919,7 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
   }
 
   const reloadSlots = useCallback(async () => {
-    const slotsRes = await fetch("/api/schedule");
+    const slotsRes = await fetch("/api/schedule?all=1");
     const slotsData = await slotsRes.json();
     setSlots(Array.isArray(slotsData) ? slotsData : []);
   }, []);
@@ -900,11 +929,33 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
     return <p className="text-sm text-charcoal/50">Loading schedule...</p>;
   }
 
+  // The grid only renders recurring slots — non-recurring overrides live in
+  // the Overrides panel below the grid (they'd overlap visually otherwise).
+  const recurringSlots = slots.filter((s) => s.is_recurring);
+  const overrideSlots = slots.filter((s) => !s.is_recurring);
+
   const slotsByDay: Record<number, ScheduleSlot[]> = {};
   for (let d = 0; d < 7; d++) slotsByDay[d] = [];
-  for (const slot of slots) {
+  for (const slot of recurringSlots) {
     (slotsByDay[slot.day_of_week] ??= []).push(slot);
   }
+
+  // Upcoming overrides: future-dated one-offs, sorted by date.
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  const upcomingOverrides = overrideSlots
+    .filter((s) => s.effective_date && s.effective_date >= today)
+    .sort((a, b) => {
+      const dateCmp = (a.effective_date || "").localeCompare(
+        b.effective_date || ""
+      );
+      if (dateCmp !== 0) return dateCmp;
+      return a.start_time.localeCompare(b.start_time);
+    });
 
   // Which days to render in the grid
   const visibleDays = isMobile
@@ -1244,6 +1295,64 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
         </div>
       </div>
 
+      {/* ── Upcoming overrides panel ── */}
+      {upcomingOverrides.length > 0 && (
+        <section className="mt-6 border border-charcoal/10 bg-off-white">
+          <header className="border-b border-charcoal/10 px-4 py-3">
+            <h3 className="text-sm font-bold text-charcoal">
+              Upcoming overrides ({upcomingOverrides.length})
+            </h3>
+            <p className="mt-0.5 text-xs text-charcoal/50">
+              One-time slots that replace the recurring grid on specific dates.
+            </p>
+          </header>
+          <ul className="divide-y divide-charcoal/5">
+            {upcomingOverrides.map((slot) => {
+              const showTitle =
+                slot.label || slot.cms_shows?.title || "Programming";
+              return (
+                <li
+                  key={slot.id}
+                  className="flex flex-wrap items-center gap-3 px-4 py-2.5 hover:bg-charcoal/[0.02]"
+                >
+                  <span className="font-mono text-xs font-medium text-charcoal">
+                    {slot.effective_date}
+                  </span>
+                  <span className="font-mono text-xs text-charcoal/50">
+                    {formatTime12(slot.start_time)} – {formatTime12(slot.end_time)}
+                  </span>
+                  <span className="flex-1 text-sm text-charcoal">
+                    {showTitle}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setModal({
+                        slot,
+                        dayOfWeek: slot.day_of_week,
+                        daysOfWeek: [slot.day_of_week],
+                        startTime: slot.start_time.substring(0, 5),
+                        endTime: slot.end_time.substring(0, 5),
+                        showId: slot.show_id,
+                        label: slot.label || "",
+                        imagePath: slot.image_path || "",
+                        isRecurring: slot.is_recurring,
+                        effectiveDate: slot.effective_date || "",
+                        expiresDate: slot.expires_date || "",
+                      });
+                      setError("");
+                    }}
+                    className="text-xs font-medium text-charcoal underline hover:text-charcoal/70"
+                  >
+                    Edit
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
       {/* ── Modal ── */}
       {modal && (
         <div
@@ -1404,6 +1513,81 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
                 }
                 placeholder="e.g. schedule/special-programming.webp"
               />
+
+              {/* Recurrence + date window */}
+              <div className="border-t border-charcoal/10 pt-4">
+                <label className="flex items-center gap-2 text-sm text-charcoal">
+                  <input
+                    type="checkbox"
+                    checked={modal.isRecurring}
+                    onChange={(e) =>
+                      setModal((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              isRecurring: e.target.checked,
+                              // When switching to one-off, expires_date is meaningless.
+                              expiresDate: e.target.checked ? prev.expiresDate : "",
+                            }
+                          : null
+                      )
+                    }
+                    className="h-4 w-4"
+                  />
+                  Recurring weekly slot
+                </label>
+                <p className="mt-1 text-[11px] text-charcoal/40">
+                  {modal.isRecurring
+                    ? "Airs every week. Use dates below to limit the window."
+                    : "One-time airing on a specific date (overrides the recurring slot at this time)."}
+                </p>
+
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-charcoal/60">
+                      {modal.isRecurring ? "Starts on" : "Date"}{" "}
+                      {!modal.isRecurring && (
+                        <span className="text-kpfk-red">*</span>
+                      )}
+                      {modal.isRecurring && (
+                        <span className="text-charcoal/30">(optional)</span>
+                      )}
+                    </label>
+                    <input
+                      type="date"
+                      value={modal.effectiveDate}
+                      onChange={(e) =>
+                        setModal((prev) =>
+                          prev
+                            ? { ...prev, effectiveDate: e.target.value }
+                            : null
+                        )
+                      }
+                      className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm"
+                    />
+                  </div>
+                  {modal.isRecurring && (
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-charcoal/60">
+                        Ends on{" "}
+                        <span className="text-charcoal/30">(optional)</span>
+                      </label>
+                      <input
+                        type="date"
+                        value={modal.expiresDate}
+                        onChange={(e) =>
+                          setModal((prev) =>
+                            prev
+                              ? { ...prev, expiresDate: e.target.value }
+                              : null
+                          )
+                        }
+                        className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {error && (

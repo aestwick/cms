@@ -2,16 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
 
-// GET /api/schedule — return weekly schedule grid (public)
-export async function GET() {
+// GET /api/schedule — return schedule slots.
+// By default returns only recurring slots (the steady-state grid).
+// Pass ?all=1 to include one-off overrides as well (used by the admin editor).
+export async function GET(request: NextRequest) {
+  const includeAll = request.nextUrl.searchParams.get("all") === "1";
   const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("cms_schedule_slots")
-    .select("id, show_id, day_of_week, start_time, end_time, label, image_path, is_recurring, effective_date, expires_date, cms_shows(id, title, slug, category, cms_show_hosts(name))")
-    .eq("is_recurring", true)
+    .select(
+      "id, show_id, day_of_week, start_time, end_time, label, image_path, is_recurring, effective_date, expires_date, cms_shows(id, title, slug, category, cms_show_hosts(name))"
+    )
     .order("day_of_week", { ascending: true })
     .order("start_time", { ascending: true });
+
+  if (!includeAll) {
+    query = query.eq("is_recurring", true);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
