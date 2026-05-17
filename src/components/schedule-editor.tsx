@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useIsMobile } from "@/hooks/use-mobile-sidebar";
 import { ScheduleHistoryDrawer } from "@/components/schedule-history-drawer";
+import { ImagePicker } from "@/components/image-picker";
 import type { CmsRole } from "@/lib/auth";
 
 // ─── Constants ───────────────────────────────────────────────
@@ -1394,27 +1395,15 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
                 )}
               </div>
 
-              {/* Image path — for special programming art */}
-              <div>
-                <label className="mb-1 block text-xs font-medium text-charcoal/60">
-                  Slot artwork{" "}
-                  <span className="text-charcoal/30">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={modal.imagePath}
-                  onChange={(e) =>
-                    setModal((prev) =>
-                      prev ? { ...prev, imagePath: e.target.value } : null
-                    )
-                  }
-                  placeholder="e.g. schedule/special-programming.webp"
-                  className="block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-sm"
-                />
-                <p className="mt-1 text-[11px] text-charcoal/30">
-                  Supabase Storage path. Media browser coming soon.
-                </p>
-              </div>
+              {/* Slot artwork — special programming, fund drive specials, etc. */}
+              <ImagePicker
+                label="Slot artwork (optional)"
+                value={modal.imagePath}
+                onChange={(path) =>
+                  setModal((prev) => (prev ? { ...prev, imagePath: path } : null))
+                }
+                placeholder="e.g. schedule/special-programming.webp"
+              />
             </div>
 
             {error && (
