@@ -2,7 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { ScheduleEditor } from "@/components/schedule-editor";
 
 export default async function AdminSchedulePage() {
-  await requireRole("admin", "editor");
+  const user = await requireRole("admin", "editor");
 
   return (
     <div>
@@ -11,7 +11,7 @@ export default async function AdminSchedulePage() {
         Manage the 24/7 weekly broadcast grid. Use &ldquo;Import from Confessor&rdquo; to sync.
       </p>
       <div className="mt-6">
-        <ScheduleEditor />
+        <ScheduleEditor userRole={user.role} />
       </div>
     </div>
   );

@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useIsMobile } from "@/hooks/use-mobile-sidebar";
+import { ScheduleHistoryDrawer } from "@/components/schedule-history-drawer";
+import type { CmsRole } from "@/lib/auth";
 
 // ─── Constants ───────────────────────────────────────────────
 const ROW_HEIGHT = 28;
@@ -403,7 +405,11 @@ function ShowCombobox({
 
 // ─── Main Component ──────────────────────────────────────────
 
-export function ScheduleEditor() {
+interface ScheduleEditorProps {
+  userRole: CmsRole;
+}
+
+export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
   const [slots, setSlots] = useState<ScheduleSlot[]>([]);
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
@@ -412,6 +418,7 @@ export function ScheduleEditor() {
   const [error, setError] = useState("");
   const [ghost, setGhost] = useState<GhostPosition | null>(null);
   const [selectedDay, setSelectedDay] = useState(() => new Date().getDay());
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   // Confessor import state
   const [importPreview, setImportPreview] = useState<ConfessorPreviewResponse | null>(null);
@@ -874,15 +881,18 @@ export function ScheduleEditor() {
       }
       setImportPreview(null);
       setImportSuccess(`Imported ${data.imported} slots (replaced ${data.deleted}).`);
-      // Reload schedule
-      const slotsRes = await fetch("/api/schedule");
-      const slotsData = await slotsRes.json();
-      setSlots(Array.isArray(slotsData) ? slotsData : []);
+      await reloadSlots();
     } catch {
       setImportError("Network error during import");
     }
     setImportApplying(false);
   }
+
+  const reloadSlots = useCallback(async () => {
+    const slotsRes = await fetch("/api/schedule");
+    const slotsData = await slotsRes.json();
+    setSlots(Array.isArray(slotsData) ? slotsData : []);
+  }, []);
 
   // ── Render ──
   if (loading) {
@@ -973,8 +983,8 @@ export function ScheduleEditor() {
 
   return (
     <div className="relative select-none">
-      {/* ── Confessor import button ── */}
-      <div className="mb-4 flex items-center gap-3">
+      {/* ── Toolbar: Confessor import + history ── */}
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <button
           onClick={handleConfessorPreview}
           disabled={importLoading}
@@ -985,10 +995,31 @@ export function ScheduleEditor() {
           </svg>
           {importLoading ? "Fetching..." : "Import from Confessor"}
         </button>
+        <button
+          type="button"
+          onClick={() => setHistoryOpen(true)}
+          className="inline-flex items-center gap-2 border border-charcoal/20 bg-off-white px-4 py-2 text-sm font-medium text-charcoal hover:bg-charcoal/5"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          History
+        </button>
         {importSuccess && (
           <span className="text-sm text-green-700">{importSuccess}</span>
         )}
       </div>
+
+      <ScheduleHistoryDrawer
+        open={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        onReverted={() => {
+          setImportSuccess("Schedule reverted.");
+          void reloadSlots();
+        }}
+        canRevert={userRole === "admin"}
+      />
+
 
       {/* ── Confessor preview modal ── */}
       {importPreview && (

@@ -11,6 +11,7 @@ import {
   decodeHtmlEntities,
   resolveAltid,
 } from "@/lib/confessor";
+import { captureSnapshot, describeOperation } from "@/lib/schedule-snapshots";
 
 // POST /api/schedule/confessor-import
 // Replaces all recurring schedule slots with data from Confessor.
@@ -89,14 +90,33 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Snapshot old slots for audit
+  // Capture full grid state into a snapshot so the import can be reverted.
+  // Captures both recurring and non-recurring (override) slots — only
+  // recurring are deleted below, but the snapshot is the full picture.
+  try {
+    await captureSnapshot(supabase, {
+      stationId: user.station_id,
+      userId: user.id,
+      operation: "confessor_import",
+      description: describeOperation("confessor_import", {
+        slotCount: rows.length,
+        userName: user.display_name,
+      }),
+    });
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Pre-import snapshot failed";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+
+  // Snapshot old slots for audit log (count only, full data is in the snapshot)
   const { data: oldSlots } = await supabase
     .from("cms_schedule_slots")
-    .select("id, show_id, day_of_week, start_time, end_time, label")
+    .select("id")
     .eq("station_id", user.station_id)
     .eq("is_recurring", true);
 
-  // Delete existing recurring slots
+  // Delete existing recurring slots. Non-recurring (overrides) are preserved.
   const { error: delError } = await supabase
     .from("cms_schedule_slots")
     .delete()
@@ -117,14 +137,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: insError.message }, { status: 500 });
   }
 
-  // Audit log
+  // Audit log (lightweight — full pre-state lives in the snapshot)
   await supabase.from("cms_audit_log").insert({
     station_id: user.station_id,
     user_id: user.id,
     action: "update",
     table_name: "cms_schedule_slots",
     record_id: null,
-    old_data: { slots: oldSlots, count: oldSlots?.length || 0 },
+    old_data: { count: oldSlots?.length || 0 },
     new_data: { count: inserted?.length || 0 },
   });
 
