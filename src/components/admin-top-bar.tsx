@@ -23,7 +23,7 @@ export function AdminTopBar({ user }: { user: CmsUser }) {
       {/* Hamburger — visible below lg */}
       <button
         onClick={toggle}
-        className="p-2 -ml-2 lg:hidden"
+        className="-ml-2 p-2 lg:hidden"
         aria-label="Toggle menu"
       >
         <svg
@@ -46,12 +46,12 @@ export function AdminTopBar({ user }: { user: CmsUser }) {
         <span className="max-w-[120px] truncate text-xs text-charcoal/50 sm:max-w-none">
           {user.display_name || user.email}
         </span>
-        <span className="hidden rounded border border-charcoal/20 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/40 sm:inline">
+        <span className="hidden border border-charcoal/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.1em] text-charcoal/50 sm:inline">
           {user.role}
         </span>
         <button
           onClick={handleSignOut}
-          className="text-xs text-charcoal/40 hover:text-charcoal"
+          className="text-xs font-bold uppercase tracking-[0.06em] text-charcoal/40 transition-colors hover:text-kpfk-red"
         >
           Sign out
         </button>
