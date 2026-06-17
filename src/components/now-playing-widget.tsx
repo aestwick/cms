@@ -8,6 +8,7 @@ interface NowPlayingData {
   show_slug: string | null;
   host_name: string | null;
   up_next: string | null;
+  listeners: number | null;
 }
 
 export function NowPlayingWidget() {
@@ -51,6 +52,11 @@ export function NowPlayingWidget() {
         </Link>
       ) : (
         <span className="font-medium text-charcoal">{data.show_title}</span>
+      )}
+      {typeof data.listeners === "number" && data.listeners > 0 && (
+        <span className="font-mono text-sm text-charcoal/50">
+          {data.listeners.toLocaleString()} listening
+        </span>
       )}
     </div>
   );

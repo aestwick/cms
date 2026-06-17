@@ -117,6 +117,53 @@ export const SH_INVISIBLE = 0x08;
 export const SH_GONE = 0x8000;
 
 // ---------------------------------------------------------------------------
+// Now-playing (req=nowary)
+// ---------------------------------------------------------------------------
+
+/**
+ * The `current` block of a `req=nowary` response.
+ * Only the fields the CMS consumes are typed; Confessor returns more.
+ */
+export interface ConfessorNowCurrent {
+  sh_altid: string; // slug — maps to cms_shows.program_slug
+  sh_name: string;
+  sh_djname: string;
+  sh_desc?: string;
+  sh_photo?: string;
+  cur_start?: string; // "3:00 PM"
+  cur_end?: string; // "4:00 PM"
+  pl_song?: string;
+  pl_artist?: string;
+  listeners?: number; // concurrent stream listeners
+}
+
+/** The `next` block of a `req=nowary` response (subset). */
+export interface ConfessorNowNext {
+  sh_altid: string;
+  sh_name: string;
+  sh_djname?: string;
+  nxt_start?: string; // "4:00 PM"
+  nxt_end?: string; // "5:00 PM"
+}
+
+/**
+ * Normalized now-airing data for the CMS.
+ * The `global` block from Confessor (which leaks Icecast admin credentials)
+ * is intentionally never read or forwarded.
+ */
+export interface NowAiring {
+  current: ConfessorNowCurrent | null;
+  next: ConfessorNowNext | null;
+  listeners: number | null;
+}
+
+// Raw shape of the parts of the nowary response we touch.
+interface ConfessorNowaryResponse {
+  current?: Partial<ConfessorNowCurrent> | unknown[];
+  next?: Partial<ConfessorNowNext> | unknown[];
+}
+
+// ---------------------------------------------------------------------------
 // Cache
 // ---------------------------------------------------------------------------
 
@@ -147,14 +194,17 @@ function setCache<T>(key: string, data: T, ttlMs: number) {
 
 const CONFESSOR_TIMEOUT_MS = 30_000; // 30 seconds — legacy PHP can be slow
 
-async function confessorFetch<T>(params: string): Promise<T | null> {
+async function confessorFetch<T>(
+  params: string,
+  revalidate = 3600
+): Promise<T | null> {
   const abort = new AbortController();
   const timer = setTimeout(() => abort.abort(), CONFESSOR_TIMEOUT_MS);
   try {
     const url = `${CONFESSOR_API_URL}?${params}&json=1`;
     const res = await fetch(url, {
       signal: abort.signal,
-      next: { revalidate: 3600 },
+      next: { revalidate },
     });
     if (!res.ok) {
       console.error(`[Confessor] HTTP ${res.status} from ${url}`);
@@ -213,6 +263,60 @@ export async function getDaySchedule(
   day: number
 ): Promise<ConfessorShow[] | null> {
   return confessorFetch<ConfessorShow[]>(`req=getday&day=${day}`);
+}
+
+const NOW_AIRING_REVALIDATE_S = 30; // listener count / now-playing is live data
+
+/** Coerce a possibly-array Confessor block to an object, or null. */
+function asObject<T>(block: Partial<T> | unknown[] | undefined): T | null {
+  if (!block || Array.isArray(block)) return null;
+  return block as T;
+}
+
+/** Decode HTML entities on a string field if present. */
+function decoded(value: string | undefined): string | undefined {
+  return value ? decodeHtmlEntities(value) : value;
+}
+
+/**
+ * Get what's airing right now from Confessor (`req=nowary`), including the
+ * live concurrent listener count. Returns null on any failure — callers must
+ * degrade gracefully (Confessor is never load-bearing).
+ *
+ * The `global` block of the raw response is intentionally ignored: it exposes
+ * Icecast admin credentials, so the CMS reads only `current` and `next`.
+ */
+export async function getNowAiring(): Promise<NowAiring | null> {
+  const raw = await confessorFetch<ConfessorNowaryResponse>(
+    "req=nowary",
+    NOW_AIRING_REVALIDATE_S
+  );
+  if (!raw) return null;
+
+  const rawCurrent = asObject<ConfessorNowCurrent>(raw.current);
+  const rawNext = asObject<ConfessorNowNext>(raw.next);
+
+  const current: ConfessorNowCurrent | null =
+    rawCurrent && rawCurrent.sh_altid
+      ? {
+          ...rawCurrent,
+          sh_name: decoded(rawCurrent.sh_name) ?? rawCurrent.sh_name,
+          sh_djname: decoded(rawCurrent.sh_djname) ?? rawCurrent.sh_djname,
+          sh_desc: decoded(rawCurrent.sh_desc),
+          pl_song: decoded(rawCurrent.pl_song),
+          pl_artist: decoded(rawCurrent.pl_artist),
+        }
+      : null;
+
+  const next: ConfessorNowNext | null =
+    rawNext && rawNext.sh_altid
+      ? { ...rawNext, sh_name: decoded(rawNext.sh_name) ?? rawNext.sh_name }
+      : null;
+
+  const listeners =
+    typeof current?.listeners === "number" ? current.listeners : null;
+
+  return { current, next, listeners };
 }
 
 /**
