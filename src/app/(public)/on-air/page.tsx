@@ -111,9 +111,12 @@ export default async function OnAirPage({
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
-      <h1 className="section-header section-header--large">On Air</h1>
-      <p className="mt-1 font-serif text-lg text-charcoal/60">
-        All active shows on KPFK 90.7 FM
+      <p className="kpfk-label">The lineup</p>
+      <h1 className="kpfk-display mt-2 text-5xl sm:text-6xl" style={{ color: "var(--txt)" }}>
+        On Air<span style={{ color: "var(--kpfk-red)" }}>.</span>
+      </h1>
+      <p className="mt-3 text-lg" style={{ color: "var(--muted)" }}>
+        All active shows on KPFK 90.7 FM.
       </p>
 
       {/* Tag filter pills — stamp style */}

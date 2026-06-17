@@ -63,10 +63,13 @@ export default async function BlogIndexPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12 sm:px-8">
-      <header className="border-b-2 border-charcoal pb-6">
-        <h1 className="font-serif text-4xl font-bold text-charcoal">Blog</h1>
-        <p className="mt-2 text-lg text-charcoal/60">
-          News, updates, and stories from KPFK 90.7 FM
+      <header className="pb-6" style={{ borderBottom: "3px solid var(--txt)" }}>
+        <p className="kpfk-label">Dispatches from the station</p>
+        <h1 className="kpfk-display mt-2 text-5xl sm:text-6xl" style={{ color: "var(--txt)" }}>
+          Stories<span style={{ color: "var(--kpfk-red)" }}>.</span>
+        </h1>
+        <p className="mt-3 text-lg" style={{ color: "var(--muted)" }}>
+          News, updates, and stories from KPFK 90.7 FM.
         </p>
       </header>
 

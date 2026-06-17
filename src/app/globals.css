@@ -678,3 +678,18 @@ a {
     font-size: 2.4em;
   }
 }
+
+/* --- Print (schedule etc.) --- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  header,
+  footer {
+    display: none !important;
+  }
+  .kpfk-page {
+    background: #fff !important;
+    color: #000 !important;
+  }
+}

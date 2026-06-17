@@ -89,24 +89,28 @@ export default async function BlogPostPage({ params }: PageProps) {
       </nav>
 
       {/* Header */}
-      <header className="border-b border-charcoal/10 pb-8">
+      <header className="pb-8" style={{ borderBottom: "3px solid var(--txt)" }}>
         {showData && (
           <Link
             href={`/on-air/${showData.slug}`}
-            className="inline-block text-sm font-medium text-kpfk-red hover:underline"
+            className="kpfk-label inline-block hover:underline"
+            style={{ color: "var(--kpfk-red)" }}
           >
             {showData.title}
           </Link>
         )}
-        <h1 className="mt-2 font-serif text-4xl font-bold leading-tight text-charcoal">
+        <h1
+          className="mt-2 text-4xl font-extrabold leading-tight sm:text-5xl"
+          style={{ color: "var(--txt)" }}
+        >
           {post.title}
         </h1>
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-charcoal/50">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm" style={{ color: "var(--muted)" }}>
           <span>{authorName}</span>
           {publishedDate && (
             <>
               <span>·</span>
-              <time className="font-mono text-xs">{publishedDate}</time>
+              <time className="text-xs">{publishedDate}</time>
             </>
           )}
         </div>
@@ -128,12 +132,13 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       {/* Body */}
       <div
-        className="prose mt-10 max-w-none text-base leading-relaxed text-charcoal/80"
+        className="prose drop-cap mt-10 max-w-none text-lg leading-relaxed"
+        style={{ color: "var(--txt)" }}
         dangerouslySetInnerHTML={{ __html: post.body }}
       />
 
       {/* Footer */}
-      <footer className="mt-12 border-t border-charcoal/10 pt-8">
+      <footer className="mt-12 border-t pt-8" style={{ borderColor: "var(--line)" }}>
         <Link
           href="/blog"
           className="text-sm font-medium text-kpfk-red hover:underline"
