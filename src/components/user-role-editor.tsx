@@ -49,7 +49,7 @@ export function UserRoleEditor({
       value={role}
       onChange={(e) => handleChange(e.target.value)}
       disabled={saving}
-      className={`rounded border px-2 py-1 font-mono text-xs uppercase ${roleStyles[role] ?? ""} cursor-pointer disabled:cursor-wait disabled:opacity-50`}
+      className={` border px-2 py-1 font-mono text-xs uppercase ${roleStyles[role] ?? ""} cursor-pointer disabled:cursor-wait disabled:opacity-50`}
     >
       <option value="admin">admin</option>
       <option value="editor">editor</option>

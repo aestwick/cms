@@ -57,7 +57,7 @@ export default async function EditShowPage({
           </p>
         </div>
         {show.is_claimed && (
-          <span className="rounded border border-green-600/20 bg-green-600/5 px-2 py-1 text-xs text-green-700">
+          <span className=" border border-green-600/20 bg-green-600/5 px-2 py-1 text-xs text-green-700">
             Claimed
           </span>
         )}

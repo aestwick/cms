@@ -350,7 +350,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               required
               value={form.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -368,7 +368,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
                   setSlugManual(true);
                   updateField("slug", e.target.value);
                 }}
-                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
               />
             </div>
           </div>
@@ -381,7 +381,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.tagline}
               onChange={(e) => updateField("tagline", e.target.value)}
               placeholder="Short one-liner about the show"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -396,7 +396,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             <select
               value={form.show_type}
               onChange={(e) => updateField("show_type", e.target.value as ShowFormData["show_type"])}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             >
               <option value="talk">Talk</option>
               <option value="music">Music</option>
@@ -412,7 +412,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.program_slug}
               onChange={(e) => updateField("program_slug", e.target.value)}
               placeholder="Confessor/Beacon program identifier"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               Maps to Confessor schedule and Beacon programs. Must match exactly.
@@ -436,7 +436,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               onChange={(e) => updateField("description", e.target.value)}
               rows={6}
               placeholder="About the show — displayed in the main content area"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               HTML supported. Rich text editor coming in a future phase.
@@ -451,7 +451,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               onChange={(e) => updateField("history", e.target.value)}
               rows={4}
               placeholder="Optional section about the show's history"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -494,7 +494,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             <select
               value={form.contact_preference}
               onChange={(e) => updateField("contact_preference", e.target.value as ShowFormData["contact_preference"])}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             >
               <option value="form">Contact form only</option>
               <option value="email">Public email only</option>
@@ -511,7 +511,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.contact_email}
               onChange={(e) => updateField("contact_email", e.target.value)}
               placeholder="host@example.com"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -523,7 +523,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.website_url}
               onChange={(e) => updateField("website_url", e.target.value)}
               placeholder="https://example.com"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -535,7 +535,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.rss_url}
               onChange={(e) => updateField("rss_url", e.target.value)}
               placeholder="https://example.com/feed.xml"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -555,7 +555,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               onDragOver={(e) => handleDragOver(e, index)}
               onDrop={() => handleDrop(index)}
               onDragEnd={handleDragEnd}
-              className={`flex items-center gap-2 rounded px-1 py-1 transition-colors ${
+              className={`flex items-center gap-2  px-1 py-1 transition-colors ${
                 dragOverIndex === index && dragIndex !== index
                   ? "bg-charcoal/5"
                   : ""
@@ -582,7 +582,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
                 value={entry.url}
                 onChange={(e) => updateSocialEntry(entry.id, e.target.value)}
                 placeholder="https://..."
-                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
               />
               <button
                 type="button"
@@ -624,7 +624,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.donation_cta_heading}
               onChange={(e) => updateField("donation_cta_heading", e.target.value)}
               placeholder={`Support ${form.title || "this show"}`}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -636,7 +636,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.donation_cta_body}
               onChange={(e) => updateField("donation_cta_body", e.target.value)}
               placeholder="Keep community radio on the air."
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -655,7 +655,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
             <select
               value={form.broadcast_status}
               onChange={(e) => updateField("broadcast_status", e.target.value as ShowFormData["broadcast_status"])}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             >
               <option value="active">Active</option>
               <option value="hiatus">On Hiatus</option>
@@ -672,7 +672,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
                 type="date"
                 value={form.returns_at}
                 onChange={(e) => updateField("returns_at", e.target.value)}
-                className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+                className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
               />
             </div>
           )}
@@ -685,7 +685,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.status_note}
               onChange={(e) => updateField("status_note", e.target.value)}
               placeholder="e.g. New episodes returning June 2026"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               Free text displayed publicly where the schedule badge would go.
@@ -700,7 +700,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               value={form.schedule_note}
               onChange={(e) => updateField("schedule_note", e.target.value)}
               placeholder="e.g. New episodes daily — airing Mon–Thu on KPFK"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               Displayed below the auto-generated schedule badge.
@@ -767,7 +767,7 @@ export function ShowForm({ initialData, showId, mode, allTags = [], initialTagId
               type="number"
               value={form.sort_order}
               onChange={(e) => updateField("sort_order", parseInt(e.target.value) || 0)}
-              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div className="flex items-center gap-3 pt-6">

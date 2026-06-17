@@ -137,7 +137,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               required
               value={form.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -157,7 +157,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
                   setSlugManual(true);
                   updateField("slug", e.target.value);
                 }}
-                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
               />
             </div>
           </div>
@@ -170,7 +170,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               onChange={(e) =>
                 updateField("category", e.target.value as EventCategory)
               }
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             >
               {Object.entries(categoryLabels).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -195,7 +195,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               required
               value={form.starts_at}
               onChange={(e) => updateField("starts_at", e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -206,7 +206,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               type="datetime-local"
               value={form.ends_at}
               onChange={(e) => updateField("ends_at", e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -233,7 +233,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
             onChange={(e) => updateField("description", e.target.value)}
             rows={6}
             placeholder="Event description — displayed on the event detail page"
-            className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+            className="block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
           />
           <p className="mt-1 text-xs text-charcoal/40">
             HTML supported. Rich text editor coming in a future phase.
@@ -254,7 +254,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               value={form.venue_name}
               onChange={(e) => updateField("venue_name", e.target.value)}
               placeholder="e.g. KPFK Studios"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -266,7 +266,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               value={form.venue_address}
               onChange={(e) => updateField("venue_address", e.target.value)}
               placeholder="3729 Cahuenga Blvd W, Los Angeles, CA"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -285,7 +285,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               value={form.event_url}
               onChange={(e) => updateField("event_url", e.target.value)}
               placeholder="https://example.com/event"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -297,7 +297,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               value={form.price_text}
               onChange={(e) => updateField("price_text", e.target.value)}
               placeholder="Free, $10, Sliding scale $5-$25"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div className="md:col-span-2">
@@ -309,7 +309,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
               value={form.image_path}
               onChange={(e) => updateField("image_path", e.target.value)}
               placeholder="events/community-fair-2026.webp"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -342,7 +342,7 @@ export function EventForm({ initialData, eventId, mode }: EventFormProps) {
         <button
           type="submit"
           disabled={saving}
-          className="border-2 border-charcoal bg-charcoal px-6 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+          className="border border-kpfk-red bg-kpfk-red px-6 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press disabled:opacity-50"
         >
           {saving
             ? "Saving\u2026"

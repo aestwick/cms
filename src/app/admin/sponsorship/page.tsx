@@ -52,7 +52,7 @@ export default async function SponsorshipPage() {
         </div>
         <Link
           href="/admin/sponsorship/new"
-          className="border-2 border-charcoal bg-charcoal px-4 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90"
+          className="border border-kpfk-red bg-kpfk-red px-4 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press"
         >
           New creative
         </Link>
@@ -79,7 +79,7 @@ export default async function SponsorshipPage() {
                   </p>
                 </div>
                 <span
-                  className={`rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase ${
+                  className={` border px-1.5 py-0.5 font-mono text-[10px] uppercase ${
                     placement.is_active
                       ? "border-green-600/20 bg-green-600/5 text-green-700"
                       : "border-charcoal/15 bg-charcoal/5 text-charcoal/30"
@@ -138,20 +138,20 @@ export default async function SponsorshipPage() {
                       <span className="flex items-center gap-2">
                         {creative.title}
                         {creative.is_pinned && (
-                          <span className="rounded border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-amber-600">
+                          <span className=" border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-amber-600">
                             Pinned {creative.pin_position != null ? `#${creative.pin_position}` : ""}
                           </span>
                         )}
                       </span>
                     </td>
                     <td className="px-4 py-2">
-                      <span className="rounded border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
+                      <span className=" border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
                         {placementNames[creative.placement_id] ?? "Unknown"}
                       </span>
                     </td>
                     <td className="px-4 py-2">
                       <span
-                        className={`rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase ${
+                        className={` border px-1.5 py-0.5 font-mono text-[10px] uppercase ${
                           creative.is_active
                             ? "border-green-600/20 bg-green-600/5 text-green-700"
                             : "border-charcoal/15 bg-charcoal/5 text-charcoal/30"

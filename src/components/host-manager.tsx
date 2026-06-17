@@ -123,7 +123,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                 <select
                   value={host.role}
                   onChange={(e) => updateHost(index, "role", e.target.value)}
-                  className="border border-charcoal/20 bg-off-white px-2 py-1.5 text-xs text-charcoal focus:border-charcoal focus:outline-none"
+                  className="border border-charcoal/20 bg-off-white px-2 py-1.5 text-xs text-charcoal rounded-[2px] focus:border-kpfk-red focus:outline-none"
                 >
                   {ROLE_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -151,7 +151,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                   required
                   value={host.name}
                   onChange={(e) => updateHost(index, "name", e.target.value)}
-                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 text-sm focus:border-charcoal focus:outline-none"
+                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
                 />
               </div>
               <div>
@@ -163,7 +163,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                   value={host.email}
                   onChange={(e) => updateHost(index, "email", e.target.value)}
                   placeholder="host@kpfk.org"
-                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 text-sm focus:border-charcoal focus:outline-none"
+                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
                 />
               </div>
               <div className="md:col-span-2">
@@ -175,7 +175,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                   onChange={(e) => updateHost(index, "bio", e.target.value)}
                   rows={3}
                   placeholder="Host bio — HTML supported"
-                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 text-sm focus:border-charcoal focus:outline-none"
+                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
                 />
               </div>
               <div>
@@ -187,7 +187,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
                   value={host.photo_path}
                   onChange={(e) => updateHost(index, "photo_path", e.target.value)}
                   placeholder="shows/bike-talk/host-photo.webp"
-                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 font-mono text-sm focus:border-charcoal focus:outline-none"
+                  className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-1.5 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
                 />
               </div>
             </div>
@@ -201,7 +201,7 @@ export function HostManager({ showId, initialHosts }: HostManagerProps) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="border-2 border-charcoal bg-charcoal px-4 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+            className="border border-kpfk-red bg-kpfk-red px-4 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press disabled:opacity-50"
           >
             {saving ? "Saving…" : "Save hosts"}
           </button>

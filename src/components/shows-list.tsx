@@ -137,12 +137,12 @@ export function ShowsList({ shows: initialShows, showIdsWithSlots }: ShowsListPr
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search shows..."
-          className="w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none sm:w-64"
+          className="w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none sm:w-64"
         />
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="border border-charcoal/20 bg-off-white px-3 py-2 text-sm text-charcoal/70 focus:border-charcoal focus:outline-none"
+          className="border border-charcoal/20 bg-off-white px-3 py-2 text-sm text-charcoal/70 rounded-[2px] focus:border-kpfk-red focus:outline-none"
         >
           <option value="all">All types</option>
           {types.map((t) => (
@@ -154,7 +154,7 @@ export function ShowsList({ shows: initialShows, showIdsWithSlots }: ShowsListPr
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-charcoal/20 bg-off-white px-3 py-2 text-sm text-charcoal/70 focus:border-charcoal focus:outline-none"
+          className="border border-charcoal/20 bg-off-white px-3 py-2 text-sm text-charcoal/70 rounded-[2px] focus:border-kpfk-red focus:outline-none"
         >
           <option value="all">All statuses</option>
           {statuses.map((s) => (
@@ -166,7 +166,7 @@ export function ShowsList({ shows: initialShows, showIdsWithSlots }: ShowsListPr
         <select
           value={claimedFilter}
           onChange={(e) => setClaimedFilter(e.target.value)}
-          className="border border-charcoal/20 bg-off-white px-3 py-2 text-sm text-charcoal/70 focus:border-charcoal focus:outline-none"
+          className="border border-charcoal/20 bg-off-white px-3 py-2 text-sm text-charcoal/70 rounded-[2px] focus:border-kpfk-red focus:outline-none"
         >
           <option value="all">All claims</option>
           <option value="yes">Claimed</option>

@@ -54,7 +54,7 @@ export default async function BlogListPage() {
         </div>
         <Link
           href="/admin/blog/new"
-          className="border-2 border-charcoal bg-charcoal px-4 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90"
+          className="border border-kpfk-red bg-kpfk-red px-4 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press"
         >
           New post
         </Link>
@@ -80,7 +80,7 @@ export default async function BlogListPage() {
                 <td className="px-4 py-2">
                   <span className="font-medium text-charcoal">{post.title}</span>
                   {post.is_featured && (
-                    <span className="ml-2 rounded border border-action-yellow/40 bg-action-yellow/10 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/60">
+                    <span className="ml-2 border border-action-yellow/40 bg-action-yellow/10 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/60">
                       Featured
                     </span>
                   )}

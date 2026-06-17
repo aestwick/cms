@@ -145,7 +145,7 @@ export default async function AdminDashboard() {
                         })}
                       </span>
                       {event.category && (
-                        <span className="rounded bg-charcoal/5 px-1.5 py-0.5 text-xs text-charcoal/60">
+                        <span className=" bg-charcoal/5 px-1.5 py-0.5 text-xs text-charcoal/60">
                           {event.category}
                         </span>
                       )}

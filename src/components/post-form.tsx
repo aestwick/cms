@@ -115,7 +115,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
               required
               value={form.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -133,7 +133,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
                   setSlugManual(true);
                   updateField("slug", e.target.value);
                 }}
-                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
               />
             </div>
           </div>
@@ -144,7 +144,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
             <select
               value={form.show_id}
               onChange={(e) => updateField("show_id", e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             >
               <option value="">No show — station-wide post</option>
               {shows.map((show) => (
@@ -174,7 +174,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
               onChange={(e) => updateField("body", e.target.value)}
               rows={16}
               placeholder="Write your post content here…"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               HTML supported. Rich text editor coming in a future phase.
@@ -189,7 +189,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
               onChange={(e) => updateField("excerpt", e.target.value)}
               rows={3}
               placeholder="Short summary for listing pages. Auto-generated from body if left empty."
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -207,7 +207,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
             value={form.featured_image_path}
             onChange={(e) => updateField("featured_image_path", e.target.value)}
             placeholder="posts/my-post/hero.webp"
-            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
           />
           <p className="mt-1 text-xs text-charcoal/40">
             Supabase Storage path. Media library upload coming in a future phase.
@@ -226,7 +226,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
             <select
               value={form.status}
               onChange={(e) => updateField("status", e.target.value as PostFormData["status"])}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -255,7 +255,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
         <button
           type="submit"
           disabled={saving}
-          className="border-2 border-charcoal bg-charcoal px-6 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+          className="border border-kpfk-red bg-kpfk-red px-6 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press disabled:opacity-50"
         >
           {saving
             ? "Saving…"

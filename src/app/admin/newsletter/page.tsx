@@ -107,11 +107,11 @@ export default async function NewsletterPage() {
                   </td>
                   <td className="px-4 py-2">
                     {sub.confirmed_at ? (
-                      <span className="rounded border border-green-600/20 bg-green-600/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-green-700">
+                      <span className=" border border-green-600/20 bg-green-600/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-green-700">
                         Confirmed
                       </span>
                     ) : (
-                      <span className="rounded border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-amber-600">
+                      <span className=" border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-amber-600">
                         Pending
                       </span>
                     )}
