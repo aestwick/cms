@@ -67,7 +67,7 @@ export default async function BlogIndexPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-12 sm:px-8">
       <header className="pb-6" style={{ borderBottom: "3px solid var(--txt)" }}>
-        <p className="kpfk-label">Dispatches from the station</p>
+        <p className="kpfk-label">News &amp; features from the station</p>
         <h1 className="kpfk-display mt-2 text-5xl sm:text-6xl" style={{ color: "var(--txt)" }}>
           Stories<span style={{ color: "var(--kpfk-red)" }}>.</span>
         </h1>
