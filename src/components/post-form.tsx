@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { flattenCategoryOptions, type CategoryNode } from "@/lib/categories";
+import { BlockEditor } from "@/components/block-editor";
+import { normalizeBlocks, type Block } from "@/lib/blocks";
 
 export interface PostFormData {
   title: string;
   slug: string;
   body: string;
+  body_blocks: Block[];
   excerpt: string;
   featured_image_path: string;
   status: "draft" | "published";
@@ -20,6 +23,7 @@ const emptyPost: PostFormData = {
   title: "",
   slug: "",
   body: "",
+  body_blocks: [],
   excerpt: "",
   featured_image_path: "",
   status: "draft",
@@ -49,7 +53,12 @@ function slugify(text: string): string {
 
 export function PostForm({ initialData, postId, mode }: PostFormProps) {
   const router = useRouter();
-  const [form, setForm] = useState<PostFormData>({ ...emptyPost, ...initialData });
+  const [form, setForm] = useState<PostFormData>({
+    ...emptyPost,
+    ...initialData,
+    // Body blocks arrive from the DB as raw JSONB — coerce to clean Blocks.
+    body_blocks: normalizeBlocks(initialData?.body_blocks),
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [slugManual, setSlugManual] = useState(mode === "edit");
@@ -198,21 +207,27 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
         <h2 className="text-lg font-bold text-charcoal">Content</h2>
         <div className="mt-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-charcoal">
-              Body <span className="text-kpfk-red">*</span>
-            </label>
+            <label className="block text-sm font-medium text-charcoal">Body</label>
+            <p className="mb-2 mt-1 text-xs text-charcoal/40">
+              Build the story from blocks. Stored as structured JSON.
+            </p>
+            <BlockEditor
+              blocks={form.body_blocks}
+              onChange={(b) => updateField("body_blocks", b)}
+            />
+          </div>
+          <details>
+            <summary className="cursor-pointer text-xs font-medium text-charcoal/50">
+              Legacy HTML body (fallback — used only if no blocks)
+            </summary>
             <textarea
-              required
               value={form.body}
               onChange={(e) => updateField("body", e.target.value)}
-              rows={16}
-              placeholder="Write your post content here…"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
+              rows={10}
+              placeholder="Optional HTML. Shown publicly only when the block body is empty."
+              className="mt-2 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
-            <p className="mt-1 text-xs text-charcoal/40">
-              HTML supported. Rich text editor coming in a future phase.
-            </p>
-          </div>
+          </details>
           <div>
             <label className="block text-sm font-medium text-charcoal">
               Excerpt

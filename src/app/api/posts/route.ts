@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
 import { canEditShow, editableShowIds } from "@/lib/authz";
+import { normalizeBlocks } from "@/lib/blocks";
 
 // GET /api/posts — list posts for the admin's station
 export async function GET(request: NextRequest) {
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
       title: body.title,
       slug: body.slug,
       body: body.body || "",
+      body_blocks: normalizeBlocks(body.body_blocks),
       excerpt: body.excerpt || null,
       featured_image_path: body.featured_image_path || null,
       status: body.status || "draft",

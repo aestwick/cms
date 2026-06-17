@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
 import { canEditShow } from "@/lib/authz";
+import { normalizeBlocks } from "@/lib/blocks";
 
 // GET /api/posts/[id] — get a single post
 export async function GET(
@@ -72,6 +73,11 @@ export async function PATCH(
     "title", "slug", "body", "excerpt", "featured_image_path",
     "status", "show_id", "category_id", "is_featured",
   ];
+
+  // Block body is normalized (not copied raw) so stored JSON stays clean.
+  if ("body_blocks" in body) {
+    updateFields.body_blocks = normalizeBlocks(body.body_blocks);
+  }
 
   for (const field of allowedFields) {
     if (field in body) {

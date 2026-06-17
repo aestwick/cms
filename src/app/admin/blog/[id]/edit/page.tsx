@@ -49,6 +49,7 @@ export default async function EditPostPage({ params }: PageProps) {
             title: post.title,
             slug: post.slug,
             body: post.body,
+            body_blocks: post.body_blocks,
             excerpt: post.excerpt || "",
             featured_image_path: post.featured_image_path || "",
             status: post.status,
