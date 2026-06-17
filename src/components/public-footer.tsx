@@ -1,111 +1,106 @@
 import Link from "next/link";
-import Image from "next/image";
+
+const columns: { heading: string; links: { label: string; href: string; external?: boolean }[] }[] = [
+  {
+    heading: "Explore",
+    links: [
+      { label: "Shows", href: "/on-air" },
+      { label: "Schedule", href: "/schedule" },
+      { label: "Blog", href: "/blog" },
+      { label: "Events", href: "/events" },
+    ],
+  },
+  {
+    heading: "Station",
+    links: [
+      { label: "About KPFK", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "Volunteer", href: "/volunteer" },
+      { label: "Donate", href: "https://donate.kpfk.org", external: true },
+    ],
+  },
+];
 
 export function PublicFooter() {
   return (
-    <footer className="border-t-2 border-charcoal bg-charcoal text-off-white">
+    <footer
+      className="mt-auto"
+      style={{ background: "var(--kpfk-ink)", color: "var(--kpfk-paper)" }}
+    >
       <div className="mx-auto max-w-7xl px-6 py-14 sm:px-8">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Branding */}
           <div>
-            <Image
-              src="https://admin.kpfk.org/images/Kpfk-horizontal.svg"
-              alt="KPFK 90.7 FM"
-              width={160}
-              height={42}
-              className="h-9 w-auto brightness-0 invert"
-              unoptimized
-            />
-            <p className="mt-3 text-base text-off-white/60">
-              Pacifica Foundation community radio in Los Angeles. Listener-supported since 1959.
+            <span className="kpfk-display block text-[32px]">KPFK</span>
+            <span className="kpfk-label mt-1 block" style={{ color: "var(--kpfk-ash-400)" }}>
+              90.7<span style={{ color: "var(--kpfk-red)" }}>FM</span>
+            </span>
+            <p className="mt-4 text-base" style={{ color: "var(--kpfk-ash-400)" }}>
+              Pacifica Foundation community radio in Los Angeles.
+              Listener-supported since 1959.
             </p>
           </div>
 
-          {/* Navigation */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-off-white/40">
-              Explore
-            </h3>
-            <ul className="mt-4 space-y-3 text-base">
-              <li>
-                <Link href="/on-air" className="text-off-white/70 hover:text-off-white">
-                  Shows
-                </Link>
-              </li>
-              <li>
-                <Link href="/schedule" className="text-off-white/70 hover:text-off-white">
-                  Schedule
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-off-white/70 hover:text-off-white">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/events" className="text-off-white/70 hover:text-off-white">
-                  Events
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* About */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-off-white/40">
-              Station
-            </h3>
-            <ul className="mt-4 space-y-3 text-base">
-              <li>
-                <Link href="/about" className="text-off-white/70 hover:text-off-white">
-                  About KPFK
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-off-white/70 hover:text-off-white">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/volunteer" className="text-off-white/70 hover:text-off-white">
-                  Volunteer
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="https://donate.kpfk.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-off-white/70 hover:text-off-white"
-                >
-                  Donate
-                </a>
-              </li>
-            </ul>
-          </div>
+          {columns.map((col) => (
+            <div key={col.heading}>
+              <h3 className="kpfk-label" style={{ color: "var(--kpfk-ash-400)" }}>
+                {col.heading}
+              </h3>
+              <ul className="mt-4 space-y-3 text-base">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="transition-colors hover:text-white"
+                        style={{ color: "color-mix(in srgb, var(--kpfk-paper) 75%, transparent)" }}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="transition-colors hover:text-white"
+                        style={{ color: "color-mix(in srgb, var(--kpfk-paper) 75%, transparent)" }}
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
           {/* Listen */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-off-white/40">
+            <h3 className="kpfk-label" style={{ color: "var(--kpfk-ash-400)" }}>
               Listen
             </h3>
-            <p className="mt-4 text-base text-off-white/60">
+            <p className="mt-4 text-base" style={{ color: "var(--kpfk-ash-400)" }}>
               KPFK 90.7 FM — Los Angeles
             </p>
             <a
               href="https://kpfk.org/stream"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-block border border-off-white/30 px-5 py-2.5 text-base font-medium text-off-white transition-colors hover:border-off-white hover:bg-off-white/10"
+              className="mt-4 inline-block border px-5 py-2.5 text-sm font-extrabold uppercase tracking-[0.04em] transition-colors hover:bg-white/10"
+              style={{ borderColor: "color-mix(in srgb, var(--kpfk-paper) 30%, transparent)" }}
             >
               Stream Online
             </a>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-off-white/10 pt-8 text-center">
-          <p className="font-mono text-sm text-off-white/30">
-            &copy; {new Date().getFullYear()} Pacifica Foundation. KPFK 90.7 FM, Los Angeles.
+        <div
+          className="mt-12 border-t pt-8 text-center"
+          style={{ borderColor: "color-mix(in srgb, var(--kpfk-paper) 12%, transparent)" }}
+        >
+          <p className="text-sm" style={{ color: "var(--kpfk-ash-400)" }}>
+            &copy; {new Date().getFullYear()} Pacifica Foundation. KPFK 90.7 FM,
+            Los Angeles.
           </p>
         </div>
       </div>

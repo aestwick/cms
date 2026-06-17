@@ -39,18 +39,29 @@ export function NowPlayingWidget() {
   if (!data) return null;
 
   return (
-    <div className="hidden items-center gap-3 text-base sm:flex">
-      <span className="inline-block h-2.5 w-2.5 animate-pulse rounded-full bg-kpfk-red" />
-      <span className="font-mono text-sm text-charcoal/50">ON NOW</span>
+    <div className="hidden items-center gap-2.5 sm:flex">
+      <span
+        className="inline-block h-2.5 w-2.5 rounded-full bg-kpfk-red"
+        style={{ animation: "kpfk-pulse 1.8s infinite" }}
+      />
+      <span
+        className="text-[11px] font-extrabold uppercase tracking-[0.14em]"
+        style={{ color: "var(--bar-muted)" }}
+      >
+        On Now
+      </span>
       {data.show_slug ? (
         <Link
           href={`/on-air/${data.show_slug}`}
-          className="font-medium text-charcoal hover:text-kpfk-red"
+          className="text-sm font-bold transition-colors hover:text-kpfk-red"
+          style={{ color: "var(--bar-txt)" }}
         >
           {data.show_title}
         </Link>
       ) : (
-        <span className="font-medium text-charcoal">{data.show_title}</span>
+        <span className="text-sm font-bold" style={{ color: "var(--bar-txt)" }}>
+          {data.show_title}
+        </span>
       )}
     </div>
   );
