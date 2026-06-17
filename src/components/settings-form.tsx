@@ -123,7 +123,7 @@ export function SettingsForm() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-charcoal/20 bg-white p-12 text-center text-charcoal/40">
+      <div className=" border border-charcoal/20 bg-white p-12 text-center text-charcoal/40">
         Loading settings...
       </div>
     );
@@ -131,14 +131,14 @@ export function SettingsForm() {
 
   if (error && !station) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-800">
+      <div className=" border border-red-200 bg-red-50 p-6 text-red-800">
         {error}
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSave} className="rounded-lg border border-charcoal/20 bg-white">
+    <form onSubmit={handleSave} className=" border border-charcoal/20 bg-white">
       {/* Station Info */}
       <div className="border-b border-charcoal/10 px-6 py-8">
         <h2 className="font-serif text-xl font-bold text-charcoal">
@@ -156,7 +156,7 @@ export function SettingsForm() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               required
             />
           </div>
@@ -168,7 +168,7 @@ export function SettingsForm() {
               type="text"
               value={station?.slug || ""}
               disabled
-              className="w-full rounded border-2 border-charcoal/10 bg-charcoal/5 px-4 py-2 text-charcoal/50"
+              className="w-full border-2 border-charcoal/10 bg-charcoal/5 px-4 py-2 text-charcoal/50"
             />
             <p className="mt-1 text-xs text-charcoal/40">
               Slug cannot be changed.
@@ -182,7 +182,7 @@ export function SettingsForm() {
               type="text"
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               placeholder="e.g. Listener-Sponsored Radio for Los Angeles"
             />
           </div>
@@ -206,7 +206,7 @@ export function SettingsForm() {
               type="url"
               value={streamUrl}
               onChange={(e) => setStreamUrl(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               placeholder="https://stream.kpfk.org/live"
             />
           </div>
@@ -218,7 +218,7 @@ export function SettingsForm() {
               type="url"
               value={beaconApiUrl}
               onChange={(e) => setBeaconApiUrl(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               placeholder="https://beacon.kpfk.org/api"
             />
           </div>
@@ -230,7 +230,7 @@ export function SettingsForm() {
               type="url"
               value={confessorApiUrl}
               onChange={(e) => setConfessorApiUrl(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               placeholder="https://confessor.kpfk.org"
             />
           </div>
@@ -251,7 +251,7 @@ export function SettingsForm() {
               type="checkbox"
               checked={fundDriveActive}
               onChange={(e) => setFundDriveActive(e.target.checked)}
-              className="mt-1 h-5 w-5 shrink-0 rounded border-2 border-charcoal/30 text-kpfk-red accent-kpfk-red focus:ring-kpfk-red"
+              className="mt-1 h-5 w-5 shrink-0 border-2 border-charcoal/30 text-kpfk-red accent-kpfk-red focus:ring-kpfk-red"
             />
             <div>
               <span className="font-medium text-charcoal">
@@ -265,7 +265,7 @@ export function SettingsForm() {
             </div>
           </label>
           {fundDriveActive && (
-            <div className="mt-4 rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <div className="mt-4 border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
               Fund drive mode is currently active. Donation CTAs are visible
               site-wide. Toggle off when the drive ends.
             </div>
@@ -290,7 +290,7 @@ export function SettingsForm() {
             type="email"
             value={defaultContactEmail}
             onChange={(e) => setDefaultContactEmail(e.target.value)}
-            className="w-full max-w-md rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+            className="w-full max-w-md border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
             placeholder="info@kpfk.org"
           />
         </div>
@@ -313,7 +313,7 @@ export function SettingsForm() {
               type="url"
               value={facebook}
               onChange={(e) => setFacebook(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               placeholder="https://facebook.com/kpfk"
             />
           </div>
@@ -325,7 +325,7 @@ export function SettingsForm() {
               type="url"
               value={twitter}
               onChange={(e) => setTwitter(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               placeholder="https://twitter.com/kpfk"
             />
           </div>
@@ -337,7 +337,7 @@ export function SettingsForm() {
               type="url"
               value={instagram}
               onChange={(e) => setInstagram(e.target.value)}
-              className="w-full rounded border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors focus:border-charcoal focus:outline-none"
+              className="w-full border-2 border-charcoal/20 px-4 py-2 text-charcoal transition-colors rounded-[2px] focus:border-kpfk-red focus:outline-none"
               placeholder="https://instagram.com/kpfk907fm"
             />
           </div>
@@ -349,7 +349,7 @@ export function SettingsForm() {
         <button
           type="submit"
           disabled={saving}
-          className="rounded border-2 border-charcoal bg-charcoal px-6 py-3 font-medium text-off-white transition-colors hover:bg-off-white hover:text-charcoal disabled:cursor-not-allowed disabled:opacity-50"
+          className=" border-2 border-charcoal bg-charcoal px-6 py-3 font-medium text-off-white transition-colors hover:bg-off-white hover:text-charcoal disabled:cursor-not-allowed disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Settings"}
         </button>

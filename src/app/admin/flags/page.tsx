@@ -102,7 +102,7 @@ function StatusBadge({ status }: { status: string }) {
 
   return (
     <span
-      className={`inline-block rounded px-1.5 py-0.5 font-mono text-[10px] uppercase ${styles[status] ?? styles.dismissed}`}
+      className={`inline-block  px-1.5 py-0.5 font-mono text-[10px] uppercase ${styles[status] ?? styles.dismissed}`}
     >
       {status}
     </span>

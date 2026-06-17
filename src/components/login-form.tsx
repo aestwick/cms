@@ -3,6 +3,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Button, Input, Label } from "@/components/ds";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -51,32 +52,22 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
       <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-charcoal"
-        >
-          Email
-        </label>
-        <input
+        <Label htmlFor="email">Email</Label>
+        <Input
           id="email"
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@kpfk.org"
-          className="mt-1 block w-full border border-charcoal/30 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
         />
       </div>
 
       {error && <p className="text-sm text-kpfk-red">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full border-2 border-charcoal bg-charcoal px-4 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
-      >
+      <Button type="submit" variant="secondary" disabled={loading} className="w-full">
         {loading ? "Sending…" : "Send magic link"}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -334,13 +334,13 @@ export function ImagePicker({
                         }
                       }}
                       placeholder={placeholder}
-                      className="flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+                      className="flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={handleUrlConfirm}
                       disabled={!urlInput.trim()}
-                      className="border-2 border-charcoal bg-charcoal px-4 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+                      className="border border-kpfk-red bg-kpfk-red px-4 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press disabled:opacity-50"
                     >
                       Use
                     </button>

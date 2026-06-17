@@ -100,7 +100,7 @@ export function TagManager({ initialTags }: { initialTags: Tag[] }) {
             value={newTag.name}
             onChange={(e) => setNewTag((prev) => ({ ...prev, name: e.target.value }))}
             placeholder="e.g. Social Justice"
-            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2.5 text-base rounded-[2px] focus:border-kpfk-red focus:outline-none"
           />
         </div>
         <div>
@@ -108,7 +108,7 @@ export function TagManager({ initialTags }: { initialTags: Tag[] }) {
           <select
             value={newTag.category}
             onChange={(e) => setNewTag((prev) => ({ ...prev, category: e.target.value as Tag["category"] }))}
-            className="mt-1 block border border-charcoal/20 bg-off-white px-3 py-2.5 text-base focus:border-charcoal focus:outline-none"
+            className="mt-1 block border border-charcoal/20 bg-off-white px-3 py-2.5 text-base rounded-[2px] focus:border-kpfk-red focus:outline-none"
           >
             <option value="topic">Topic</option>
             <option value="format">Format</option>
@@ -145,7 +145,7 @@ export function TagManager({ initialTags }: { initialTags: Tag[] }) {
                       type="text"
                       value={editForm.name}
                       onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
-                      className="flex-1 border border-charcoal/20 bg-off-white px-2 py-1 text-base focus:border-charcoal focus:outline-none"
+                      className="flex-1 border border-charcoal/20 bg-off-white px-2 py-1 text-base rounded-[2px] focus:border-kpfk-red focus:outline-none"
                     />
                     <select
                       value={editForm.category}

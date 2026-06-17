@@ -41,7 +41,7 @@ export default async function EventsListPage() {
         </div>
         <Link
           href="/admin/events/new"
-          className="border-2 border-charcoal bg-charcoal px-4 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90"
+          className="border border-kpfk-red bg-kpfk-red px-4 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press"
         >
           New event
         </Link>
@@ -119,7 +119,7 @@ function EventTable({ events }: { events: EventRow[] }) {
                 <span className="flex items-center gap-2">
                   {event.title}
                   {event.is_highlighted && (
-                    <span className="rounded border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-amber-600">
+                    <span className=" border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 font-mono text-[10px] uppercase text-amber-600">
                       Featured
                     </span>
                   )}
@@ -134,7 +134,7 @@ function EventTable({ events }: { events: EventRow[] }) {
                 )}
               </td>
               <td className="px-4 py-2">
-                <span className="rounded border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
+                <span className=" border border-charcoal/15 px-1.5 py-0.5 font-mono text-[10px] uppercase text-charcoal/50">
                   {categoryLabels[event.category] || event.category}
                 </span>
               </td>

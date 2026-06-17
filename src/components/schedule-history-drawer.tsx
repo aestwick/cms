@@ -218,7 +218,7 @@ export function ScheduleHistoryDrawer({
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <span
-                          className={`inline-block rounded-sm px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${
+                          className={`inline-block  px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${
                             OPERATION_COLORS[snap.operation]
                           }`}
                         >

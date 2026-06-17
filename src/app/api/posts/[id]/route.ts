@@ -93,7 +93,7 @@ export async function PATCH(
   const updateFields: Record<string, unknown> = {};
   const allowedFields = [
     "title", "slug", "body", "excerpt", "featured_image_path",
-    "status", "show_id", "is_featured",
+    "status", "show_id", "category_id", "is_featured",
   ];
 
   for (const field of allowedFields) {

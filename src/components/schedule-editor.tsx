@@ -252,7 +252,7 @@ function TimePicker({
                       key={`am-${h}`}
                       type="button"
                       onClick={() => selectHour(h, "AM")}
-                      className={`rounded px-1 py-1.5 text-xs ${
+                      className={` px-1 py-1.5 text-xs ${
                         h12 === h && period === "AM"
                           ? "bg-charcoal text-off-white"
                           : "text-charcoal hover:bg-charcoal/10"
@@ -272,7 +272,7 @@ function TimePicker({
                       key={`pm-${h}`}
                       type="button"
                       onClick={() => selectHour(h, "PM")}
-                      className={`rounded px-1 py-1.5 text-xs ${
+                      className={` px-1 py-1.5 text-xs ${
                         h12 === h && period === "PM"
                           ? "bg-charcoal text-off-white"
                           : "text-charcoal hover:bg-charcoal/10"
@@ -299,7 +299,7 @@ function TimePicker({
                     key={m}
                     type="button"
                     onClick={() => selectMinute(m)}
-                    className={`rounded px-2 py-1.5 text-xs ${
+                    className={` px-2 py-1.5 text-xs ${
                       minute === m
                         ? "bg-charcoal text-off-white"
                         : "text-charcoal hover:bg-charcoal/10"
@@ -979,7 +979,7 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
       <div
         key={slot.id}
         data-slot="true"
-        className="group absolute left-0.5 right-0.5 cursor-grab overflow-hidden rounded-sm border border-charcoal/15 active:cursor-grabbing"
+        className="group absolute left-0.5 right-0.5 cursor-grab overflow-hidden border border-charcoal/15 active:cursor-grabbing"
         style={{
           top: startRow * ROW_HEIGHT + 1,
           height: height - 2,
@@ -1099,12 +1099,12 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
                 </p>
                 <p className="mt-1 text-xs text-amber-700">
                   These will be imported with a label but no linked show page.
-                  Set <code className="rounded bg-amber-100 px-1">program_slug</code> on the CMS show to match.
+                  Set <code className=" bg-amber-100 px-1">program_slug</code> on the CMS show to match.
                 </p>
                 <ul className="mt-2 space-y-0.5 text-xs text-amber-800">
                   {importPreview.unmatched_shows.map((s) => (
                     <li key={s.altid}>
-                      <code className="rounded bg-amber-100 px-1">{s.altid}</code>{" "}
+                      <code className=" bg-amber-100 px-1">{s.altid}</code>{" "}
                       &mdash; {s.name}
                     </li>
                   ))}
@@ -1277,7 +1277,7 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
                 {/* Ghost preview during drag */}
                 {ghost && ghost.dayOfWeek === dayIndex && (
                   <div
-                    className={`pointer-events-none absolute left-0.5 right-0.5 rounded-sm border-2 border-dashed ${
+                    className={`pointer-events-none absolute left-0.5 right-0.5  border-2 border-dashed ${
                       ghost.valid
                         ? "border-charcoal/40 bg-charcoal/10"
                         : "border-kpfk-red/40 bg-kpfk-red/10"
@@ -1486,7 +1486,7 @@ export function ScheduleEditor({ userRole }: ScheduleEditorProps) {
                             });
                           }
                         }}
-                        className={`flex-1 rounded border py-2 text-center text-xs font-medium transition-colors ${
+                        className={`flex-1  border py-2 text-center text-xs font-medium transition-colors ${
                           isSelected
                             ? "border-charcoal bg-charcoal text-off-white"
                             : "border-charcoal/20 bg-off-white text-charcoal/50 hover:border-charcoal/40 hover:text-charcoal"

@@ -56,7 +56,7 @@ export default async function AdminDashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-3xl font-bold text-charcoal">
+        <h1 className="text-3xl font-extrabold text-charcoal">
           Dashboard
         </h1>
         <p className="mt-1 text-sm text-charcoal/60">
@@ -81,10 +81,10 @@ export default async function AdminDashboard() {
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Recent Activity */}
         <div className="lg:col-span-2">
-          <h2 className="font-serif text-xl font-bold text-charcoal">
+          <h2 className="text-xl font-extrabold text-charcoal">
             Recent Posts
           </h2>
-          <div className="mt-4 divide-y divide-charcoal/10 rounded-lg border border-charcoal/20 bg-white">
+          <div className="mt-4 divide-y divide-charcoal/10 border border-charcoal/20 bg-white">
             {recentPosts && recentPosts.length > 0 ? (
               recentPosts.map((post) => (
                 <Link
@@ -96,7 +96,7 @@ export default async function AdminDashboard() {
                     <p className="truncate font-medium text-charcoal">
                       {post.title}
                     </p>
-                    <p className="mt-0.5 font-mono text-xs text-charcoal/50">
+                    <p className="mt-0.5 text-xs text-charcoal/50">
                       {post.published_at
                         ? new Date(post.published_at).toLocaleDateString(
                             "en-US",
@@ -124,7 +124,7 @@ export default async function AdminDashboard() {
         <div className="space-y-8">
           {/* Upcoming Events */}
           <div>
-            <h2 className="font-serif text-xl font-bold text-charcoal">
+            <h2 className="text-xl font-extrabold text-charcoal">
               Upcoming Events
             </h2>
             <div className="mt-4 space-y-3">
@@ -133,11 +133,11 @@ export default async function AdminDashboard() {
                   <Link
                     key={event.id}
                     href={`/admin/events/${event.id}/edit`}
-                    className="block rounded-lg border border-charcoal/20 bg-white p-4 transition-colors hover:bg-off-white"
+                    className="block border border-charcoal/20 bg-white p-4 transition-colors hover:bg-off-white"
                   >
                     <p className="font-medium text-charcoal">{event.title}</p>
                     <div className="mt-1 flex items-center gap-2">
-                      <span className="font-mono text-xs text-charcoal/50">
+                      <span className="text-xs text-charcoal/50">
                         {new Date(event.starts_at).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
@@ -145,7 +145,7 @@ export default async function AdminDashboard() {
                         })}
                       </span>
                       {event.category && (
-                        <span className="rounded bg-charcoal/5 px-1.5 py-0.5 text-xs text-charcoal/60">
+                        <span className=" bg-charcoal/5 px-1.5 py-0.5 text-xs text-charcoal/60">
                           {event.category}
                         </span>
                       )}
@@ -153,7 +153,7 @@ export default async function AdminDashboard() {
                   </Link>
                 ))
               ) : (
-                <div className="rounded-lg border border-charcoal/20 bg-white px-4 py-8 text-center text-sm text-charcoal/40">
+                <div className="border border-charcoal/20 bg-white px-4 py-8 text-center text-sm text-charcoal/40">
                   No upcoming events.
                 </div>
               )}
@@ -163,7 +163,7 @@ export default async function AdminDashboard() {
           {/* Quick Actions */}
           {isAdminOrEditor && (
             <div>
-              <h2 className="font-serif text-xl font-bold text-charcoal">
+              <h2 className="text-xl font-extrabold text-charcoal">
                 Quick Actions
               </h2>
               <div className="mt-4 flex flex-col gap-3">
@@ -179,7 +179,7 @@ export default async function AdminDashboard() {
           {/* Host-specific quick actions */}
           {user.role === "host" && (
             <div>
-              <h2 className="font-serif text-xl font-bold text-charcoal">
+              <h2 className="text-xl font-extrabold text-charcoal">
                 Quick Actions
               </h2>
               <div className="mt-4 flex flex-col gap-3">
@@ -210,9 +210,9 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="rounded-lg border border-charcoal/20 bg-white p-6 transition-colors hover:border-kpfk-red/40"
+      className="border border-charcoal/20 bg-white p-6 transition-colors hover:border-kpfk-red/40"
     >
-      <p className="font-mono text-3xl font-bold text-charcoal">{count}</p>
+      <p className="text-4xl font-extrabold text-charcoal">{count}</p>
       <p className="mt-1 text-sm text-charcoal/60">{label}</p>
     </Link>
   );
@@ -227,7 +227,7 @@ function StatusBadge({ status }: { status: string }) {
 
   return (
     <span
-      className={`ml-3 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+      className={`ml-3 shrink-0 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em] ${
         styles[status] ?? styles.draft
       }`}
     >
@@ -240,7 +240,7 @@ function QuickActionLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="rounded-lg border border-charcoal/20 bg-white px-4 py-3 text-center text-sm font-medium text-charcoal transition-colors hover:border-kpfk-red hover:text-kpfk-red"
+      className="border border-charcoal/20 bg-white px-4 py-3 text-center text-sm font-medium text-charcoal transition-colors hover:border-kpfk-red hover:text-kpfk-red"
     >
       {label}
     </Link>

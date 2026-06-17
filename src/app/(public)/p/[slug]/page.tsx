@@ -55,8 +55,8 @@ export default async function PublicPage({ params }: PageProps) {
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-12 sm:px-8">
-      <header className="border-b-2 border-charcoal pb-6">
-        <h1 className="font-serif text-4xl font-bold text-charcoal">
+      <header className="pb-6" style={{ borderBottom: "3px solid var(--txt)" }}>
+        <h1 className="text-4xl font-extrabold sm:text-5xl" style={{ color: "var(--txt)" }}>
           {page.title}
         </h1>
       </header>
@@ -64,17 +64,16 @@ export default async function PublicPage({ params }: PageProps) {
       {/* Body */}
       {page.body && (
         <div
-          className="prose mt-10 max-w-none text-base leading-relaxed text-charcoal/80"
+          className="prose mt-10 max-w-none text-lg leading-relaxed"
+          style={{ color: "var(--txt)" }}
           dangerouslySetInnerHTML={{ __html: page.body }}
         />
       )}
 
       {/* Child pages */}
       {childPages && childPages.length > 0 && (
-        <nav className="mt-10 border-t border-charcoal/10 pt-8">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-charcoal/40">
-            In this section
-          </h2>
+        <nav className="mt-10 border-t pt-8" style={{ borderColor: "var(--line)" }}>
+          <h2 className="kpfk-label">In this section</h2>
           <ul className="mt-4 space-y-2">
             {childPages.map((child) => (
               <li key={child.id}>

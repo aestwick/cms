@@ -52,7 +52,7 @@ export default async function EditEventPage({
           </p>
         </div>
         {event.is_highlighted && (
-          <span className="rounded border border-amber-500/20 bg-amber-500/5 px-2 py-1 text-xs text-amber-600">
+          <span className=" border border-amber-500/20 bg-amber-500/5 px-2 py-1 text-xs text-amber-600">
             Featured
           </span>
         )}

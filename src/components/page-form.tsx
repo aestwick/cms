@@ -111,7 +111,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
               required
               value={form.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -129,7 +129,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
                   setSlugManual(true);
                   updateField("slug", e.target.value);
                 }}
-                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm focus:border-charcoal focus:outline-none"
+                className="block flex-1 border border-charcoal/20 bg-off-white px-3 py-2 font-mono text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
               />
             </div>
           </div>
@@ -140,7 +140,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
             <select
               value={form.parent_id}
               onChange={(e) => updateField("parent_id", e.target.value)}
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             >
               <option value="">None (top-level page)</option>
               {pages.map((page) => (
@@ -158,7 +158,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
               type="number"
               value={form.sort_order}
               onChange={(e) => updateField("sort_order", parseInt(e.target.value) || 0)}
-              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-32 border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -176,7 +176,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
             onChange={(e) => updateField("body", e.target.value)}
             rows={16}
             placeholder="Page content…"
-            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+            className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
           />
           <p className="mt-1 text-xs text-charcoal/40">
             HTML supported. Rich text editor coming in a future phase.
@@ -197,7 +197,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
               value={form.meta_title}
               onChange={(e) => updateField("meta_title", e.target.value)}
               placeholder="Auto-generated from title if empty"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
           <div>
@@ -209,7 +209,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
               onChange={(e) => updateField("meta_description", e.target.value)}
               rows={2}
               placeholder="Short description for search engines"
-              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm focus:border-charcoal focus:outline-none"
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
             />
           </div>
         </div>
@@ -239,7 +239,7 @@ export function PageForm({ initialData, pageId, mode }: PageFormProps) {
         <button
           type="submit"
           disabled={saving}
-          className="border-2 border-charcoal bg-charcoal px-6 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
+          className="border border-kpfk-red bg-kpfk-red px-6 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press disabled:opacity-50"
         >
           {saving
             ? "Saving…"

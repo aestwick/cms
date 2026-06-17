@@ -117,30 +117,39 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------------ */}
       {/* Hero / Now Playing                                                  */}
       {/* ------------------------------------------------------------------ */}
-      <section className="border-2 border-charcoal p-8 sm:p-12 text-center">
-        <p className="font-mono text-xs uppercase tracking-widest text-charcoal/50">
+      <section
+        className="border p-8 text-center sm:p-14"
+        style={{ borderColor: "var(--line)", background: "var(--card)" }}
+      >
+        <p className="kpfk-label">
           Pacifica Foundation Community Radio — Los Angeles
         </p>
-        <h1 className="mt-4 font-serif text-5xl font-bold text-charcoal sm:text-6xl">
-          KPFK 90.7 FM
+        <h1
+          className="kpfk-display mt-5 text-6xl sm:text-8xl"
+          style={{ color: "var(--txt)" }}
+        >
+          KPFK<span style={{ color: "var(--kpfk-red)" }}>.</span>
         </h1>
-        <p className="mt-3 text-lg text-charcoal/60">
-          Listener-supported since 1959
+        <p className="mt-4 text-lg" style={{ color: "var(--muted)" }}>
+          Listener-supported community radio since 1959.
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <a
-            href="#"
-            className="inline-flex items-center gap-2 border-2 border-kpfk-red bg-kpfk-red px-8 py-3 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-kpfk-red"
+            href="https://kpfk.org/stream"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border border-kpfk-red bg-kpfk-red px-8 py-3 text-sm font-extrabold uppercase tracking-[0.04em] text-white transition-colors hover:bg-kpfk-red-press"
           >
-            <span aria-hidden="true" className="text-lg">&#9654;</span>
+            <span aria-hidden="true">&#9654;</span>
             Listen Live
           </a>
           <a
             href="https://donate.kpfk.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="border-2 border-charcoal bg-charcoal px-8 py-3 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-charcoal"
+            className="border px-8 py-3 text-sm font-extrabold uppercase tracking-[0.04em] transition-colors"
+            style={{ borderColor: "var(--txt)", color: "var(--txt)" }}
           >
             Support KPFK
           </a>
@@ -150,25 +159,33 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------------ */}
       {/* Two-column: Schedule + Blog                                         */}
       {/* ------------------------------------------------------------------ */}
-      <div className="mt-12 grid grid-cols-1 gap-px border border-charcoal bg-charcoal/10 lg:grid-cols-3">
+      <div
+        className="mt-12 grid grid-cols-1 gap-px lg:grid-cols-3"
+        style={{ background: "var(--line)" }}
+      >
         {/* Today's Schedule */}
-        <div className="bg-off-white p-6 lg:col-span-1">
+        <div className="p-6 lg:col-span-1" style={{ background: "var(--card)" }}>
           <div className="flex items-baseline justify-between">
-            <h2 className="font-serif text-2xl font-bold text-charcoal">
+            <h2 className="text-2xl font-extrabold" style={{ color: "var(--txt)" }}>
               Today
             </h2>
-            <span className="font-mono text-xs uppercase tracking-wide text-charcoal/40">
-              {todayName}
-            </span>
+            <span className="kpfk-label">{todayName}</span>
           </div>
 
           {scheduleSlots.length > 0 ? (
-            <ul className="mt-5 divide-y divide-charcoal/10">
+            <ul className="mt-5" style={{ borderTop: "1px solid var(--hair)" }}>
               {scheduleSlots.map((slot: any) => {
                 const show = slot.cms_shows;
                 return (
-                  <li key={slot.id} className="py-3 first:pt-0 last:pb-0">
-                    <p className="font-mono text-xs text-charcoal/40">
+                  <li
+                    key={slot.id}
+                    className="py-3"
+                    style={{ borderBottom: "1px solid var(--hair)" }}
+                  >
+                    <p
+                      className="text-xs font-bold uppercase tracking-[0.08em]"
+                      style={{ color: "var(--faint)" }}
+                    >
                       {formatTime24(slot.start_time)}
                       {" — "}
                       {formatTime24(slot.end_time)}
@@ -176,12 +193,16 @@ export default async function HomePage() {
                     {show ? (
                       <Link
                         href={`/on-air/${show.slug}`}
-                        className="mt-0.5 block font-serif text-base font-semibold text-charcoal hover:text-kpfk-red"
+                        className="mt-0.5 block text-base font-bold transition-colors hover:text-kpfk-red"
+                        style={{ color: "var(--txt)" }}
                       >
                         {show.title}
                       </Link>
                     ) : (
-                      <p className="mt-0.5 font-serif text-base font-semibold text-charcoal">
+                      <p
+                        className="mt-0.5 text-base font-bold"
+                        style={{ color: "var(--txt)" }}
+                      >
                         {slot.label || "Programming"}
                       </p>
                     )}
@@ -190,28 +211,28 @@ export default async function HomePage() {
               })}
             </ul>
           ) : (
-            <p className="mt-5 text-sm text-charcoal/40">
+            <p className="mt-5 text-sm" style={{ color: "var(--faint)" }}>
               No schedule data for today.
             </p>
           )}
 
           <Link
             href="/schedule"
-            className="mt-5 inline-block font-mono text-xs font-bold uppercase tracking-wide text-kpfk-red hover:underline"
+            className="mt-5 inline-block text-xs font-extrabold uppercase tracking-[0.08em] text-kpfk-red hover:underline"
           >
             Full Schedule &rarr;
           </Link>
         </div>
 
         {/* Recent Blog Posts */}
-        <div className="bg-off-white p-6 lg:col-span-2">
+        <div className="p-6 lg:col-span-2" style={{ background: "var(--card)" }}>
           <div className="flex items-baseline justify-between">
-            <h2 className="font-serif text-2xl font-bold text-charcoal">
+            <h2 className="text-2xl font-extrabold" style={{ color: "var(--txt)" }}>
               Latest
             </h2>
             <Link
               href="/blog"
-              className="font-mono text-xs font-bold uppercase tracking-wide text-kpfk-red hover:underline"
+              className="text-xs font-extrabold uppercase tracking-[0.08em] text-kpfk-red hover:underline"
             >
               All Posts &rarr;
             </Link>
@@ -222,7 +243,10 @@ export default async function HomePage() {
               {recentPosts.map((post: any) => (
                 <article key={post.id} className="group">
                   {post.featured_image_path && (
-                    <div className="relative mb-3 h-40 w-full overflow-hidden bg-charcoal/5">
+                    <div
+                      className="relative mb-3 h-40 w-full overflow-hidden"
+                      style={{ background: "var(--hair)" }}
+                    >
                       <Image
                         src={resolveImageUrl(post.featured_image_path)}
                         alt={post.title}
@@ -233,22 +257,28 @@ export default async function HomePage() {
                     </div>
                   )}
                   {post.cms_shows && (
-                    <p className="font-mono text-[10px] uppercase tracking-wide text-charcoal/40">
+                    <p className="kpfk-label">
                       {(post.cms_shows as any).title}
                     </p>
                   )}
                   <Link href={`/blog/${post.slug}`}>
-                    <h3 className="mt-1 font-serif text-lg font-bold leading-snug text-charcoal group-hover:text-kpfk-red">
+                    <h3
+                      className="mt-1 text-lg font-extrabold leading-snug transition-colors group-hover:text-kpfk-red"
+                      style={{ color: "var(--txt)" }}
+                    >
                       {post.title}
                     </h3>
                   </Link>
                   {post.excerpt && (
-                    <p className="mt-1.5 line-clamp-2 text-sm text-charcoal/60">
+                    <p
+                      className="mt-1.5 line-clamp-2 text-sm"
+                      style={{ color: "var(--muted)" }}
+                    >
                       {post.excerpt}
                     </p>
                   )}
                   {post.published_at && (
-                    <p className="mt-2 font-mono text-xs text-charcoal/30">
+                    <p className="mt-2 text-xs" style={{ color: "var(--faint)" }}>
                       {formatDate(post.published_at)}
                     </p>
                   )}
@@ -256,7 +286,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <p className="mt-5 text-sm text-charcoal/40">
+            <p className="mt-5 text-sm" style={{ color: "var(--faint)" }}>
               No posts yet.
             </p>
           )}
@@ -268,19 +298,22 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------------ */}
       <section className="mt-12">
         <div className="flex items-baseline justify-between">
-          <h2 className="font-serif text-2xl font-bold text-charcoal">
+          <h2 className="text-2xl font-extrabold" style={{ color: "var(--txt)" }}>
             Upcoming Events
           </h2>
           <Link
             href="/events"
-            className="font-mono text-xs font-bold uppercase tracking-wide text-kpfk-red hover:underline"
+            className="text-xs font-extrabold uppercase tracking-[0.08em] text-kpfk-red hover:underline"
           >
             All Events &rarr;
           </Link>
         </div>
 
         {upcomingEvents.length > 0 ? (
-          <div className="mt-5 grid grid-cols-1 gap-px border border-charcoal/20 bg-charcoal/10 sm:grid-cols-2 lg:grid-cols-4">
+          <div
+            className="mt-5 grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4"
+            style={{ background: "var(--line)" }}
+          >
             {upcomingEvents.map((event) => {
               const isExternal = event.source === "beacon";
               const href = isExternal
@@ -291,7 +324,10 @@ export default async function HomePage() {
               const inner = (
                 <div className="flex h-full flex-col">
                   {event.image_url && (
-                    <div className="relative h-32 w-full overflow-hidden bg-charcoal/5">
+                    <div
+                      className="relative h-32 w-full overflow-hidden"
+                      style={{ background: "var(--hair)" }}
+                    >
                       <Image
                         src={event.image_url}
                         alt={event.title}
@@ -302,27 +338,31 @@ export default async function HomePage() {
                     </div>
                   )}
                   <div className="flex flex-1 flex-col p-5">
-                    <p className="font-mono text-xs text-charcoal/40">
+                    <p
+                      className="text-xs font-bold uppercase tracking-[0.08em]"
+                      style={{ color: "var(--faint)" }}
+                    >
                       {formatDate(event.starts_at, {
                         weekday: "short",
                         year: undefined,
                       })}
                       {!event.is_all_day && (
-                        <span className="ml-1 text-charcoal/30">
-                          {formatTime(event.starts_at)}
-                        </span>
+                        <span className="ml-1">{formatTime(event.starts_at)}</span>
                       )}
                     </p>
-                    <h3 className="mt-1.5 font-serif text-base font-bold leading-snug text-charcoal">
+                    <h3
+                      className="mt-1.5 text-base font-extrabold leading-snug"
+                      style={{ color: "var(--txt)" }}
+                    >
                       {event.title}
                     </h3>
                     {event.venue_name && (
-                      <p className="mt-1 text-xs text-charcoal/40">
+                      <p className="mt-1 text-xs" style={{ color: "var(--faint)" }}>
                         {event.venue_name}
                       </p>
                     )}
                     {isExternal && (
-                      <span className="mt-auto pt-3 font-mono text-[10px] uppercase tracking-wide text-kpfk-red">
+                      <span className="mt-auto pt-3 text-[10px] font-extrabold uppercase tracking-[0.08em] text-kpfk-red">
                         Tickets
                       </span>
                     )}
@@ -337,7 +377,8 @@ export default async function HomePage() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block bg-off-white transition-colors hover:bg-charcoal/[0.02]"
+                    className="block transition-opacity hover:opacity-90"
+                    style={{ background: "var(--card)" }}
                   >
                     {inner}
                   </a>
@@ -348,7 +389,8 @@ export default async function HomePage() {
                 <Link
                   key={`cms-${event.id}`}
                   href={href}
-                  className="block bg-off-white transition-colors hover:bg-charcoal/[0.02]"
+                  className="block transition-opacity hover:opacity-90"
+                  style={{ background: "var(--card)" }}
                 >
                   {inner}
                 </Link>
@@ -356,7 +398,7 @@ export default async function HomePage() {
             })}
           </div>
         ) : (
-          <p className="mt-5 text-sm text-charcoal/40">
+          <p className="mt-5 text-sm" style={{ color: "var(--faint)" }}>
             No upcoming events at this time.
           </p>
         )}
@@ -365,13 +407,16 @@ export default async function HomePage() {
       {/* ------------------------------------------------------------------ */}
       {/* Newsletter Signup                                                   */}
       {/* ------------------------------------------------------------------ */}
-      <section className="mt-12 border-2 border-charcoal p-8 sm:p-10">
+      <section
+        className="mt-12 border p-8 sm:p-10"
+        style={{ borderColor: "var(--line)", background: "var(--card)" }}
+      >
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:gap-10">
           <div className="flex-1">
-            <h2 className="font-serif text-2xl font-bold text-charcoal">
+            <h2 className="text-2xl font-extrabold" style={{ color: "var(--txt)" }}>
               Stay Connected
             </h2>
-            <p className="mt-2 text-base text-charcoal/60">
+            <p className="mt-2 text-base" style={{ color: "var(--muted)" }}>
               Get the KPFK newsletter — programming highlights, events, and
               station news delivered to your inbox.
             </p>

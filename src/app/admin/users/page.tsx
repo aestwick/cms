@@ -38,7 +38,7 @@ export default async function UsersPage() {
         </div>
         <Link
           href="/admin/users/invite"
-          className="border-2 border-charcoal bg-charcoal px-4 py-2 text-sm font-medium text-off-white hover:bg-charcoal/90"
+          className="border border-kpfk-red bg-kpfk-red px-4 py-2 text-sm font-extrabold uppercase tracking-[0.04em] text-white hover:bg-kpfk-red-press"
         >
           Invite user
         </Link>

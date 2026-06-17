@@ -90,7 +90,7 @@ export default async function EventDetailPage({ params }: PageProps) {
             </span>
           )}
         </div>
-        <h1 className="mt-4 font-serif text-4xl font-bold leading-tight text-charcoal">
+        <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl" style={{ color: "var(--txt)" }}>
           {event.title}
         </h1>
       </header>

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { NowPlayingWidget } from "@/components/now-playing-widget";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 const navLinks = [
   { label: "On Air", href: "/on-air" },
@@ -10,30 +11,59 @@ const navLinks = [
   { label: "About", href: "/about" },
 ];
 
-export function PublicHeader() {
-  return (
-    <header className="border-b-2 border-charcoal bg-off-white">
-      {/* Top bar: branding + Listen Live */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-8">
-        <Link href="/" className="block">
-          <Image
-            src="https://admin.kpfk.org/images/Kpfk-horizontal.svg"
-            alt="KPFK 90.7 FM"
-            width={180}
-            height={48}
-            className="h-10 w-auto sm:h-12"
-            priority
-            unoptimized
-          />
-        </Link>
+// Top-level coverage areas flagged for the nav. Resilient: if the
+// categories table isn't present yet (migration unapplied), the nav
+// simply renders without them rather than breaking every page.
+async function getNavCategories(): Promise<{ label: string; href: string }[]> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("cms_categories")
+      .select("name, slug")
+      .is("parent_id", null)
+      .eq("show_in_nav", true)
+      .is("deleted_at", null)
+      .order("sort_order")
+      .order("name");
+    if (error || !data) return [];
+    return data.map((c) => ({ label: c.name, href: `/category/${c.slug}` }));
+  } catch {
+    return [];
+  }
+}
 
-        <div className="flex items-center gap-5">
+function Wordmark() {
+  return (
+    <Link href="/" className="block leading-none" aria-label="KPFK 90.7 FM home">
+      <span
+        className="kpfk-display block text-[26px] sm:text-[30px]"
+        style={{ color: "var(--bar-txt)" }}
+      >
+        KPFK
+      </span>
+      <span className="kpfk-label mt-1 block" style={{ color: "var(--bar-muted)" }}>
+        90.7<span style={{ color: "var(--kpfk-red)" }}>FM</span> · Los Angeles
+      </span>
+    </Link>
+  );
+}
+
+export async function PublicHeader() {
+  const navCategories = await getNavCategories();
+  return (
+    <header style={{ background: "var(--bar)", color: "var(--bar-txt)" }}>
+      {/* Top bar: branding + listen / donate */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-5 sm:px-8">
+        <Wordmark />
+
+        <div className="flex items-center gap-3 sm:gap-5">
           <NowPlayingWidget />
+          <ThemeToggle />
           <a
             href="https://kpfk.org/stream"
             target="_blank"
             rel="noopener noreferrer"
-            className="border-2 border-kpfk-red bg-kpfk-red px-5 py-2.5 text-base font-bold text-off-white transition-colors hover:bg-off-white hover:text-kpfk-red"
+            className="border border-kpfk-red bg-kpfk-red px-5 py-2.5 text-sm font-extrabold uppercase tracking-[0.04em] text-white transition-colors hover:bg-kpfk-red-press"
           >
             Listen Live
           </a>
@@ -41,27 +71,40 @@ export function PublicHeader() {
       </div>
 
       {/* Navigation bar */}
-      <nav className="border-t border-charcoal/10">
+      <nav
+        className="border-t"
+        style={{ borderColor: "color-mix(in srgb, var(--bar-txt) 14%, transparent)" }}
+      >
         <div className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-6 sm:px-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="whitespace-nowrap px-5 py-4 text-base font-medium text-charcoal/70 transition-colors hover:text-charcoal"
+              className="whitespace-nowrap px-4 py-3.5 text-sm font-bold uppercase tracking-[0.04em] transition-colors"
+              style={{ color: "var(--bar-muted)" }}
             >
               {link.label}
             </Link>
           ))}
-          <div className="ml-auto">
-            <a
-              href="https://donate.kpfk.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-5 py-4 text-base font-bold text-kpfk-red transition-colors hover:text-kpfk-red/80"
+          {navCategories.map((cat) => (
+            <Link
+              key={cat.href}
+              href={cat.href}
+              className="whitespace-nowrap px-4 py-3.5 text-sm font-bold uppercase tracking-[0.04em] transition-colors"
+              style={{ color: "var(--bar-muted)" }}
             >
-              Donate
-            </a>
-          </div>
+              {cat.label}
+            </Link>
+          ))}
+          <a
+            href="https://donate.kpfk.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto whitespace-nowrap px-4 py-3.5 text-sm font-extrabold uppercase tracking-[0.04em] transition-colors"
+            style={{ color: "var(--kpfk-red)" }}
+          >
+            Donate
+          </a>
         </div>
       </nav>
     </header>

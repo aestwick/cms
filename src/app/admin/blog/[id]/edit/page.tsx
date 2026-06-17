@@ -53,6 +53,7 @@ export default async function EditPostPage({ params }: PageProps) {
             featured_image_path: post.featured_image_path || "",
             status: post.status,
             show_id: post.show_id || "",
+            category_id: post.category_id || "",
             is_featured: post.is_featured,
           }}
         />

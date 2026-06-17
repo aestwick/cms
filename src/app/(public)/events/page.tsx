@@ -93,9 +93,12 @@ export default async function EventsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
-      <h1 className="font-serif text-4xl font-bold text-charcoal">Events</h1>
-      <p className="mt-3 text-lg text-charcoal/60">
-        Upcoming events from KPFK and the community
+      <p className="kpfk-label">What&apos;s happening</p>
+      <h1 className="kpfk-display mt-2 text-5xl sm:text-6xl" style={{ color: "var(--txt)" }}>
+        Events<span style={{ color: "var(--kpfk-red)" }}>.</span>
+      </h1>
+      <p className="mt-3 text-lg" style={{ color: "var(--muted)" }}>
+        Upcoming events from KPFK and the community.
       </p>
 
       {/* Featured events */}

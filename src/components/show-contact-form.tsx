@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { TurnstileWidget } from "@/components/turnstile-widget";
+import { Button, Input, Textarea, Label } from "@/components/ds";
 
 interface ShowContactFormProps {
   showId: string;
@@ -66,11 +67,11 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
 
   if (success) {
     return (
-      <div className="border border-charcoal/10 p-8 text-center">
-        <p className="font-serif text-xl font-bold text-charcoal">
+      <div className="border p-8 text-center" style={{ borderColor: "var(--line)" }}>
+        <p className="text-xl font-extrabold" style={{ color: "var(--txt)" }}>
           Message sent!
         </p>
-        <p className="mt-2 text-base text-charcoal/60">
+        <p className="mt-2 text-base" style={{ color: "var(--muted)" }}>
           Your message has been forwarded to {showTitle}. They&apos;ll respond if
           they can.
         </p>
@@ -80,13 +81,9 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
 
   if (!open) {
     return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="border-2 border-charcoal bg-charcoal px-7 py-3 text-base font-medium text-off-white hover:bg-charcoal/90"
-      >
+      <Button variant="secondary" onClick={() => setOpen(true)}>
         Contact {showTitle}
-      </button>
+      </Button>
     );
   }
 
@@ -94,60 +91,56 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label className="block text-base font-medium text-charcoal">
+          <Label>
             Name <span className="text-kpfk-red">*</span>
-          </label>
-          <input
+          </Label>
+          <Input
             type="text"
             required
             value={form.sender_name}
             onChange={(e) =>
               setForm((prev) => ({ ...prev, sender_name: e.target.value }))
             }
-            className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-base font-medium text-charcoal">
+          <Label>
             Email <span className="text-kpfk-red">*</span>
-          </label>
-          <input
+          </Label>
+          <Input
             type="email"
             required
             value={form.sender_email}
             onChange={(e) =>
               setForm((prev) => ({ ...prev, sender_email: e.target.value }))
             }
-            className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
           />
         </div>
       </div>
       <div>
-        <label className="block text-base font-medium text-charcoal">
+        <Label>
           Subject <span className="text-kpfk-red">*</span>
-        </label>
-        <input
+        </Label>
+        <Input
           type="text"
           required
           value={form.subject}
           onChange={(e) =>
             setForm((prev) => ({ ...prev, subject: e.target.value }))
           }
-          className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
         />
       </div>
       <div>
-        <label className="block text-base font-medium text-charcoal">
+        <Label>
           Message <span className="text-kpfk-red">*</span>
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           required
           rows={6}
           value={form.message}
           onChange={(e) =>
             setForm((prev) => ({ ...prev, message: e.target.value }))
           }
-          className="mt-1.5 block w-full border border-charcoal/20 bg-off-white px-4 py-2.5 text-base focus:border-charcoal focus:outline-none"
         />
       </div>
 
@@ -173,13 +166,9 @@ export function ShowContactForm({ showId, showTitle }: ShowContactFormProps) {
 
       {error && <p className="text-base text-kpfk-red">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="border-2 border-charcoal bg-charcoal px-7 py-3 text-base font-medium text-off-white hover:bg-charcoal/90 disabled:opacity-50"
-      >
+      <Button type="submit" variant="secondary" disabled={submitting}>
         {submitting ? "Sending..." : "Send Message"}
-      </button>
+      </Button>
     </form>
   );
 }

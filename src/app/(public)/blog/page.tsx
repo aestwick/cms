@@ -2,6 +2,7 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { CategoryChip } from "@/components/category-chip";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,7 @@ interface Post {
   published_at: string;
   is_featured: boolean;
   cms_shows: { title: string; slug: string } | null;
+  cms_categories: { name: string; slug: string; color: string | null } | null;
 }
 
 function getExcerpt(post: Post): string {
@@ -50,7 +52,7 @@ export default async function BlogIndexPage() {
 
   const { data: posts } = await supabase
     .from("cms_posts")
-    .select("id, title, slug, excerpt, body, featured_image_path, published_at, is_featured, cms_shows(title, slug)")
+    .select("id, title, slug, excerpt, body, featured_image_path, published_at, is_featured, cms_shows(title, slug), cms_categories(name, slug, color)")
     .eq("status", "published")
     .is("deleted_at", null)
     .order("is_featured", { ascending: false })
@@ -59,14 +61,18 @@ export default async function BlogIndexPage() {
   const allPosts = (posts ?? []).map((p) => ({
     ...p,
     cms_shows: Array.isArray(p.cms_shows) ? p.cms_shows[0] || null : p.cms_shows,
+    cms_categories: Array.isArray(p.cms_categories) ? p.cms_categories[0] || null : p.cms_categories,
   })) as Post[];
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12 sm:px-8">
-      <header className="border-b-2 border-charcoal pb-6">
-        <h1 className="font-serif text-4xl font-bold text-charcoal">Blog</h1>
-        <p className="mt-2 text-lg text-charcoal/60">
-          News, updates, and stories from KPFK 90.7 FM
+      <header className="pb-6" style={{ borderBottom: "3px solid var(--txt)" }}>
+        <p className="kpfk-label">Dispatches from the station</p>
+        <h1 className="kpfk-display mt-2 text-5xl sm:text-6xl" style={{ color: "var(--txt)" }}>
+          Stories<span style={{ color: "var(--kpfk-red)" }}>.</span>
+        </h1>
+        <p className="mt-3 text-lg" style={{ color: "var(--muted)" }}>
+          News, updates, and stories from KPFK 90.7 FM.
         </p>
       </header>
 
@@ -111,6 +117,9 @@ export default async function BlogIndexPage() {
                       <span className="rounded border border-action-yellow/40 bg-action-yellow/10 px-1.5 py-0.5 font-mono text-[10px] uppercase">
                         Featured
                       </span>
+                    )}
+                    {post.cms_categories && (
+                      <CategoryChip category={post.cms_categories} />
                     )}
                   </div>
                   <h2 className="mt-2 font-serif text-2xl font-bold leading-tight text-charcoal">
