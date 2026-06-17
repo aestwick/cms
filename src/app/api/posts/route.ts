@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
+import { canEditShow, editableShowIds } from "@/lib/authz";
 
 // GET /api/posts — list posts for the admin's station
 export async function GET(request: NextRequest) {
@@ -20,17 +21,12 @@ export async function GET(request: NextRequest) {
     .order("created_at", { ascending: false });
 
   // Hosts can only see their own show's posts
-  if (user.role === "host") {
-    const { data: hostShows } = await supabase
-      .from("cms_show_hosts")
-      .select("show_id")
-      .eq("profile_id", user.id);
-
-    const showIds = (hostShows ?? []).map((h) => h.show_id);
-    if (showIds.length === 0) {
+  const allowedShowIds = await editableShowIds(supabase, user);
+  if (allowedShowIds !== null) {
+    if (allowedShowIds.length === 0) {
       return NextResponse.json([]);
     }
-    query = query.in("show_id", showIds);
+    query = query.in("show_id", allowedShowIds);
   } else if (showId) {
     query = query.eq("show_id", showId);
   }
@@ -54,21 +50,12 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const supabase = getSupabaseAdmin();
 
-  // Hosts can only create posts scoped to their shows
-  if (user.role === "host") {
-    if (!body.show_id) {
-      return NextResponse.json({ error: "Hosts must scope posts to a show" }, { status: 400 });
-    }
-    const { data: hostLink } = await supabase
-      .from("cms_show_hosts")
-      .select("id")
-      .eq("profile_id", user.id)
-      .eq("show_id", body.show_id)
-      .single();
-
-    if (!hostLink) {
-      return NextResponse.json({ error: "You do not have access to this show" }, { status: 403 });
-    }
+  // Hosts can only create posts scoped to a show they're linked to.
+  if (user.role === "host" && !body.show_id) {
+    return NextResponse.json({ error: "Hosts must scope posts to a show" }, { status: 400 });
+  }
+  if (!(await canEditShow(supabase, user, body.show_id))) {
+    return NextResponse.json({ error: "You do not have access to this show" }, { status: 403 });
   }
 
   const { data, error } = await supabase

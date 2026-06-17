@@ -1,5 +1,6 @@
 import { getCmsUser } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { canEditShow } from "@/lib/authz";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/episodes — list episode metadata for a show
@@ -23,17 +24,8 @@ export async function GET(request: NextRequest) {
   const supabase = getSupabaseAdmin();
 
   // If host, verify they have access to the requested show
-  if (user.role === "host" && showId) {
-    const { data: hostLink } = await supabase
-      .from("cms_show_hosts")
-      .select("id")
-      .eq("show_id", showId)
-      .eq("profile_id", user.id)
-      .single();
-
-    if (!hostLink) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (showId && !(await canEditShow(supabase, user, showId))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let query = supabase
@@ -92,17 +84,8 @@ export async function POST(request: NextRequest) {
   }
 
   // If host, verify they have access to this show
-  if (user.role === "host") {
-    const { data: hostLink } = await supabase
-      .from("cms_show_hosts")
-      .select("id")
-      .eq("show_id", body.show_id)
-      .eq("profile_id", user.id)
-      .single();
-
-    if (!hostLink) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!(await canEditShow(supabase, user, body.show_id))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { data, error } = await supabase
@@ -173,17 +156,8 @@ export async function PATCH(request: NextRequest) {
   }
 
   // If host, verify they have access to this show
-  if (user.role === "host") {
-    const { data: hostLink } = await supabase
-      .from("cms_show_hosts")
-      .select("id")
-      .eq("show_id", existing.show_id)
-      .eq("profile_id", user.id)
-      .single();
-
-    if (!hostLink) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!(await canEditShow(supabase, user, existing.show_id))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const updateFields: Record<string, unknown> = {};

@@ -1,6 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
-import { getCmsUser } from "@/lib/auth";
+import { getCmsUser, type CmsUser } from "@/lib/auth";
+import { canEditShow } from "@/lib/authz";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+// Confirm the show exists in the user's station AND the user may edit it
+// (admin/editor: any; host: only their linked shows). Returns an error
+// response to short-circuit with, or null when access is granted.
+async function guardShowAccess(
+  supabase: SupabaseClient,
+  user: CmsUser,
+  showId: string
+): Promise<NextResponse | null> {
+  const { data: show } = await supabase
+    .from("cms_shows")
+    .select("id")
+    .eq("id", showId)
+    .eq("station_id", user.station_id)
+    .is("deleted_at", null)
+    .single();
+
+  if (!show) {
+    return NextResponse.json({ error: "Show not found" }, { status: 404 });
+  }
+  if (!(await canEditShow(supabase, user, showId))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+  return null;
+}
 
 // GET /api/shows/[id]/hosts
 export async function GET(
@@ -9,11 +36,14 @@ export async function GET(
 ) {
   const { id } = await params;
   const user = await getCmsUser();
-  if (!user || !["admin", "editor"].includes(user.role)) {
+  if (!user || !["admin", "editor", "host"].includes(user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const supabase = getSupabaseAdmin();
+  const denied = await guardShowAccess(supabase, user, id);
+  if (denied) return denied;
+
   const { data, error } = await supabase
     .from("cms_show_hosts")
     .select("*")
@@ -34,24 +64,15 @@ export async function POST(
 ) {
   const { id } = await params;
   const user = await getCmsUser();
-  if (!user || !["admin", "editor"].includes(user.role)) {
+  if (!user || !["admin", "editor", "host"].includes(user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = await request.json();
   const supabase = getSupabaseAdmin();
 
-  // Verify show belongs to station
-  const { data: show } = await supabase
-    .from("cms_shows")
-    .select("id")
-    .eq("id", id)
-    .eq("station_id", user.station_id)
-    .single();
-
-  if (!show) {
-    return NextResponse.json({ error: "Show not found" }, { status: 404 });
-  }
+  const denied = await guardShowAccess(supabase, user, id);
+  if (denied) return denied;
 
   const { data, error } = await supabase
     .from("cms_show_hosts")
@@ -81,7 +102,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   const user = await getCmsUser();
-  if (!user || !["admin", "editor"].includes(user.role)) {
+  if (!user || !["admin", "editor", "host"].includes(user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -97,6 +118,9 @@ export async function PUT(
   }> = body.hosts;
 
   const supabase = getSupabaseAdmin();
+
+  const denied = await guardShowAccess(supabase, user, id);
+  if (denied) return denied;
 
   // Delete existing hosts for this show
   await supabase.from("cms_show_hosts").delete().eq("show_id", id);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
+import { canEditShow, HOST_EDITABLE_SHOW_FIELDS } from "@/lib/authz";
 
 // GET /api/shows/[id] — get a single show with hosts
 export async function GET(
@@ -9,7 +10,7 @@ export async function GET(
 ) {
   const { id } = await params;
   const user = await getCmsUser();
-  if (!user || !["admin", "editor"].includes(user.role)) {
+  if (!user || !["admin", "editor", "host"].includes(user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -26,6 +27,11 @@ export async function GET(
     return NextResponse.json({ error: "Show not found" }, { status: 404 });
   }
 
+  // Hosts may only view shows they're linked to.
+  if (!(await canEditShow(supabase, user, id))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
   return NextResponse.json(data);
 }
 
@@ -36,7 +42,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const user = await getCmsUser();
-  if (!user || !["admin", "editor"].includes(user.role)) {
+  if (!user || !["admin", "editor", "host"].includes(user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -53,6 +59,24 @@ export async function PATCH(
 
   if (!oldData) {
     return NextResponse.json({ error: "Show not found" }, { status: 404 });
+  }
+
+  // Hosts may only edit shows they're linked to.
+  if (!(await canEditShow(supabase, user, id))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  // Hosts may not touch identity / station-ops fields.
+  if (user.role === "host") {
+    const forbidden = Object.keys(body).filter(
+      (k) => !HOST_EDITABLE_SHOW_FIELDS.has(k)
+    );
+    if (forbidden.length > 0) {
+      return NextResponse.json(
+        { error: `Hosts cannot edit: ${forbidden.join(", ")}` },
+        { status: 403 }
+      );
+    }
   }
 
   const updateFields: Record<string, unknown> = {};

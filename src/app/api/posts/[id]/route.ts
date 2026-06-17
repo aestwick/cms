@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
+import { canEditShow } from "@/lib/authz";
 
 // GET /api/posts/[id] — get a single post
 export async function GET(
@@ -27,20 +28,8 @@ export async function GET(
   }
 
   // Hosts can only view their own show's posts (not station-wide posts)
-  if (user.role === "host") {
-    if (!data.show_id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
-    const { data: hostLink } = await supabase
-      .from("cms_show_hosts")
-      .select("id")
-      .eq("profile_id", user.id)
-      .eq("show_id", data.show_id)
-      .single();
-
-    if (!hostLink) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+  if (!(await canEditShow(supabase, user, data.show_id))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   return NextResponse.json(data);
@@ -74,20 +63,8 @@ export async function PATCH(
   }
 
   // Hosts can only edit their own show's posts (not station-wide posts)
-  if (user.role === "host") {
-    if (!oldData.show_id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
-    const { data: hostLink } = await supabase
-      .from("cms_show_hosts")
-      .select("id")
-      .eq("profile_id", user.id)
-      .eq("show_id", oldData.show_id)
-      .single();
-
-    if (!hostLink) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+  if (!(await canEditShow(supabase, user, oldData.show_id))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   const updateFields: Record<string, unknown> = {};
