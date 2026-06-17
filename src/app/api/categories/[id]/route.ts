@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
-
-function slugify(input: string): string {
-  return input
-    ?.toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
+import { slugify } from "@/lib/categories";
 
 // PATCH /api/categories/[id] — update a category
 export async function PATCH(

@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getCmsUser } from "@/lib/auth";
-
-function slugify(input: string): string {
-  return input
-    ?.toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
+import { slugify } from "@/lib/categories";
 
 // GET /api/categories — list the station's coverage-area tree.
 // Readable by hosts too, so they can file their show posts under one.

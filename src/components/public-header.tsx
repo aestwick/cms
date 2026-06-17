@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { NowPlayingWidget } from "@/components/now-playing-widget";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 const navLinks = [
   { label: "On Air", href: "/on-air" },
@@ -9,6 +10,27 @@ const navLinks = [
   { label: "Events", href: "/events" },
   { label: "About", href: "/about" },
 ];
+
+// Top-level coverage areas flagged for the nav. Resilient: if the
+// categories table isn't present yet (migration unapplied), the nav
+// simply renders without them rather than breaking every page.
+async function getNavCategories(): Promise<{ label: string; href: string }[]> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("cms_categories")
+      .select("name, slug")
+      .is("parent_id", null)
+      .eq("show_in_nav", true)
+      .is("deleted_at", null)
+      .order("sort_order")
+      .order("name");
+    if (error || !data) return [];
+    return data.map((c) => ({ label: c.name, href: `/category/${c.slug}` }));
+  } catch {
+    return [];
+  }
+}
 
 function Wordmark() {
   return (
@@ -26,7 +48,8 @@ function Wordmark() {
   );
 }
 
-export function PublicHeader() {
+export async function PublicHeader() {
+  const navCategories = await getNavCategories();
   return (
     <header style={{ background: "var(--bar)", color: "var(--bar-txt)" }}>
       {/* Top bar: branding + listen / donate */}
@@ -61,6 +84,16 @@ export function PublicHeader() {
               style={{ color: "var(--bar-muted)" }}
             >
               {link.label}
+            </Link>
+          ))}
+          {navCategories.map((cat) => (
+            <Link
+              key={cat.href}
+              href={cat.href}
+              className="whitespace-nowrap px-4 py-3.5 text-sm font-bold uppercase tracking-[0.04em] transition-colors"
+              style={{ color: "var(--bar-muted)" }}
+            >
+              {cat.label}
             </Link>
           ))}
           <a

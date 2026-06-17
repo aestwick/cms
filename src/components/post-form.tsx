@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { flattenCategoryOptions, type CategoryNode } from "@/lib/categories";
 
 export interface PostFormData {
   title: string;
@@ -38,12 +39,6 @@ interface ShowOption {
   title: string;
 }
 
-interface CategoryOption {
-  id: string;
-  name: string;
-  parent_id: string | null;
-  sort_order: number;
-}
 
 function slugify(text: string): string {
   return text
@@ -59,7 +54,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
   const [error, setError] = useState("");
   const [slugManual, setSlugManual] = useState(mode === "edit");
   const [shows, setShows] = useState<ShowOption[]>([]);
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [categories, setCategories] = useState<CategoryNode[]>([]);
 
   useEffect(() => {
     // Try /api/shows first (admin/editor), fall back to /api/posts/shows (host-accessible)
@@ -79,16 +74,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
   }, []);
 
   // Flatten the tree into indented options (parents first, then children).
-  const categoryOptions = categories
-    .filter((c) => !c.parent_id)
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .flatMap((parent) => [
-      { id: parent.id, label: parent.name },
-      ...categories
-        .filter((c) => c.parent_id === parent.id)
-        .sort((a, b) => a.sort_order - b.sort_order)
-        .map((child) => ({ id: child.id, label: `— ${child.name}` })),
-    ]);
+  const categoryOptions = flattenCategoryOptions(categories);
 
   function updateField<K extends keyof PostFormData>(key: K, value: PostFormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
