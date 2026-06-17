@@ -1,6 +1,7 @@
 import { getCmsUser } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { canEditShow } from "@/lib/authz";
+import { normalizeBlocks } from "@/lib/blocks";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/episodes — list episode metadata for a show
@@ -98,6 +99,7 @@ export async function POST(request: NextRequest) {
         air_date: body.air_date,
         title: body.title || null,
         description: body.description || null,
+        body_blocks: normalizeBlocks(body.body_blocks),
         transcript_url: body.transcript_url || null,
         segments: body.segments || null,
         is_published: body.is_published ?? true,
@@ -176,6 +178,11 @@ export async function PATCH(request: NextRequest) {
       updateFields[field] =
         nullableFields.has(field) && body[field] === "" ? null : body[field];
     }
+  }
+
+  // Block body is normalized (not copied raw) so stored JSON stays clean.
+  if ("body_blocks" in body) {
+    updateFields.body_blocks = normalizeBlocks(body.body_blocks);
   }
 
   const { data, error } = await supabase
