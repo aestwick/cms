@@ -137,6 +137,21 @@
   --kpfk-radius-pill: 999px;
   --kpfk-border: 1px solid var(--kpfk-mist-200);
   --kpfk-rule: 3px solid var(--kpfk-ink);
+
+  /* Semantic theme defaults (light). The .kpfk-page shell restates
+     these and the dark block overrides them; defining them here too
+     lets the shared editorial classes resolve outside .kpfk-page
+     (e.g. admin) without going dark. */
+  --pg: var(--kpfk-paper);
+  --card: var(--kpfk-white);
+  --txt: var(--kpfk-ink);
+  --muted: var(--kpfk-slate-600);
+  --faint: var(--kpfk-ash-400);
+  --line: var(--kpfk-mist-200);
+  --hair: var(--kpfk-hairline);
+  --bar: var(--kpfk-ink);
+  --bar-txt: var(--kpfk-paper);
+  --bar-muted: var(--kpfk-ash-400);
 }
 
 /* ============================================================
@@ -187,6 +202,17 @@ html[data-mode="dark"] .kpfk-page,
   --tint-culture: #0e2a21;
   --tint-community: #33102a;
   --tint-talk: #262019;
+
+  /* Flip the legacy semantic color utilities used across not-yet-
+     rewritten public pages. "charcoal" = foreground, "off-white" =
+     background — so a dark swap keeps text/surface utilities legible
+     (text-charcoal, bg-off-white, border-charcoal, /opacity variants).
+     Scoped to .kpfk-page so admin keeps its light values. */
+  --color-charcoal: #f4eddf;
+  --color-off-white: #14110c;
+  --color-foreground: #f4eddf;
+  --color-background: #14110c;
+  --color-border: #39322a;
 }
 
 html[data-mode="dark"] body {
@@ -305,7 +331,7 @@ a {
   border-bottom: 2px solid var(--kpfk-red);
   display: inline-block;
   margin-bottom: 1.25rem;
-  color: var(--kpfk-ink);
+  color: var(--txt);
 }
 
 .section-header--large {
@@ -315,14 +341,14 @@ a {
 
 /* --- Masthead — heavy rule divider --- */
 .masthead {
-  border-bottom: 3px solid var(--kpfk-ink);
+  border-bottom: 3px solid var(--txt);
   position: relative;
   padding-bottom: 1.5rem;
 }
 
 /* --- Show Logo --- */
 .show-logo {
-  border: 1px solid var(--kpfk-mist-200);
+  border: 1px solid var(--line);
   object-fit: cover;
   object-position: center;
 }
@@ -330,8 +356,8 @@ a {
 /* --- Schedule Badge — dateline style --- */
 .schedule-badge {
   display: inline-block;
-  background: var(--kpfk-ink);
-  color: var(--kpfk-paper);
+  background: var(--bar);
+  color: var(--bar-txt);
   padding: 6px 14px;
   font-family: var(--font-text);
   font-size: 12px;
@@ -390,9 +416,9 @@ a {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border: 1px solid var(--kpfk-mist-200);
+  border: 1px solid var(--line);
   background: transparent;
-  color: var(--kpfk-slate-600);
+  color: var(--muted);
   transition: all 0.15s;
 }
 .tag-filter:hover {
@@ -419,8 +445,8 @@ a {
 .show-card {
   display: flex;
   flex-direction: column;
-  background: var(--kpfk-white);
-  border: 1px solid var(--kpfk-mist-200);
+  background: var(--card);
+  border: 1px solid var(--line);
   transition: border-color 0.15s;
 }
 .show-card:hover {
@@ -431,8 +457,8 @@ a {
   aspect-ratio: 1;
   object-fit: contain;
   display: block;
-  border-bottom: 1px solid var(--kpfk-mist-200);
-  background: var(--kpfk-paper);
+  border-bottom: 1px solid var(--line);
+  background: var(--pg);
 }
 .show-card__image--cover {
   object-fit: cover;
@@ -443,8 +469,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid var(--kpfk-mist-200);
-  background: var(--kpfk-paper);
+  border-bottom: 1px solid var(--line);
+  background: var(--pg);
 }
 .show-card__body {
   padding: 16px;
@@ -458,18 +484,18 @@ a {
   font-size: 16px;
   text-transform: uppercase;
   letter-spacing: -0.01em;
-  color: var(--kpfk-ink);
+  color: var(--txt);
   margin: 0;
   line-height: 1.2;
 }
 .show-card__host {
   font-size: 14px;
-  color: var(--kpfk-slate-600);
+  color: var(--muted);
   margin-top: 4px;
 }
 .show-card__tagline {
   font-size: 14px;
-  color: var(--kpfk-slate-600);
+  color: var(--muted);
   margin-top: 8px;
   line-height: 1.4;
 }
@@ -486,20 +512,20 @@ a {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--kpfk-ash-400);
+  color: var(--faint);
 }
 
 /* --- Host Cards --- */
 .host-card {
-  border: 1px solid var(--kpfk-mist-200);
-  background: var(--kpfk-white);
+  border: 1px solid var(--line);
+  background: var(--card);
 }
 .host-card__photo {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
   display: block;
-  border-bottom: 1px solid var(--kpfk-mist-200);
+  border-bottom: 1px solid var(--line);
 }
 .host-card__info {
   padding: 16px;
@@ -510,7 +536,7 @@ a {
   font-size: 16px;
   text-transform: uppercase;
   letter-spacing: -0.01em;
-  color: var(--kpfk-ink);
+  color: var(--txt);
   margin: 0;
 }
 .host-card__role {
@@ -519,13 +545,13 @@ a {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--kpfk-slate-600);
+  color: var(--muted);
   margin-top: 2px;
 }
 .host-card__bio {
   font-size: 14px;
   line-height: 1.5;
-  color: var(--kpfk-char-800);
+  color: var(--txt);
   margin-top: 8px;
 }
 
@@ -565,12 +591,12 @@ a {
 }
 .btn-editorial--secondary {
   background: transparent;
-  color: var(--kpfk-ink);
-  border-color: var(--kpfk-ink);
+  color: var(--txt);
+  border-color: var(--txt);
 }
 .btn-editorial--secondary:hover {
-  background: var(--kpfk-ink);
-  color: var(--kpfk-paper);
+  background: var(--txt);
+  color: var(--pg);
 }
 
 /* --- Donate CTA --- */
@@ -583,13 +609,13 @@ a {
 /* --- Section Dividers --- */
 .divider {
   height: 1px;
-  background: var(--kpfk-mist-200);
+  background: var(--line);
   border: none;
   margin: 2rem 0;
 }
 .divider--heavy {
   height: 3px;
-  background: var(--kpfk-ink);
+  background: var(--txt);
 }
 
 /* --- Sidebar Section Labels --- */
@@ -599,7 +625,7 @@ a {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: var(--kpfk-ls-label);
-  color: var(--kpfk-slate-600);
+  color: var(--muted);
   margin-bottom: 1rem;
 }
 
@@ -608,7 +634,7 @@ a {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--kpfk-slate-600);
+  color: var(--muted);
   text-decoration: none;
   font-size: 14px;
   transition: color 0.15s;
@@ -622,8 +648,8 @@ a {
   position: absolute;
   right: 8px;
   top: 8px;
-  background: var(--kpfk-ink);
-  color: var(--kpfk-paper);
+  background: var(--bar);
+  color: var(--bar-txt);
   padding: 3px 8px;
   font-family: var(--font-text);
   font-size: 10px;
@@ -635,12 +661,12 @@ a {
 /* --- Adjacent Show Links --- */
 .adjacent-link {
   display: block;
-  border: 1px solid var(--kpfk-mist-200);
+  border: 1px solid var(--line);
   padding: 1rem;
   transition: border-color 0.15s;
 }
 .adjacent-link:hover {
-  border-color: var(--kpfk-ink);
+  border-color: var(--txt);
 }
 
 /* --- Responsive --- */
