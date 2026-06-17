@@ -4,6 +4,8 @@ import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type { Metadata } from "next";
 import { CategoryChip } from "@/components/category-chip";
+import { BlockRenderer } from "@/components/block-renderer";
+import { normalizeBlocks } from "@/lib/blocks";
 
 export const dynamic = "force-dynamic";
 
@@ -141,12 +143,21 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Body */}
-      <div
-        className="prose drop-cap mt-10 max-w-none text-lg leading-relaxed"
-        style={{ color: "var(--txt)" }}
-        dangerouslySetInnerHTML={{ __html: post.body }}
-      />
+      {/* Body — block-based when present, legacy HTML otherwise */}
+      {(() => {
+        const blocks = normalizeBlocks(post.body_blocks);
+        return blocks.length > 0 ? (
+          <div className="mt-10">
+            <BlockRenderer blocks={blocks} />
+          </div>
+        ) : (
+          <div
+            className="prose drop-cap mt-10 max-w-none text-lg leading-relaxed"
+            style={{ color: "var(--txt)" }}
+            dangerouslySetInnerHTML={{ __html: post.body }}
+          />
+        );
+      })()}
 
       {/* Footer */}
       <footer className="mt-12 border-t pt-8" style={{ borderColor: "var(--line)" }}>
