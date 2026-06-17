@@ -4,6 +4,9 @@ export interface ConfessorEpisode {
   title: string;
   date: string;
   shortDate: string;
+  /** LA-time YYYY-MM-DD — stable key for joining to cms_episode_metadata
+   * and for episode-page deep links. Empty when the date is unknown. */
+  airDate: string;
   duration: string;
   audioUrl: string;
   timestamp: number;
@@ -11,6 +14,15 @@ export interface ConfessorEpisode {
   guest: string | null;
   summary: string | null;
 }
+
+// en-CA renders as YYYY-MM-DD; the LA timezone keeps evening broadcasts on
+// their intended calendar day.
+const LA_DATE = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Los_Angeles",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
 interface ConfessorRawEpisode {
   title?: string;
@@ -143,6 +155,7 @@ export async function GET(request: NextRequest) {
         title: item.title || "Untitled Episode",
         date: dateStr,
         shortDate,
+        airDate: timestamp ? LA_DATE.format(new Date(timestamp)) : "",
         duration,
         audioUrl,
         timestamp,

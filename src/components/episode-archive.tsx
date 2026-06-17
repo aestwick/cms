@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import Link from "next/link";
 
 interface Episode {
   title: string;
   date: string;
   shortDate: string;
+  airDate: string;
   duration: string;
   audioUrl: string;
   timestamp: number;
@@ -17,6 +19,7 @@ interface Episode {
 interface EpisodeArchiveProps {
   programSlug: string;
   showTitle: string;
+  showSlug: string;
 }
 
 const EPISODES_PER_PAGE = 6;
@@ -58,7 +61,7 @@ function formatTime(seconds: number): string {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
-export function EpisodeArchive({ programSlug, showTitle }: EpisodeArchiveProps) {
+export function EpisodeArchive({ programSlug, showTitle, showSlug }: EpisodeArchiveProps) {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -281,6 +284,14 @@ export function EpisodeArchive({ programSlug, showTitle }: EpisodeArchiveProps) 
                   {ep.duration ? ` · ${ep.duration}` : ""}
                   {ep.guest ? ` · Guest: ${ep.guest}` : ""}
                 </p>
+                {ep.airDate && (
+                  <Link
+                    href={`/on-air/${showSlug}/${ep.airDate}`}
+                    className="mt-1 inline-block text-xs font-bold uppercase tracking-[0.06em] text-kpfk-red hover:underline"
+                  >
+                    Episode page →
+                  </Link>
+                )}
 
                 {isPlaying && (
                   <p className="mt-1 font-mono text-xs font-bold uppercase text-kpfk-red">

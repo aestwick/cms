@@ -607,6 +607,7 @@ export default async function ShowPage({ params }: PageProps) {
               <EpisodeArchive
                 programSlug={typedShow.program_slug}
                 showTitle={typedShow.title}
+                showSlug={typedShow.slug}
               />
             ) : (
               <section className="border-2 border-charcoal/10 p-8">
