@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import type { Metadata } from "next";
+import { CategoryChip } from "@/components/category-chip";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const { data: post } = await supabase
     .from("cms_posts")
-    .select("*, cms_shows(id, title, slug)")
+    .select("*, cms_shows(id, title, slug), cms_categories(name, slug, color)")
     .eq("slug", slug)
     .eq("status", "published")
     .is("deleted_at", null)
@@ -58,6 +59,10 @@ export default async function BlogPostPage({ params }: PageProps) {
   const showData = Array.isArray(post.cms_shows)
     ? (post.cms_shows[0] as { id: string; title: string; slug: string } | undefined) ?? null
     : (post.cms_shows as { id: string; title: string; slug: string } | null);
+
+  const categoryData = Array.isArray(post.cms_categories)
+    ? (post.cms_categories[0] as { name: string; slug: string; color: string | null } | undefined) ?? null
+    : (post.cms_categories as { name: string; slug: string; color: string | null } | null);
 
   const publishedDate = post.published_at
     ? new Date(post.published_at).toLocaleDateString("en-US", {
@@ -111,6 +116,12 @@ export default async function BlogPostPage({ params }: PageProps) {
             <>
               <span>·</span>
               <time className="text-xs">{publishedDate}</time>
+            </>
+          )}
+          {categoryData && (
+            <>
+              <span>·</span>
+              <CategoryChip category={categoryData} />
             </>
           )}
         </div>

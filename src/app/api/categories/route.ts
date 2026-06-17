@@ -9,10 +9,11 @@ function slugify(input: string): string {
     .replace(/^-|-$/g, "");
 }
 
-// GET /api/categories — list the station's coverage-area tree
+// GET /api/categories — list the station's coverage-area tree.
+// Readable by hosts too, so they can file their show posts under one.
 export async function GET() {
   const user = await getCmsUser();
-  if (!user || !["admin", "editor"].includes(user.role)) {
+  if (!user || !["admin", "editor", "host"].includes(user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

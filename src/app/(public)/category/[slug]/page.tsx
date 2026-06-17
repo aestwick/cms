@@ -1,8 +1,10 @@
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import Link from "next/link";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { CategoryChip } from "@/components/category-chip";
+import { voiceColor } from "@/lib/voices";
 
 export const dynamic = "force-dynamic";
 
@@ -14,10 +16,14 @@ function resolveImageUrl(path: string): string {
   return `${SUPABASE_STORAGE_URL}/${path}`;
 }
 
-export const metadata: Metadata = {
-  title: "Blog — KPFK 90.7 FM",
-  description: "News, updates, and stories from KPFK 90.7 FM, Pacifica Radio in Los Angeles.",
-};
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  color: string | null;
+  parent_id: string | null;
+}
 
 interface Post {
   id: string;
@@ -27,14 +33,12 @@ interface Post {
   body: string;
   featured_image_path: string | null;
   published_at: string;
-  is_featured: boolean;
   cms_shows: { title: string; slug: string } | null;
   cms_categories: { name: string; slug: string; color: string | null } | null;
 }
 
 function getExcerpt(post: Post): string {
   if (post.excerpt) return post.excerpt;
-  // Strip HTML and truncate
   const text = post.body.replace(/<[^>]*>/g, "");
   return text.length > 200 ? text.slice(0, 200) + "…" : text;
 }
@@ -47,42 +51,112 @@ function formatDate(d: string) {
   });
 }
 
-export default async function BlogIndexPage() {
+async function loadCategory(slug: string): Promise<Category | null> {
+  const supabase = getSupabaseAdmin();
+  const { data } = await supabase
+    .from("cms_categories")
+    .select("id, name, slug, description, color, parent_id")
+    .eq("slug", slug)
+    .is("deleted_at", null)
+    .single();
+  return (data as Category) ?? null;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const category = await loadCategory(slug);
+  if (!category) return { title: "Not found — KPFK 90.7 FM" };
+  return {
+    title: `${category.name} — KPFK 90.7 FM`,
+    description:
+      category.description ??
+      `Stories filed under ${category.name} from KPFK 90.7 FM.`,
+  };
+}
+
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const supabase = getSupabaseAdmin();
 
-  const { data: posts } = await supabase
+  const category = await loadCategory(slug);
+  if (!category) notFound();
+
+  // Sub-categories (so a parent page includes its children's stories).
+  const { data: childRows } = await supabase
+    .from("cms_categories")
+    .select("id, name, slug, color")
+    .eq("parent_id", category.id)
+    .is("deleted_at", null)
+    .order("sort_order");
+
+  const children = childRows ?? [];
+  const categoryIds = [category.id, ...children.map((c) => c.id)];
+
+  const { data: postRows } = await supabase
     .from("cms_posts")
-    .select("id, title, slug, excerpt, body, featured_image_path, published_at, is_featured, cms_shows(title, slug), cms_categories(name, slug, color)")
+    .select(
+      "id, title, slug, excerpt, body, featured_image_path, published_at, cms_shows(title, slug), cms_categories(name, slug, color)"
+    )
+    .in("category_id", categoryIds)
     .eq("status", "published")
     .is("deleted_at", null)
-    .order("is_featured", { ascending: false })
     .order("published_at", { ascending: false });
 
-  const allPosts = (posts ?? []).map((p) => ({
+  const posts = (postRows ?? []).map((p) => ({
     ...p,
     cms_shows: Array.isArray(p.cms_shows) ? p.cms_shows[0] || null : p.cms_shows,
-    cms_categories: Array.isArray(p.cms_categories) ? p.cms_categories[0] || null : p.cms_categories,
+    cms_categories: Array.isArray(p.cms_categories)
+      ? p.cms_categories[0] || null
+      : p.cms_categories,
   })) as Post[];
+
+  const accent = voiceColor(category.color) ?? "var(--kpfk-red)";
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12 sm:px-8">
       <header className="pb-6" style={{ borderBottom: "3px solid var(--txt)" }}>
-        <p className="kpfk-label">Dispatches from the station</p>
-        <h1 className="kpfk-display mt-2 text-5xl sm:text-6xl" style={{ color: "var(--txt)" }}>
-          Stories<span style={{ color: "var(--kpfk-red)" }}>.</span>
-        </h1>
-        <p className="mt-3 text-lg" style={{ color: "var(--muted)" }}>
-          News, updates, and stories from KPFK 90.7 FM.
+        <p className="kpfk-label">
+          <Link href="/blog" className="hover:underline">
+            Stories
+          </Link>{" "}
+          / Coverage
         </p>
+        <h1 className="kpfk-display mt-2 text-5xl sm:text-6xl" style={{ color: "var(--txt)" }}>
+          {category.name}
+          <span style={{ color: accent }}>.</span>
+        </h1>
+        {category.description && (
+          <p className="mt-3 text-lg" style={{ color: "var(--muted)" }}>
+            {category.description}
+          </p>
+        )}
+        {children.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {children.map((c) => (
+              <CategoryChip
+                key={c.id}
+                category={{ name: c.name, slug: c.slug, color: c.color }}
+              />
+            ))}
+          </div>
+        )}
       </header>
 
-      {allPosts.length === 0 ? (
+      {posts.length === 0 ? (
         <p className="py-16 text-center text-charcoal/40">
-          No posts yet. Check back soon.
+          No stories in this coverage area yet. Check back soon.
         </p>
       ) : (
         <div className="mt-8 space-y-0 divide-y divide-charcoal/10">
-          {allPosts.map((post) => (
+          {posts.map((post) => (
             <article key={post.id} className="py-8 first:pt-0">
               <div className="flex flex-col gap-5 sm:flex-row sm:gap-8">
                 {post.featured_image_path && (
@@ -112,11 +186,6 @@ export default async function BlogIndexPage() {
                           {post.cms_shows.title}
                         </Link>
                       </>
-                    )}
-                    {post.is_featured && (
-                      <span className="rounded border border-action-yellow/40 bg-action-yellow/10 px-1.5 py-0.5 font-mono text-[10px] uppercase">
-                        Featured
-                      </span>
                     )}
                     {post.cms_categories && (
                       <CategoryChip category={post.cms_categories} />

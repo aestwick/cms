@@ -11,6 +11,7 @@ export interface PostFormData {
   featured_image_path: string;
   status: "draft" | "published";
   show_id: string;
+  category_id: string;
   is_featured: boolean;
 }
 
@@ -22,6 +23,7 @@ const emptyPost: PostFormData = {
   featured_image_path: "",
   status: "draft",
   show_id: "",
+  category_id: "",
   is_featured: false,
 };
 
@@ -34,6 +36,13 @@ interface PostFormProps {
 interface ShowOption {
   id: string;
   title: string;
+}
+
+interface CategoryOption {
+  id: string;
+  name: string;
+  parent_id: string | null;
+  sort_order: number;
 }
 
 function slugify(text: string): string {
@@ -50,6 +59,7 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
   const [error, setError] = useState("");
   const [slugManual, setSlugManual] = useState(mode === "edit");
   const [shows, setShows] = useState<ShowOption[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
 
   useEffect(() => {
     // Try /api/shows first (admin/editor), fall back to /api/posts/shows (host-accessible)
@@ -61,7 +71,24 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
       })
       .then((data) => setShows(data))
       .catch(() => {});
+
+    fetch("/api/categories")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setCategories(data))
+      .catch(() => {});
   }, []);
+
+  // Flatten the tree into indented options (parents first, then children).
+  const categoryOptions = categories
+    .filter((c) => !c.parent_id)
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .flatMap((parent) => [
+      { id: parent.id, label: parent.name },
+      ...categories
+        .filter((c) => c.parent_id === parent.id)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((child) => ({ id: child.id, label: `— ${child.name}` })),
+    ]);
 
   function updateField<K extends keyof PostFormData>(key: K, value: PostFormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -155,6 +182,26 @@ export function PostForm({ initialData, postId, mode }: PostFormProps) {
             </select>
             <p className="mt-1 text-xs text-charcoal/40">
               Show-scoped posts also appear on the show&apos;s public page.
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-charcoal">
+              Coverage area (optional)
+            </label>
+            <select
+              value={form.category_id}
+              onChange={(e) => updateField("category_id", e.target.value)}
+              className="mt-1 block w-full border border-charcoal/20 bg-off-white px-3 py-2 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none"
+            >
+              <option value="">Uncategorized</option>
+              {categoryOptions.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-charcoal/40">
+              Files the story under a coverage area on the public site.
             </p>
           </div>
         </div>

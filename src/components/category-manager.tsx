@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Label } from "@/components/ds";
+import { VOICES, VOICE_COLOR_VAR, type Voice } from "@/lib/voices";
 
 export interface Category {
   id: string;
@@ -15,18 +16,6 @@ export interface Category {
   sort_order: number;
 }
 
-type Voice = "news" | "music" | "culture" | "community" | "talk";
-
-const VOICES: Voice[] = ["news", "music", "culture", "community", "talk"];
-
-const VOICE_SWATCH: Record<Voice, string> = {
-  news: "var(--kpfk-airwave)",
-  music: "var(--kpfk-sunray)",
-  culture: "var(--kpfk-frequency)",
-  community: "var(--kpfk-chorus)",
-  talk: "var(--kpfk-ink)",
-};
-
 const selectClass =
   "border border-charcoal/20 bg-off-white px-2 py-1.5 text-sm rounded-[2px] focus:border-kpfk-red focus:outline-none";
 
@@ -35,7 +24,7 @@ function ColorDot({ color }: { color: Voice | null }) {
   return (
     <span
       className="inline-block h-3 w-3"
-      style={{ background: VOICE_SWATCH[color] }}
+      style={{ background: VOICE_COLOR_VAR[color] }}
       title={color}
     />
   );

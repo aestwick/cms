@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from("cms_posts")
-    .select("id, title, slug, status, published_at, is_featured, show_id, author_id, created_at, updated_at, cms_shows(id, title)")
+    .select("id, title, slug, status, published_at, is_featured, show_id, category_id, author_id, created_at, updated_at, cms_shows(id, title)")
     .eq("station_id", user.station_id)
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       station_id: user.station_id,
       author_id: user.id,
       show_id: body.show_id || null,
+      category_id: body.category_id || null,
       title: body.title,
       slug: body.slug,
       body: body.body || "",
