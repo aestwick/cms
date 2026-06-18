@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { ShowForm } from "@/components/show-form";
 import { HostManager } from "@/components/host-manager";
 
@@ -56,11 +57,19 @@ export default async function EditShowPage({
             /on-air/{show.slug}
           </p>
         </div>
-        {show.is_claimed && (
-          <span className=" border border-green-600/20 bg-green-600/5 px-2 py-1 text-xs text-green-700">
-            Claimed
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/admin/shows/${id}/episodes`}
+            className="border border-charcoal/20 px-3 py-1.5 text-sm font-semibold text-charcoal hover:border-kpfk-red hover:text-kpfk-red"
+          >
+            Episodes →
+          </Link>
+          {show.is_claimed && (
+            <span className=" border border-green-600/20 bg-green-600/5 px-2 py-1 text-xs text-green-700">
+              Claimed
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-8 xl:grid-cols-[1fr_20rem]">
