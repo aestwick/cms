@@ -1,0 +1,18 @@
+.git
+.github
+.next
+node_modules
+
+# Env files — never bake secrets into the image
+.env
+.env.*
+
+# Docs and project meta — not needed at build time
+*.md
+docs/
+data/
+scripts/
+
+# Misc
+*.log
+.DS_Store
